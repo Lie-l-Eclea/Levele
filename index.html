@@ -1795,8 +1795,8 @@ var A_NU = [["a", 4], ["e", 4], ["i", 3], ["o", 3], ["u", 3], ["y", 1], ["ia", 0
 var A_COD_MID = [["", 6], ["r", 1.2], ["l", 0.6], ["s", 1.2]];
 var A_COD_END = [["", 6], ["l", 1], ["r", 1], ["s", 1], ["t", 0.6], ["k", 0.4], ["c", 0.5], ["v", 0.3]];
 /* 에클라이아어 음소배열: 어두 자음군 없음(Akla처럼 모음을 덧붙임), 어말 자음군 없음,
-   모음 사이 자음 연쇄는 홑자음, 장자음, 온셋 자음군(C+l, vr, C+r), 코다 r/s + 홑자음, lk lt만 */
-var A_MED_OK = /^(?:[ptkcsvrl]|([ptkcsvrl])\1|[ptkcvsr]l|[ptkvs]r|r[ptkcsvl]|s[ptkcvl]|l[kt])$/;
+   모음 사이 자음 연쇄는 홑자음, 장자음, 온셋 자음군(C+l, vr, C+r), 코다 l/r/s + 아무 홑자음 */
+var A_MED_OK = /^(?:[ptkcsvrl]|([ptkcsvrl])\1|[ptkcvsr]l|[ptkvs]r|[lrs][ptkcsvrl])$/;
 function aLegal(s) {
   var w = s.replace(/^@/, "");
   if (/^[^aeiouy]{2}/.test(w)) return false;
@@ -1817,7 +1817,7 @@ function genA(n) {
     var s = "";
     for (var i = 0; i < n; i++) {
       var on = i === 0 ? pickW([["", 7]].concat(A_ON.slice(1, 9))) : pickW(A_ON.slice(1));
-      if (i > 0 && on.length > 1 && /[^aeiouy]$/.test(s)) on = on[on.length - 1] === "l" || on[on.length - 1] === "r" ? on[0] : on;
+      if (i > 0 && on.length > 1 && /[^aeiouy]$/.test(s)) on = on[0];
       s += on + pickW(A_NU) + (i === n - 1 ? pickW(A_COD_END) : pickW(A_COD_MID));
     }
     /* 장자음은 어휘집에서 드묾 */
@@ -1836,8 +1836,8 @@ function genB(n) {
     s += on + pickW(B_V);
     if (Math.random() < (i === n - 1 ? 0.25 : 0.1)) s += pickW([["r", 1], ["l", 1]]);
   }
-  /* 에냥어도 CV(C): 자음 셋 연쇄와 rl, lr 같은 유음 연쇄는 만들지 않음 */
-  if (/[^aeiouɯ]{3}|[rl][rl](?![aeiouɯ])|lr|rl/.test(s.replace(/ei|ai/g, "a"))) return null;
+  /* 에냥어도 CV(C): 자음 셋 연쇄는 만들지 않음 */
+  if (/[^aeiouɯ]{3}/.test(s.replace(/ei|ai/g, "a"))) return null;
   return s;
 }
 function bToA(b) { return aProthesis(b.replace(/ʃ/g, "s").replace(/ɯ/g, "u").replace(/m/g, "p")); }
