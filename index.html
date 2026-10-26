@@ -1852,7 +1852,8 @@ var F_V = [["a", 4], ["e", 3], ["i", 3], ["o", 3], ["u", 3], ["ə", 2]];
 function genF(n) {
   var s = "";
   for (var i = 0; i < n; i++) {
-    var on = pickW(F_C); /* 포브르어 음절은 CV(C): 온셋 필수 */
+    /* 포브르어 음절은 (C)V(C): 모음 연속이 없으므로 온셋 없는 음절은 어두에만 */
+    var on = (i === 0 && Math.random() < 0.2) ? "" : pickW(F_C);
     var v = pickW(F_V);
     if (on === "w" && /[ou]/.test(v)) v = "a";
     s += on + v;
