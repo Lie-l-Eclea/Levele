@@ -1,0 +1,1799 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>에클레아어 변환기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 왼쪽 입력·결과, 오른쪽 규칙 편집기. 좁은 화면에서는 위아래로 쌓임 */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --fg: #17202a;
+  --muted: #5b6876;
+  --line: #d6dde4;
+  --accent: #2e5b7a;
+  --accent-soft: #e2ecf3;
+  --err: #a8321f;
+  --err-soft: #f8e6e2;
+  --font-lang: "Gentium Book Plus", "Charis SIL", "Doulos SIL", Georgia, serif;
+  --font-ui: "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --font-code: "Noto Sans Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f151b; --surface: #161f28; --fg: #e4ebf1; --muted: #93a2b0; --line: #2a3643;
+    --accent: #8dbad8; --accent-soft: #1d3141; --err: #ff9b8a; --err-soft: #3a1f1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f151b; --surface: #161f28; --fg: #e4ebf1; --muted: #93a2b0; --line: #2a3643;
+  --accent: #8dbad8; --accent-soft: #1d3141; --err: #ff9b8a; --err-soft: #3a1f1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: grid; gap: 4px; }
+h1 { font-family: var(--font-lang); font-weight: 700; font-size: 1.9rem; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 0; font-size: 0.92rem; }
+.sub .lang { font-family: var(--font-lang); font-size: 1.05rem; color: var(--fg); }
+.grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 980px) { .grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: start; } }
+.col { display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+h2 { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+.hint { color: var(--muted); font-size: 0.82rem; margin: 0; }
+textarea {
+  width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg);
+  padding: 10px 12px; font-size: 0.95rem; line-height: 1.5;
+}
+textarea:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#input { font-family: var(--font-lang); font-size: 1.1rem; min-height: 120px; }
+.code { font-family: var(--font-code); font-size: 0.86rem; min-height: 360px; white-space: pre; overflow-wrap: normal; overflow-x: auto; tab-size: 2; }
+.out { font-family: var(--font-lang); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.out.main { font-size: 1.35rem; line-height: 1.5; }
+.out.form { font-size: 1.05rem; color: var(--fg); }
+.out.ipa { font-size: 1.1rem; color: var(--accent); }
+.out.ko { font-family: var(--font-ui); font-size: 1.1rem; }
+.ko-sm { display: block; font-family: var(--font-ui); font-size: 0.86rem; color: var(--muted); }
+.label { font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; }
+.result { display: grid; gap: 4px; padding-block: 8px; border-top: 1px dashed var(--line); }
+.result:first-of-type { border-top: 0; padding-top: 0; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+button {
+  font-family: var(--font-ui); font-size: 0.82rem; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  padding: 5px 10px; cursor: pointer;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+button.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+button.primary:hover { color: var(--surface); filter: brightness(1.08); }
+.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); }
+.tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; padding: 8px 10px; white-space: nowrap; color: var(--muted); font-size: 0.88rem; }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 700; }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--accent-soft); padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; }
+.status { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.errors { display: grid; gap: 4px; }
+.err { background: var(--err-soft); color: var(--err); border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; font-family: var(--font-code); overflow-wrap: anywhere; }
+.words { display: grid; gap: 0; }
+.word { border-top: 1px solid var(--line); }
+.word:first-child { border-top: 0; }
+.word > button {
+  width: 100%; text-align: left; border: 0; border-radius: 0; background: transparent; padding: 8px 2px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; font-family: var(--font-lang); font-size: 0.98rem; color: var(--fg);
+}
+.word > button:hover { background: var(--accent-soft); color: var(--fg); }
+.word > button span { overflow-wrap: anywhere; min-width: 0; }
+.word > button span:nth-child(4) { color: var(--accent); }
+.word-head { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 0 2px 4px; }
+.trace { padding: 4px 2px 12px; display: grid; gap: 10px; }
+.trace h3 { margin: 0; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; }
+.trace ol { margin: 0; padding-left: 1.4em; display: grid; gap: 2px; }
+.trace li { font-size: 0.85rem; overflow-wrap: anywhere; }
+.trace code { font-family: var(--font-code); font-size: 0.82rem; color: var(--muted); }
+.trace .res { font-family: var(--font-lang); font-size: 1rem; }
+details summary { cursor: pointer; font-size: 0.88rem; color: var(--muted); }
+.help { font-size: 0.85rem; display: grid; gap: 6px; padding-top: 6px; }
+.help code { font-family: var(--font-code); font-size: 0.82rem; background: var(--bg); padding: 1px 4px; border-radius: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.82rem; color: var(--muted); }
+.legend code { font-family: var(--font-code); color: var(--fg); }
+@media (max-width: 560px) {
+  .word > button, .word-head { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .word-head span:nth-child(n+3) { display: none; }
+}
+.views { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.view-tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; padding: 8px 14px; font-size: 0.95rem; color: var(--muted); }
+.view-tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 700; }
+.lex-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lex-bar input[type="search"], .lex-bar select, .field input {
+  font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); padding: 6px 10px;
+}
+.lex-bar input[type="search"] { flex: 1 1 220px; min-width: 0; }
+.chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+.lex-form { display: grid; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label { font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+.field input { width: 100%; }
+.field input.lang { font-family: var(--font-lang); font-size: 1.05rem; }
+.preview { font-family: var(--font-lang); font-size: 1.05rem; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.preview .ipa { color: var(--accent); }
+.lex-row > button, .lex-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: baseline;
+}
+.lex-head { padding: 0 2px 4px; }
+.lex-row { border-top: 1px solid var(--line); }
+.lex-row > button { width: 100%; text-align: left; border: 0; border-radius: 0; background: transparent; padding: 8px 2px; color: var(--fg); font-size: 0.92rem; }
+.lex-row > button:hover { background: var(--accent-soft); color: var(--fg); }
+.lex-row span { min-width: 0; overflow-wrap: anywhere; }
+.lex-row .hw, .lex-row .sp { font-family: var(--font-lang); font-size: 1.05rem; }
+.lex-row .ip { font-family: var(--font-lang); color: var(--accent); }
+.lex-row .mn { color: var(--fg); }
+.badge { display: inline-block; font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700; border-radius: 999px; padding: 0 7px; margin-left: 6px; vertical-align: 2px; background: var(--err-soft); color: var(--err); }
+.badge.soft { background: var(--accent-soft); color: var(--accent); }
+.empty { color: var(--muted); padding: 16px 2px; }
+.badge.tag { background: transparent; border: 1px solid var(--line); color: var(--muted); font-weight: 500; }
+.badge.fossil { background: var(--accent); color: var(--surface); }
+.check { display: flex; gap: 6px; align-items: center; font-size: 0.88rem; font-weight: 400; letter-spacing: 0; color: var(--fg); padding-top: 6px; }
+#lexTag { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
+@media (max-width: 620px) {
+  .lex-row > button, .lex-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lex-head span:nth-child(n+3) { display: none; }
+}
+.badge.near { background: transparent; color: var(--muted); font-weight: 500; border: 1px dashed var(--line); }
+.warns { display: grid; gap: 2px; font-size: 0.85rem; }
+.warns .w-homo { color: var(--err); }
+.warns .w-near { color: var(--muted); }
+.diff { display: grid; gap: 8px; padding-top: 8px; }
+#diffBase { font-family: var(--font-ui); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); padding: 4px 8px; }
+.diff-row { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; border-top: 1px solid var(--line); padding: 6px 2px; font-size: 0.88rem; align-items: baseline; }
+.diff-row .hw, .diff-row .bf, .diff-row .af { font-family: var(--font-lang); font-size: 0.98rem; overflow-wrap: anywhere; min-width: 0; }
+.diff-row .bf { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.diff-row .af .ip { color: var(--accent); }
+.diff-row .mn { display: block; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+/* ---------- 에클레아 테마 ----------
+   Layout: 설산 Véaspal 능선과 강 Aclêa를 그린 머리띠 아래, 연맹 문헌학 작업대처럼 차가운 종이와 강물빛 잉크로 정리한 두 칸 작업면 */
+:root {
+  --bg: #e8eef0;          /* 눈밭 */
+  --surface: #f7fafa;     /* 종이 */
+  --fg: #14232a;          /* 먹 */
+  --muted: #55676f;
+  --line: #c9d5d9;
+  --accent: #1c6872;      /* 강 Aclêa */
+  --accent-soft: #d6e7e7;
+  --ice: #bccfd5;         /* 설산 그늘 */
+  --snow: #fbfdfd;        /* 눈 덮인 봉우리 */
+  --dusk: #5b4b8a;        /* 비음형 화석 */
+  --err: #a33a24; --err-soft: #f6e4df;
+  --font-display: "Cormorant Garamond", "Gentium Book Plus", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1418; --surface: #121d23; --fg: #e1eaec; --muted: #8ea2aa; --line: #253740;
+    --accent: #74c1c7; --accent-soft: #15313a; --ice: #213843; --snow: #cfdde2; --dusk: #ab9bdc;
+    --err: #ff9e8b; --err-soft: #3a201b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1418; --surface: #121d23; --fg: #e1eaec; --muted: #8ea2aa; --line: #253740;
+  --accent: #74c1c7; --accent-soft: #15313a; --ice: #213843; --snow: #cfdde2; --dusk: #ab9bdc;
+  --err: #ff9e8b; --err-soft: #3a201b; color-scheme: dark;
+}
+.hero { display: grid; gap: 6px; padding-block: 18px 0; border-bottom: 1px solid var(--line); }
+.hero .ridge { display: block; width: 100%; max-width: 100%; height: 64px; margin-top: 6px; }
+.hero .kicker { margin: 0; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); }
+.hero h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.02; letter-spacing: 0.005em; }
+.hero h1 .ko { display: block; font-family: var(--font-ui); font-size: 0.95rem; font-weight: 500; letter-spacing: 0.02em; color: var(--muted); margin-top: 6px; }
+.hero .chain { margin: 4px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-family: var(--font-lang); font-size: 1.05rem; }
+.hero .chain .from { color: var(--muted); }
+.hero .chain .arrow { color: var(--accent); font-family: var(--font-ui); font-size: 0.85rem; }
+.hero .chain .ipa { color: var(--accent); }
+.hero .chain .note { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.panel { border-radius: 4px; box-shadow: 0 1px 0 var(--line); }
+textarea, button, .lex-bar input[type="search"], .lex-bar select, .field input, #lexTag, #diffBase { border-radius: 3px; }
+.confirm, .lex-form, .err { border-radius: 3px; }
+h2 { color: var(--accent); letter-spacing: 0.12em; }
+.view-tab { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; padding: 6px 14px 8px; }
+.view-tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.out.main { font-size: 1.5rem; }
+.badge.fossil { background: var(--dusk); color: var(--surface); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="kicker">에클레아어 변환기</p>
+    <h1>Lévèle l'Éclêa<span class="ko">에클라이아어 형태를 문자형, 기본 표기, 발음으로 바꿉니다</span></h1>
+    <p class="chain"><span class="from">Levela l'Eklaia</span><span class="arrow">→</span><span>Lévèle l'Éclêa</span><span class="ipa">[leˈvel leˈklea]</span><span class="note">“에클라이아의 말”</span></p>
+    <svg class="ridge" viewBox="0 0 600 84" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path style="fill:var(--ice)" d="M0 84 L0 58 L60 40 L105 52 L170 14 L215 38 L250 30 L300 6 L345 34 L390 26 L440 46 L500 22 L560 44 L600 36 L600 84 Z"/>
+      <path style="fill:var(--snow)" d="M155 24 L170 14 L186 25 L176 22 L168 28 Z M286 16 L300 6 L316 18 L305 15 L298 22 Z M488 30 L500 22 L513 31 L503 28 Z"/>
+      <path style="fill:none;stroke:var(--accent);stroke-width:2;opacity:.55" d="M0 76 C90 70 150 82 240 74 S420 66 600 72"/>
+    </svg>
+  </header>
+
+  <nav class="views" role="tablist" id="views">
+    <button class="view-tab" role="tab" type="button" data-view="conv" aria-selected="true">변환기</button>
+    <button class="view-tab" role="tab" type="button" data-view="lex" aria-selected="false">단어장</button>
+  </nav>
+
+  <section id="viewLex" hidden>
+    <div class="panel">
+      <div class="lex-bar">
+        <input id="lexSearch" type="search" placeholder="형태, 뜻, 표기로 찾기" aria-label="단어 찾기">
+        <div class="chips" id="lexChips">
+          <button class="chip" type="button" data-filter="all" aria-pressed="true">전체</button>
+          <button class="chip" type="button" data-filter="same" aria-pressed="false">같은 형태</button>
+          <button class="chip" type="button" data-filter="homo" aria-pressed="false">같은 발음</button>
+          <button class="chip" type="button" data-filter="near" aria-pressed="false">유사음</button>
+          <button class="chip" type="button" data-filter="note" aria-pressed="false">메모 있음</button>
+        </div>
+        <select id="lexTag" aria-label="태그로 거르기"><option value="">모든 태그</option></select>
+        <select id="lexSort" aria-label="정렬">
+          <option value="n">원래 순서</option>
+          <option value="abc">에클라이아어 순</option>
+          <option value="mean">뜻 순</option>
+        </select>
+        <button id="lexAdd" type="button" class="primary">단어 추가</button>
+        <button id="projSave2" type="button">프로젝트 저장</button>
+        <button id="projLoad2" type="button">프로젝트 불러오기</button>
+        <button id="lexReset" type="button">초기 상태로</button>
+      </div>
+      <div class="confirm" id="mergeBox" hidden>
+        <span id="mergeText"></span>
+        <button type="button" id="mergeYes" class="primary">합치기</button>
+        <button type="button" id="mergeNo">단어는 가져오지 않기</button>
+      </div>
+      <p class="status" id="lexStatus"></p>
+
+      <form class="lex-form" id="lexForm" hidden>
+        <div class="fields">
+          <div class="field"><label for="fHead">에클라이아어</label><input id="fHead" class="lang" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="fMean">뜻</label><input id="fMean" autocomplete="off"></div>
+          <div class="field"><label for="fInput">변환기 입력 (@ 비음형, % 포브르어 단어, &amp; 학술어, ^ 접어, ~ · 합성어)</label><input id="fInput" class="lang" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="fNote">메모</label><input id="fNote" autocomplete="off"></div>
+          <div class="field"><label for="fTags">태그 (쉼표로 구분)</label><input id="fTags" autocomplete="off"></div>
+          <div class="field"><label for="fFossil">비음형 화석</label><label class="check"><input type="checkbox" id="fFossil"> 비음형으로 전해진 단어 (입력 앞에 @)</label></div>
+        </div>
+        <div class="preview" id="fPreview"></div>
+        <div class="warns" id="fWarn"></div>
+        <div class="tools">
+          <button type="submit" class="primary" id="fSave">저장</button>
+          <button type="button" id="fCancel">닫기</button>
+          <button type="button" id="fToConv">변환기에 넣기</button>
+          <button type="button" id="fDelete">삭제</button>
+        </div>
+        <div class="confirm" id="fConfirm" hidden>
+          <span id="fConfirmText"></span>
+          <button type="button" id="fConfirmYes" class="primary">삭제</button>
+          <button type="button" id="fConfirmNo">취소</button>
+        </div>
+      </form>
+
+      <div class="lex-head label"><span>에클라이아어</span><span>뜻</span><span>에클레아어</span><span>발음</span></div>
+      <div id="lexList"></div>
+    </div>
+  </section>
+
+  <div class="grid" id="viewConv">
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>입력 · 에클라이아어</h2>
+          <button id="clearInput" type="button">지우기</button>
+        </div>
+        <textarea id="input" spellcheck="false" aria-label="에클라이아어 입력"></textarea>
+        <div class="legend">
+          <span><code>@</code> 비음형 시작 위치</span>
+          <span><code>%</code> 포브르어 단어</span>
+          <span><code>&amp;</code> 학술 차용어</span>
+          <span><code>-</code> 굴절 접두사 (표기에 하이픈. 문법 표지 <code>le- pe- ti- va- sa- kal-</code>은 모음 앞에서 자동 축약: l' p' t' v' s' cal')</span>
+          <span><code>|</code> 파생 접두사 (붙여 씀)</span>
+          <span><code>'</code> 축약된 접어</span>
+          <span><code>=</code> 인칭 어미</span>
+          <span><code>^</code> 접어 (따로 변화)</span>
+          <span><code>~</code> 에클라이아어 단계 합성어</span>
+          <span><code>·</code> 에클레아어 단계 합성어 (에클레아어 형태로 새로 만든 구: <code>le-·@kiset</code> → l'Ègnand)</span>
+        </div>
+      </section>
+
+      <section class="panel" aria-live="polite">
+        <div class="result">
+          <div class="row"><span class="label">기본 표기</span><button type="button" data-copy="outMain">복사</button></div>
+          <p class="out main" id="outMain"></p>
+        </div>
+        <div class="result">
+          <div class="row"><span class="label">문자형</span><button type="button" data-copy="outForm">복사</button></div>
+          <p class="out form" id="outForm"></p>
+        </div>
+        <div class="result">
+          <div class="row"><span class="label">발음</span><button type="button" data-copy="outIpa">복사</button></div>
+          <p class="out ipa" id="outIpa"></p>
+        </div>
+        <div class="result">
+          <div class="row"><span class="label">한글 표기</span><button type="button" data-copy="outKo">복사</button></div>
+          <p class="out ko" id="outKo"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>단어별 분석</h2>
+          <p class="hint">단어를 누르면 적용된 규칙이 순서대로 보입니다.</p>
+        </div>
+        <div class="word-head label"><span>입력</span><span>문자형</span><span>기본 표기</span><span>발음</span></div>
+        <div class="words" id="words"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>규칙 편집</h2>
+          <span class="status" id="status"></span>
+        </div>
+        <div class="tabs" role="tablist" id="tabs">
+          <button class="tab" role="tab" type="button" data-key="cats" aria-selected="true">범주</button>
+          <button class="tab" role="tab" type="button" data-key="r1" aria-selected="false">문자형 규칙</button>
+          <button class="tab" role="tab" type="button" data-key="r2" aria-selected="false">기본 표기 규칙</button>
+          <button class="tab" role="tab" type="button" data-key="r3" aria-selected="false">발음 규칙</button>
+        </div>
+        <p class="hint" id="tabHint"></p>
+        <textarea id="editor" class="code" spellcheck="false" aria-label="규칙 편집"></textarea>
+        <div class="errors" id="errors"></div>
+        <div class="tools">
+          <button type="button" id="copyAll" class="primary">규칙 전체 복사</button>
+          <button type="button" id="resetTab">이 탭 기본값으로</button>
+          <button type="button" id="projSave">프로젝트 저장</button>
+          <button type="button" id="projLoad">프로젝트 불러오기</button>
+          <input id="projFile" type="file" accept="application/json,.json" hidden>
+        </div>
+        <div class="confirm" id="confirmBox" hidden>
+          <span id="confirmText"></span>
+          <button type="button" id="confirmYes" class="primary">되돌리기</button>
+          <button type="button" id="confirmNo">취소</button>
+        </div>
+        <p class="status" id="copyStatus" role="status"></p>
+        <details id="diffBox">
+          <summary>규칙 변경 비교</summary>
+          <div class="diff">
+            <div class="tools">
+              <label class="check" for="diffBase">비교 기준</label>
+              <select id="diffBase" aria-label="비교 기준">
+                <option value="default">기본 규칙</option>
+                <option value="mark">저장한 기준점</option>
+              </select>
+              <button type="button" id="diffMark">지금 규칙을 기준점으로</button>
+            </div>
+            <p class="status" id="diffStatus"></p>
+            <div id="diffList"></div>
+          </div>
+        </details>
+        <details>
+          <summary>규칙 문법</summary>
+          <div class="help">
+            <p>한 줄에 규칙 하나: <code>대상/결과/환경</code> 또는 <code>대상/결과/환경/예외</code>.</p>
+            <p><code>_</code> 대상 자리, <code>#</code> 단어 경계, <code>…</code> 임의의 글자열(단어 안), <code>( )</code> 있어도 없어도 됨.</p>
+            <p>범주는 대문자 한 글자(<code>V=aeiou</code>) 또는 중괄호 이름(<code>{무성}=ptkfsʃ</code>)으로 정의합니다. ɛ̃처럼 여러 글자인 구성원은 띄어 씁니다(<code>{비모음}=ɛ̃ ɑ̃ ɔ̃ œ̃</code>). 대상과 결과에 범주를 쓰면 같은 순번 글자끼리 바뀝니다.</p>
+            <p><code>[ptk]</code>는 이름 없는 범주입니다(<code>[ptk]ʲ/ʃ</code>, <code>[ao][iy]/[ao][ïü]</code>). <code>²</code>는 바로 앞 요소와 같은 글자의 반복입니다(<code>J²/J</code> = 같은 공명음 장자음을 단자음으로).</p>
+            <p>예외는 여러 개 둘 수 있습니다(<code>대상/결과/환경/예외1/예외2</code>). 줄 끝에 <code> ↻</code>를 붙이면 더 바뀌지 않을 때까지 그 규칙을 되풀이합니다.</p>
+            <p>대상을 비우면 삽입, 결과를 비우면 삭제입니다. <code>;</code>로 시작하는 줄은 주석입니다.</p>
+            <p>규칙은 단어마다 따로, 위에서 아래로 적용되며, 한 규칙은 단어 안의 모든 자리에 한꺼번에 적용됩니다.</p>
+            <p>발음 단계에서는 강세 <code>ˈ</code>가 미리 표시되고, 같은 구 안에서 다음 단어가 모음으로 시작하면 단어 끝에 <code>‿</code>가 붙습니다.</p>
+            <p>고친 규칙은 이 브라우저에만 저장됩니다. 다른 기기로 옮기거나 백업하려면 "프로젝트 저장"으로 규칙과 단어장을 한 파일에 담아 두세요. "프로젝트 불러오기"는 규칙을 바꾸고, 단어는 새 단어와 내용이 다른 단어만 확인한 뒤 합칩니다.</p>
+            <p>"규칙 변경 비교"는 기본 규칙이나 저장한 기준점과 비교해 표기나 발음이 바뀐 단어, 새로 같은 발음이 된 단어를 보여 줍니다.</p>
+          </div>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+var DEFAULTS = {
+cats: [
+"V=aeiouyɯəœøɛɔɑãẽĩõũỹʊɚáéóǿíúý",
+"C=ptkbdgfvszʃʒcmnŋɲlrʁxhjwɥʲƀđǥž",
+"O=aeiouyɯə",
+"N=ãẽĩõũỹʊɚ",
+"M=mnŋ",
+"G=bdg",
+"P=ƀđǥ",
+"R=uoyøœɔõỹũóǿúý",
+"B=-'|",
+"X=@%&",
+"D=ptkbdgfvszʃʒmnɲlʁ",
+"H=mnŋžz",
+"E=ptkcs",
+"F=eéèiəøœêĩɘî",
+"Q=aéèiouəøœɛɔâêôîû",
+"Z=aeéèiouyəøœïüɛɔáóâêôûî",
+"T=\u0303",
+"K=pbtdkgfvszʃʒmnɲlrjwɥ",
+"L=pb",
+"S=ptkbdgfvszʃʒ",
+"J=lrʁmnɲ",
+"Y=eiouyɯẽĩõũỹʊ",
+"W=zʒ",
+"A=ptkbdgfvszʃʒmnŋɲrʁc",
+"I=eiyœəéíýǿ",
+"U=eiyéíýẽĩỹœøǿ",
+"{비모음}=ɛ̃ ɑ̃ ɔ̃ œ̃",
+"{무성}=ptkfsʃ",
+"{유성}=bdgvzʒ"
+].join("\n"),
+
+r1: [
+"; 1. 강세 표시와 경계",
+"/!/B(X)(C)(C)_V",
+"/!/#(X)(C)(C)_V",
+"!//_…!",
+"; 형태소 첫머리의 i·y·u는 모음 앞에서 어두처럼 활음",
+"i/ʲ/B(X)(!)_(!)V",
+"y/ɥ/B(X)(!)_(!)V",
+"i/ʲ/+(X)(!)_(!)V",
+"y/ɥ/+(X)(!)_(!)V",
+"B//_",
+"+//_",
+"; 2. 비음형 생성 (@ 오른쪽). 인칭 어미(= 뒤)는 비음화하지 않음",
+"E/H/@…_/@…=…_",
+"/na/@_",
+"na//@_…H",
+"a//@n_(!)V",
+"ŋ//#@_",
+"=//_",
+"; 3. 에클라이아어 음가 (F 단어는 보호, 학술어의 u는 철자 발음으로 보호)",
+"u/ů/[%&]…_",
+"s/ş/%…_",
+"u/ɯ/_",
+"s/ʃ/_",
+"ů/u/_",
+"ş/s/_",
+"; 4. 비음형 화석",
+"; 비음 자음 + i·e + 모음은 구개음화 (vinea → vigne). 어두에서는 곧 구개성을 잃음",
+"M[ie]/Mʲ/@…_(!)V",
+"![ie]/!ʲ/@…M_V",
+"ʲ//@M(!)_",
+"O/N/@…_(!)H",
+"O/N/@H(!)_",
+"M/G/@…_/@…_(!)ʲ",
+"; c형 비음 교체형은 모음 앞과 어말에서 ɲ. 어두 ɲ은 n을 거쳐 d로 (화석 비음 경화와 합류)",
+"[žz]/ɲ/@…_(!)V",
+"[žz]/ɲ/@…_#",
+"ɲ/n/@_",
+"n/d/@_",
+"[žz]/ʒ/@…_",
+"; 5. F 차용어",
+"O/N/%…_P",
+"P/G/_",
+"g//N_(!)V",
+"O/N/%…_hC",
+"O/N/%…_h#",
+"O/N/%…h_",
+"h//_",
+"p/f/%…_",
+"@//_",
+"%//_",
+"; 6. 순음 원순화와 활음화",
+"ɯ/u/v(!)_",
+"ɯ/u/_v",
+"ʊ/ũ/v(!)_",
+"ʊ/ũ/_v",
+"; 같은 고모음 연속은 활음화 전에 장모음으로",
+"ɯɯ/ǿ/_",
+"uɯ/ú/_",
+"ɯu/ú/_",
+"[iy]²/[íý]/_",
+"ʊʊ/ʊ/_",
+"i/ʲ/C(!)_(!)V",
+"i/ʲ/#(!)_(!)V",
+"y/ɥ/C(!)_(!)V",
+"y/ɥ/#(!)_(!)V",
+"u/w/C(!)_(!)V",
+"u/w/#(!)_(!)V",
+"ɯ/w/C(!)_(!)V",
+"ɯ/w/#(!)_(!)V",
+"; 긴 단어의 강세 뒤 모음: a는 ə로 약화, 나머지는 탈락 (학술어 & 제외)",
+"a/ə/!V(V)C_CV…V/&…_",
+"Y//!V(V)C_CV…V/&…_",
+"G//N_G",
+"; 7. ɯ 분열",
+"ɯ/œ/!_",
+"ɯ/ə/_",
+"ʊ/ỹ/!_",
+"ʊ/ɚ/_",
+"ə/œ/!_",
+"ɚ/ỹ/!_",
+"!//_",
+"ə//_V",
+"ə//V_",
+"; 8. 모음 융합 (구강 융합은 옛 장모음 표시, 학술어는 모음 연속 유지)",
+"/ˑ/&…V_V",
+"O/N/_N",
+"O/N/N_",
+"; e의 비모음은 ɑ̃로 (i의 비모음만 ɛ̃)",
+"ĩẽ/ĩ/_",
+"; 비모음 뒤 l: 전설모음에 인접하면 구강모음+ɲ (e 비모음 하강 전)",
+"Ndl/Oɲ/_U",
+"Nl/Oɲ/_U",
+"ẽdl/eɲ/_",
+"ẽl/eɲ/_",
+"ĩdl/iɲ/_",
+"ĩl/iɲ/_",
+"ẽ/ã/_",
+"ai/é/_",
+"ae/é/_",
+"ea/é/_",
+"ao/ó/_",
+"au/ó/_",
+"oa/ó/_",
+"ay/ǿ/_",
+"eo/ǿ/_",
+"eu/ǿ/_",
+"oe/ǿ/_",
+"oi/ǿ/_",
+"ey/ǿ/_",
+"oy/ǿ/_",
+"ei/é/_",
+"ou/ó/_",
+"[aeoiuyœĩũ]²/[áéóíúýœĩũ]/_",
+"ãĩ/ẽ/_",
+"ãẽ/ẽ/_",
+"ẽã/ẽ/_",
+"ẽĩ/ẽ/_",
+"ẽẽ/ẽ/_",
+"ãõ/õ/_",
+"ãũ/õ/_",
+"õã/õ/_",
+"õũ/õ/_",
+"õõ/õ/_",
+"ãỹ/ỹ/_",
+"ẽõ/ỹ/_",
+"ẽũ/ỹ/_",
+"õẽ/ỹ/_",
+"õĩ/ỹ/_",
+"ẽỹ/ỹ/_",
+"õỹ/ỹ/_",
+"ãã/ã/_",
+"ĩ/ẽ/_",
+"ũ/õ/_",
+"ɚ/ỹ/_",
+"; 9. 구개음화와 자음 (학술어는 구개음화 없음)",
+"ˑ//_",
+"; 비모음 뒤 r은 d로 강화",
+"rr/d/N_",
+"r/d/N_",
+"[ptk]ʲ/ʃ/_/&…_",
+"[bdg]ʲ/ʒ/_/&…_",
+"[mnŋ]ʲ/ɲ/_/&…_",
+"[zʒ]//_ɲ",
+"Nɲ/Oɲ/_",
+"ʲ/j/_",
+"c/s/_",
+"r/ʁ/_",
+"x/ʁ/_",
+"l/ʁ/_ʁ",
+"[td]l/[td]əl/#_",
+"[td]l/ll/_",
+"; 모음 융합 뒤 다시 전설모음과 만난 비모음 뒤 l도 ɲ",
+"Nll/Oɲ/_U",
+"Nl/Oɲ/_U",
+"; 그 밖의 비모음 뒤 l은 d로 강화",
+"ll/d/N_",
+"l/d/N_",
+"ʃ/s/_C",
+"ʒ/z/_C",
+"; 10. v 탈락과 후기 변화",
+"v//R_/&…_",
+"v//_R/&…_",
+"; v 탈락 뒤 같은 모음 연속",
+"[aeoiuyœãẽõỹáéóǿíúý]²/[áéóíúýœãẽõỹáéóǿíúý]/_",
+"[aá][aá]/á/_ ↻",
+"[eé][eé]/é/_ ↻",
+"[oó][oó]/ó/_ ↻",
+"[œǿ][œǿ]/ǿ/_ ↻",
+"[ií][ií]/í/_ ↻",
+"[uú][uú]/ú/_ ↻",
+"[yý][yý]/ý/_ ↻",
+"; 자음 앞 l: 전설모음 뒤에서는 ll로 동화, 후설모음 뒤에서는 모음화 (학술어 제외)",
+"lA/ll/I_/&…_",
+"[aá]l/ó/_A/&…_",
+"[oóuú]l/ú/_A/&…_",
+"w/v/#_",
+"w/v/V_",
+"ə//C_ʁV",
+"s/z/V_V",
+"ʃ/ʒ/V_V",
+"f/v/V_V",
+"; 치찰음 연속은 뒤의 ʃ·ʒ로 합침 (모음 사이 유성음화 뒤라서 무성음 유지)",
+"[sz]//_[ʃʒ]",
+"; 유성 치찰음은 l 앞에서 탈락 (모음은 길어짐). 비모음 뒤에서는 l과 유성 파열음 앞에서 탈락하고 곡절 부호 표시 ˆ를 남김",
+"z/ˆ/N_l",
+"z/ˆ/N_G",
+"[aeoiuyœə]z/[áéóíúýǿé]/_l",
+"z//_l",
+"; 유성 치찰음과 r 사이에는 ə를 넣음",
+"/ə/W_ʁ",
+"; ɲ은 모음 앞에만 오므로 자음 앞에서는 ə를 넣음",
+"/ə/ɲ_D",
+"[aeo]/ə/V…D_#",
+"; 비모음 뒤 l이 모음 앞이 아니면 b 삽입 (humilem → humble). z 탈락으로 새로 생긴 비모음+l에만 적용됨",
+"/b/N(ˆ)_lə#",
+"/b/N(ˆ)_l#",
+"/b/N(ˆ)_lA",
+"/b/N(ˆ)_lj",
+"&//_",
+"; 11. 문자형 표시",
+"[ẽ õ ã ỹ]/[ɛ̃ ɔ̃ ɑ̃ œ̃]/_",
+"ʁ/r/_",
+"ǿ/œ́/_",
+"; 비모음 + 공명음으로 끝나면 ə를 덧붙임",
+"/ə/T(C)J_#/Tn_#",
+"/ə/ɲ_#",
+"ʃ/ch/_"
+].join("\n"),
+
+r2: [
+"; 0. 문자형의 ch를 한 글자로",
+"ch/ʃ/_",
+"; 1. 어말 ə, 닫힌 음절, 모음 연속 u, 장자음",
+"ə/ɘ/K_#",
+"e/è/_K(K)ɘ",
+"u/ʉ/_Z",
+"nn/ñ/_",
+"mm/ɱ/_",
+"; 2. 옛 장모음은 곡절 부호",
+"á/â/_",
+"é/ê/_",
+"ó/ô/_",
+"[ao][íý]/[ao]h[íý]/_",
+"aú/ahú/_",
+"í/î/_",
+"ú/oû/_",
+"ý/û/_",
+"; 3. 융합되지 않은 모음 연속",
+"[ao][iy]/[ao][ïü]/_",
+"; 4. e 계열",
+"er/èr/_#",
+"e/é/_#",
+"e/é/_Z",
+"e/é/_K(K)Z",
+"e/è/_",
+"œ́/eû/_",
+"; 5. 고모음, 코다 비음, 활음",
+"u/ou/_",
+"y/u/_",
+"ɥ/u/_",
+"[nm]/[nm][nm]/Q_K",
+"[nm]/[nm][nm]e/Q_#",
+"j/y/#_",
+"j/y/Z_",
+"j/y/T_",
+"j/i/_",
+"; 6. 비모음 (ˆ: 탈락한 z, 곡절 부호로 표시)",
+"{비모음}ˆ/[î â ô û]m/_L",
+"{비모음}ˆ/[î â ô û]n/_",
+"wɛ̃/oin/_",
+"{비모음}[nm]/[ĩ ã õ ũ][nm]/_",
+"ɛ̃/ĩ/_Z",
+"ɑ̃/ã/_Z",
+"ɔ̃/õ/_Z",
+"œ̃/ũ/_Z",
+"{비모음}/[i a o u]m/_L",
+"{비모음}/[i a o u]n/_",
+"[ɛɔ]/[èo]/_",
+"wa/oi/_",
+"w/ou/_",
+"; 7. 자음 철자",
+"k/qu/_F",
+"k/c/_",
+"g/gu/_F",
+"ʒ/g/_F",
+"ʒ/j/_",
+"s/ss/Z_Z",
+"z/s/Z_Z",
+"ʃ/ch/_",
+"ɲ/gn/_",
+"; 8. 남은 모음과 임시 기호",
+"[øœ]/eu/_",
+"[ñɱ]/[nm][nm]/_",
+"[əɘ]/e/_",
+"ʉ/ouh/_[ou oi eu an am in im on om un um]",
+"ʉ[aiou]/ou[äïöü]/_",
+"ʉ/ouh/_"
+].join("\n"),
+
+r3: [
+"; 문자형 → 발음. 강세 ˈ는 미리 표시되고, 끝에 ‿가 붙으면 다음 단어와 연음",
+"ˆ//_",
+"ch/ʃ/_",
+"r/ʁ/_",
+"œ́/œ/_",
+"[áéóíúý]/[aeoiuy]/_",
+"; 연음: 잠재 자음의 유성화",
+"[tsʃkp]/[dzʒgb]/V_‿",
+"[tsʃkp]/[dzʒgb]/T_‿",
+"ə//_‿",
+"; 잠재 자음과 어말 ə",
+"S//V_#",
+"S//T_#",
+"; 비모음 뒤 어말 n은 잠재 자음 (연음에서만 발음)",
+"n//T_#",
+"ə//V…C_#",
+"; ə 탈락: 공명음(l·r·m·n·ɲ) 뒤에서는 자음+모음 앞이면 탈락. 장애음 뒤에서는 뒤 자음이 유무성이 같은 장애음일 때만 탈락({무성} 무성, {유성} 유성). 장애음+공명음은 유지. 연속 ə는 앞의 것만. 장자음은 단자음으로",
+"J²/J/V(T)_əC(ˈ)V/ə_",
+"{무성}²/{무성}/V(T)_ə{무성}(ˈ)V/ə_",
+"{유성}²/{유성}/V(T)_ə{유성}(ˈ)V/ə_",
+"ə//V(T)J_C(ˈ)V/ə(T)C_/ɲ_",
+"ə//V(T){무성}_{무성}(ˈ)V/ə(T)C_",
+"ə//V(T){유성}_{유성}(ˈ)V/ə(T)C_"
+].join("\n")
+};
+
+var HINTS = {
+  cats: "모든 단계가 함께 쓰는 범주입니다. 대문자 한 글자 또는 {이름} = 글자 목록(여러 글자 구성원은 띄어 씀).",
+  r1: "에클라이아어 입력 → 문자형. 단어마다 따로 적용됩니다.",
+  r2: "문자형 → 기본 표기(프랑스어식 철자).",
+  r3: "문자형 → 발음. 강세와 연음 표시는 이 규칙 전에 자동으로 붙습니다."
+};
+var TAB_NAMES = { cats: "범주", r1: "문자형 규칙", r2: "기본 표기 규칙", r3: "발음 규칙" };
+function hashStr(s) { var x = 5381; for (var i = 0; i < s.length; i++) x = ((x << 5) + x + s.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
+/* 기본 규칙이 바뀌면 저장 키도 바뀌어, 예전 기본값을 바탕으로 고친 규칙이 새 기본값을 가리지 않음 */
+var STORE_RULES = "eklea-converter-rules-" + hashStr(JSON.stringify(DEFAULTS));
+var STORE_INPUT = "eklea-converter-input-v1";
+var SAMPLE = "; 예시 입력입니다. 지우고 직접 넣어 보세요.\nlevela le-Eklaia\nkapu uvla, @caso @pate @lai.\narte-@taka ake!\n%wahjah %gihi tas=leitu";
+
+function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+function save(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
+
+var state = { cats: DEFAULTS.cats, r1: DEFAULTS.r1, r2: DEFAULTS.r2, r3: DEFAULTS.r3 };
+var saved = load(STORE_RULES);
+if (saved) { try { var o = JSON.parse(saved); ["cats", "r1", "r2", "r3"].forEach(function (k) { if (typeof o[k] === "string") state[k] = o[k]; }); } catch (e) {} }
+
+/* ---------- 규칙 엔진 ---------- */
+function cp(s) { return Array.from(s); }
+function esc(ch) { return "\\^$.*+?()[]{}|/".indexOf(ch) >= 0 ? "\\" + ch : ch; }
+function escClass(ch) { return "\\]^-[".indexOf(ch) >= 0 ? "\\" + ch : ch; }
+
+function parseCats(text) {
+  var cats = {}, errors = [];
+  text.normalize("NFC").split("\n").forEach(function (line, i) {
+    if (!line.trim() || line.trim().charAt(0) === ";") return;
+    var m = line.match(/^\s*([A-Z]|\{[^{}\/\s]+\})\s*=(.*)$/);
+    if (!m) { errors.push({ where: "범주", line: i + 1, msg: "형식은 대문자 한 글자 또는 {이름} = 글자들 입니다: " + line }); return; }
+    var name = m[1].charAt(0) === "{" ? m[1].slice(1, -1) : m[1];
+    var members = splitMembers(m[2].replace(/^[ \t]+|[ \t]+$/g, ""));
+    if (!members.length) { errors.push({ where: "범주", line: i + 1, msg: m[1] + " 범주가 비어 있습니다." }); return; }
+    cats[name] = members;
+  });
+  return { cats: cats, errors: errors };
+}
+
+/* 범주·묶음의 구성원: 띄어 쓰면 띄어쓰기 단위(ɛ̃ 같은 여러 글자 구성원), 붙여 쓰면 글자 단위 */
+function splitMembers(s) {
+  s = s.trim();
+  if (!s) return [];
+  if (/\s/.test(s)) return s.split(/\s+/).filter(Boolean);
+  return cp(s);
+}
+
+function altOf(arr) {
+  var singles = arr.filter(function (x) { return cp(x).length === 1; });
+  var multis = arr.filter(function (x) { return cp(x).length > 1; }).sort(function (a, b) { return cp(b).length - cp(a).length; });
+  var parts = multis.map(function (x) { return cp(x).map(esc).join(""); });
+  if (singles.length) parts.push("[" + singles.map(escClass).join("") + "]");
+  return parts.length === 1 && !multis.length ? parts[0] : "(?:" + parts.join("|") + ")";
+}
+
+/* 규칙 문자열을 요소로 나눔: {이름}·대문자 범주, [묶음], ², 그 밖의 글자 */
+function tokenize(str, cats) {
+  var c = cp(str), out = [];
+  for (var i = 0; i < c.length; i++) {
+    var ch = c[i];
+    if (ch === "{") {
+      var j = c.indexOf("}", i);
+      if (j < 0) throw new Error("{ 가 닫히지 않았습니다");
+      var name = c.slice(i + 1, j).join("");
+      if (!cats[name]) throw new Error("{" + name + "} 범주가 정의되지 않았습니다");
+      out.push({ cat: cats[name] }); i = j;
+    } else if (ch === "[") {
+      var k = c.indexOf("]", i);
+      if (k < 0) throw new Error("[ 가 닫히지 않았습니다");
+      var mem = splitMembers(c.slice(i + 1, k).join(""));
+      if (!mem.length) throw new Error("빈 [ ] 묶음입니다");
+      out.push({ cat: mem }); i = k;
+    } else if (ch === "²") {
+      if (!out.length) throw new Error("² 앞에 요소가 없습니다");
+      out.push({ dup: true });
+    } else if (cats[ch] && /[A-Z]/.test(ch)) {
+      out.push({ cat: cats[ch] });
+    } else {
+      out.push({ lit: ch });
+    }
+  }
+  return out;
+}
+
+function compilePart(str, cats, side) {
+  var out = "";
+  tokenize(str, cats).forEach(function (e) {
+    if (e.dup) throw new Error("환경에는 ² 를 쓸 수 없습니다");
+    if (e.cat) { out += altOf(e.cat); return; }
+    var ch = e.lit;
+    if (ch === "(") out += "(?:";
+    else if (ch === ")") out += ")?";
+    else if (ch === "…") out += ".*";
+    else if (ch === "#") out += side === "pre" ? "^" : "$";
+    else out += esc(ch);
+  });
+  return out;
+}
+
+function compileRule(src, cats) {
+  var line = src.normalize("NFC").replace(/\.\.\./g, "…").replace(/\s+$/, "");
+  var repeat = /\s↻$/.test(line);
+  if (repeat) line = line.replace(/\s*↻$/, "");
+  var parts = line.split("/");
+  if (parts.length < 3) throw new Error("대상/결과/환경 형식이 아닙니다");
+  var tgt = parts[0], rep = parts[1], env = parts[2].trim() || "_";
+  var excs = parts.slice(3).map(function (x) { return x.trim(); }).filter(Boolean);
+  if (/[()…#_]/.test(tgt)) throw new Error("대상에는 ( ) … # _ 를 쓸 수 없습니다");
+  var tgtEls = tokenize(tgt, cats), repEls = tokenize(rep, cats);
+  if (repEls.some(function (e) { return e.dup; })) throw new Error("결과에는 ² 를 쓸 수 없습니다");
+  var tgtSrc = tgtEls.map(function (e, i) {
+    if (e.dup) return "(\\" + i + ")";
+    return "(" + (e.cat ? altOf(e.cat) : esc(e.lit)) + ")";
+  }).join("");
+  function build(envStr) {
+    var idx = envStr.indexOf("_");
+    if (idx < 0 || envStr.indexOf("_", idx + 1) >= 0) throw new Error("환경에는 _ 가 정확히 하나 있어야 합니다");
+    var pre = compilePart(envStr.slice(0, idx), cats, "pre");
+    var post = compilePart(envStr.slice(idx + 1), cats, "post");
+    return new RegExp((pre ? "(?<=" + pre + ")" : "") + (tgtSrc ? tgtSrc : "") + (post ? "(?=" + post + ")" : ""), "gu");
+  }
+  var re = build(env);
+  var excRes = excs.map(build);
+  var catPos = [];
+  tgtEls.forEach(function (e, i) { if (e.cat) catPos.push(i); });
+  return { src: src.trim(), repeat: repeat, re: re, excRes: excRes, tgtEls: tgtEls, repEls: repEls, catPos: catPos, n: tgtEls.length };
+}
+
+function applyRule(r, word) {
+  var skip = null;
+  if (r.excRes.length) {
+    skip = {};
+    r.excRes.forEach(function (ex) { ex.lastIndex = 0; var m; while ((m = ex.exec(word))) { skip[m.index] = true; if (m[0] === "") ex.lastIndex++; } });
+  }
+  r.re.lastIndex = 0;
+  return word.replace(r.re, function () {
+    var args = arguments, match = args[0], groups = [];
+    for (var g = 1; g <= r.n; g++) groups.push(args[g]);
+    var offset = args[r.n + 1];
+    if (skip && skip[offset]) return match;
+    var out = "", k = 0;
+    r.repEls.forEach(function (e) {
+      if (e.lit !== undefined) { out += e.lit; return; }
+      var pos = r.catPos.length ? r.catPos[Math.min(k, r.catPos.length - 1)] : undefined;
+      k++;
+      if (pos === undefined) return;
+      var from = r.tgtEls[pos].cat, to = e.cat, got = groups[pos];
+      var idx = from.indexOf(got);
+      out += (idx >= 0 && idx < to.length) ? to[idx] : got;
+    });
+    return out;
+  });
+}
+
+function compileSet(text, cats, where) {
+  var rules = [], errors = [];
+  text.split("\n").forEach(function (line, i) {
+    var t = line.trim();
+    if (!t || t.charAt(0) === ";") return;
+    try { rules.push(compileRule(line, cats)); }
+    catch (e) { errors.push({ where: where, line: i + 1, msg: (e.message || String(e)) + " : " + t }); }
+  });
+  return { rules: rules, errors: errors };
+}
+
+function runSet(word, rules, trace) {
+  rules.forEach(function (r) {
+    var w2 = applyRule(r, word);
+    if (r.repeat) { for (var n = 0; n < 10; n++) { var w3 = applyRule(r, w2); if (w3 === w2) break; w2 = w3; } }
+    if (w2 !== word) { if (trace) trace.push({ rule: r.src, out: w2 }); word = w2; }
+  });
+  return word;
+}
+
+/* ---------- 강세와 연음 ---------- */
+var NUC = new Set(cp("aeiouyəœøɛɑɔáéóíúý"));
+var VOW = new Set(cp("aeiouyəœøɛɑɔ"));
+function markStress(s) {
+  var c = cp(s), nucs = [];
+  for (var i = 0; i < c.length; i++) {
+    if (NUC.has(c[i])) nucs.push({ i: i, marked: "áéóíúý".indexOf(c[i]) >= 0 || (c[i] === "œ" && c[i + 1] === "\u0301"), schwa: c[i] === "ə" });
+  }
+  if (nucs.length < 2) return s;
+  var ch = -1;
+  for (var k = nucs.length - 1; k >= 0; k--) if (nucs[k].marked) { ch = k; break; }
+  if (ch < 0) { ch = nucs.length - 2; if (nucs[ch].schwa && ch > 0) ch--; }
+  c.splice(nucs[ch].i, 0, "ˈ");
+  return c.join("");
+}
+function placeStress(s) {
+  var c = cp(s), p = c.indexOf("ˈ");
+  if (p < 0) return s;
+  c.splice(p, 1);
+  var nv = c.filter(function (x) { return VOW.has(x); }).length;
+  if (nv < 2) return c.join("");
+  var k = p - 1, run = [];
+  while (k >= 0 && !VOW.has(c[k]) && c[k] !== "\u0303" && c[k] !== "\u0301" && c[k] !== "‿") { run.unshift(k); k--; }
+  var onset = 0;
+  if (run.length) {
+    if (k < 0) onset = run.length;
+    else {
+      onset = 1;
+      if (run.length >= 2) {
+        var last = c[run[run.length - 1]], prev = c[run[run.length - 2]];
+        if ("ʁljwɥ".indexOf(last) >= 0 && "ptkbdgfv".indexOf(prev) >= 0) onset = 2;
+      }
+    }
+  }
+  c.splice(p - onset, 0, "ˈ");
+  return c.join("");
+}
+var VOWEL_START = /^ˈ?[aeiouyəœøɛɑɔáéóíúý]/u;
+
+/* ---------- 한글 표기 (국립국어원 프랑스어 표기 세칙 기준) ---------- */
+var JL = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+var JV = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
+var JT = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+var K_ON = { p: "ㅍ", b: "ㅂ", t: "ㅌ", d: "ㄷ", k: "ㅋ", g: "ㄱ", f: "ㅍ", v: "ㅂ", s: "ㅅ", z: "ㅈ", "ʃ": "ㅅ", "ʒ": "ㅈ", m: "ㅁ", n: "ㄴ", "ɲ": "ㄴ", l: "ㄹ", "ʁ": "ㄹ", h: "ㅎ" };
+var K_V = { i: "ㅣ", e: "ㅔ", "ɛ": "ㅔ", a: "ㅏ", "ɑ": "ㅏ", o: "ㅗ", "ɔ": "ㅗ", u: "ㅜ", y: "ㅟ", "ø": "ㅚ", "œ": "ㅚ", "ə": "ㅡ" };
+var K_VN = { "ɛ": "ㅐ", e: "ㅐ", "ɑ": "ㅏ", a: "ㅏ", "ɔ": "ㅗ", o: "ㅗ", "œ": "ㅚ", "ø": "ㅚ" };
+var K_YV = { a: "ㅑ", "ɑ": "ㅑ", e: "ㅖ", "ɛ": "ㅖ", i: "ㅣ", o: "ㅛ", "ɔ": "ㅛ", u: "ㅠ", y: "ㅟ", "ø": "ㅚ", "œ": "ㅚ", "ə": "ㅠ" };
+var K_YVN = { "ɛ": "ㅒ", e: "ㅒ", "ɑ": "ㅑ", a: "ㅑ", "ɔ": "ㅛ", o: "ㅛ", "œ": "ㅚ", "ø": "ㅚ" };
+var K_WV = { a: "ㅘ", "ɑ": "ㅘ", e: "ㅞ", "ɛ": "ㅞ", i: "ㅟ" };
+var K_VOW = "ieɛaɑoɔuyøœə";
+
+function koSegments(ipa) {
+  var c = cp(ipa.replace(/[ˈ‿.]/g, "")), segs = [];
+  for (var i = 0; i < c.length; i++) {
+    var ch = c[i];
+    if (K_VOW.indexOf(ch) >= 0) {
+      var nas = c[i + 1] === "̃";
+      if (nas) i++;
+      segs.push({ t: "V", v: ch, nas: nas });
+    } else if (ch === "j" || ch === "w" || ch === "ɥ") segs.push({ t: "G", v: ch });
+    else if (K_ON[ch]) segs.push({ t: "C", v: ch });
+  }
+  /* 장음(같은 자음·모음 연속)은 한글 표기에서 하나로 */
+  return segs.filter(function (x, i) {
+    var p = segs[i - 1];
+    return !(p && p.t !== "G" && p.t === x.t && p.v === x.v && !!p.nas === !!x.nas);
+  });
+}
+function toHangul(ipa) {
+  var s = koSegments(ipa), syl = [];
+  function add(on, v, coda) { syl.push({ on: on || "ㅇ", v: v, coda: coda || "" }); }
+  function vowelOf(seg, table, ntable) { return seg.nas ? (ntable[seg.v] || K_VN[seg.v] || "ㅏ") : (table[seg.v] || "ㅡ"); }
+  function last() { return syl[syl.length - 1]; }
+  for (var i = 0; i < s.length; i++) {
+    var x = s[i], nx = s[i + 1], pv = s[i - 1];
+    if (x.t === "V") { add("ㅇ", vowelOf(x, K_V, K_VN), x.nas ? "ㅇ" : ""); continue; }
+    if (x.t === "G") {
+      if (x.v === "j") {
+        if (nx && nx.t === "V") {
+          if (nx.v === "ø" || nx.v === "œ" || !pv) { add("ㅇ", "ㅣ"); }
+          else if (pv.t === "V") { add("ㅇ", vowelOf(nx, K_YV, K_YVN), nx.nas ? "ㅇ" : ""); i++; }
+          else add("ㅇ", "ㅣ");
+        } else add("ㅇ", "ㅠ");
+      } else if (x.v === "w") {
+        if (nx && nx.t === "V" && !nx.nas && K_WV[nx.v]) { add("ㅇ", K_WV[nx.v]); i++; }
+        else add("ㅇ", "ㅜ");
+      } else {
+        add("ㅇ", "ㅟ");
+        if (nx && nx.t === "V" && nx.v === "i" && !nx.nas) i++;
+      }
+      continue;
+    }
+    var on = K_ON[x.v];
+    if (nx && nx.t === "V") {
+      if (x.v === "l" && i > 0 && last() && !last().coda) last().coda = "ㄹ";
+      if (x.v === "ʃ" || x.v === "ɲ") add(on, vowelOf(nx, K_YV, K_YVN), nx.nas ? "ㅇ" : "");
+      else if (x.v === "ʒ" && nx.v === "ə" && !nx.nas) add(on, "ㅜ");
+      else add(on, vowelOf(nx, K_V, K_VN), nx.nas ? "ㅇ" : "");
+      i++; continue;
+    }
+    if (nx && nx.t === "G") {
+      if (x.v === "l" && i > 0 && last() && !last().coda) last().coda = "ㄹ";
+      if (nx.v === "j") { add(on, "ㅣ"); }
+      else if (nx.v === "w") { add(on, x.v === "ʃ" ? "ㅠ" : "ㅜ"); }
+      else { add(on, "ㅟ"); var n2 = s[i + 2]; if (n2 && n2.t === "V" && n2.v === "i" && !n2.nas) i++; }
+      i++; continue;
+    }
+    if ((x.v === "m" || x.v === "n" || x.v === "l") && last() && !last().coda) { last().coda = x.v === "m" ? "ㅁ" : x.v === "n" ? "ㄴ" : "ㄹ"; continue; }
+    if (x.v === "ʃ") add("ㅅ", "ㅠ");
+    else if (x.v === "ʒ") add("ㅈ", "ㅜ");
+    else if (x.v === "ɲ") add("ㄴ", "ㅠ");
+    else add(on, "ㅡ");
+  }
+  return syl.map(function (y) {
+    return String.fromCharCode(0xAC00 + (JL.indexOf(y.on) * 21 + JV.indexOf(y.v)) * 28 + JT.indexOf(y.coda));
+  }).join("");
+}
+
+/* ---------- 실행 ---------- */
+var compiled = null;
+function compileFrom(st) {
+  var pc = parseCats(st.cats);
+  var s1 = compileSet(st.r1, pc.cats, "문자형 규칙");
+  var s2 = compileSet(st.r2, pc.cats, "기본 표기 규칙");
+  var s3 = compileSet(st.r3, pc.cats, "발음 규칙");
+  return { r1: s1.rules, r2: s2.rules, r3: s3.rules, errors: pc.errors.concat(s1.errors, s2.errors, s3.errors) };
+}
+function compileAll() { compiled = compileFrom(state); }
+/* 다른 규칙 묶음으로 잠시 변환 (변경 비교용) */
+function withCompiled(c, fn) { var keep = compiled; compiled = c; try { return fn(); } finally { compiled = keep; } }
+
+/* ---------- 발음 비교 ---------- */
+/* 발음을 음소 단위로 나눔: 결합 부호와 ʰ ʲ ː 같은 수식 글자는 앞 글자에 붙임. 강세·연음·공백은 뺌 */
+function ipaSegs(ipa) {
+  var out = [];
+  cp((ipa || "").replace(/[ˈˌ‿\s\[\]]/g, "").normalize("NFC")).forEach(function (ch) {
+    if (/[̀-ͯʰ-˿ᴬ-ᶿ]/u.test(ch) && out.length) out[out.length - 1] += ch; else out.push(ch);
+  });
+  return out;
+}
+function homoKey(ipa) { return (ipa || "").replace(/[‿\s\[\]]/g, "").normalize("NFC"); }
+/* 한 음소만 다름(바꿈·넣음·뺌), 또는 음소는 같고 강세만 다름 */
+function nearOne(a, b) {
+  var la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  var i = 0, j = 0, diff = 0;
+  if (la === lb) { for (; i < la; i++) if (a[i] !== b[i] && ++diff > 1) return false; return true; }
+  if (la < lb) { var t = a; a = b; b = t; la = a.length; lb = b.length; }
+  while (i < la && j < lb) { if (a[i] === b[j]) { i++; j++; } else { if (++diff > 1) return false; i++; } }
+  return true;
+}
+/* words: [{id, key(같은 단어 판별), ipa}] → id별 { homo: [같은 발음], near: [유사음] } */
+function soundGroups(words) {
+  var byKey = {}, res = {};
+  words.forEach(function (x) {
+    x._segs = ipaSegs(x.ipa); x._k = homoKey(x.ipa);
+    res[x.id] = { homo: [], near: [] };
+    if (x._k) (byKey[x._k] = byKey[x._k] || []).push(x);
+  });
+  Object.keys(byKey).forEach(function (k) {
+    var g = byKey[k];
+    g.forEach(function (x) { g.forEach(function (o) { if (o !== x && o.key !== x.key) res[x.id].homo.push(o); }); });
+  });
+  var byLen = {};
+  words.forEach(function (x) { if (x._segs.length) (byLen[x._segs.length] = byLen[x._segs.length] || []).push(x); });
+  words.forEach(function (x) {
+    var n = x._segs.length; if (!n) return;
+    [n - 1, n, n + 1].forEach(function (L) {
+      (byLen[L] || []).forEach(function (o) {
+        if (o === x || o.key === x.key || o._k === x._k) return;
+        /* 두세 음소 이하의 짧은 말끼리는 한 음소 차이가 너무 흔해 유사음으로 치지 않음 */
+        if (n < 3 && L < 3) return;
+        if (L === n && o._segs.join("") === x._segs.join("")) { res[x.id].near.push(o); return; }
+        if (nearOne(x._segs, o._segs)) res[x.id].near.push(o);
+      });
+    });
+  });
+  return res;
+}
+
+var PUNCT = "\\s.,;:?!\"«»“”()\\[\\]…¡¿—–";
+var TOKEN_RE = new RegExp("[^" + PUNCT + "]+|[" + PUNCT + "]+", "gu");
+
+function capitalize(out, raw) {
+  var first = cp(raw).find(function (ch) { return /\p{L}/u.test(ch); });
+  if (!first || first === first.toLowerCase()) return out;
+  var c = cp(out);
+  for (var i = 0; i < c.length; i++) { if (/\p{L}/u.test(c[i])) { c[i] = c[i].toUpperCase(); break; } }
+  return c.join("");
+}
+/* 접두사 뒤 어간이 대문자로 입력되면(le-Eklaia) 표기에서도 그 어간 첫 글자를 대문자로 */
+function capitalizeParts(out, raw) {
+  var rp = raw.split("-"), op = out.split(/([-'])/);
+  if (rp.length < 2 || (op.length + 1) / 2 !== rp.length) return out;
+  for (var i = 1; i < rp.length; i++) op[i * 2] = capitalize(op[i * 2], rp[i]);
+  return op.join("");
+}
+
+/* - 접두사 경계를 기본 표기에 하이픈으로 남김 (| 는 표기에 남기지 않음).
+   접두사가 전체 철자 앞에 그대로 있으면 하이픈, 끝 모음이 어간 모음과 합쳐졌으면 자음 부분 뒤에 축약 표시 */
+var VOWEL_L = "aeiouyàâéèêëîïôûüœ";
+function stripAcc(x) { return x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC"); }
+function spellOf(x) { return runSet(runSet(x, compiled.r1), compiled.r2); }
+function hyphenate(input, spell) {
+  var m = input.match(/^([^\-'+=·*^|]+)-(.+)$/u);
+  if (!m) return spell;
+  /* 1차: 어간을 따로 철자화한 형태가 끝에 그대로 있으면 그 앞이 접두사 */
+  var restAlone = hyphenate(m[2], spellOf(m[2])), plainAlone = restAlone.replace(/[-']/g, "");
+  var prefAlone = spellOf(m[1] + "-tal").slice(0, -spellOf("tal").length);
+  var hasV = function (x) { return cp(x).some(function (ch) { return VOWEL_L.indexOf(ch.toLowerCase()) >= 0; }); };
+  /* 모음 없는 접두사(축약된 l- 등)는 아포스트로피 */
+  var mark = function (p) { return hasV(p) ? "-" : "'"; };
+  if (spell.length > plainAlone.length && spell.slice(-plainAlone.length) === plainAlone) {
+    var p1 = spell.slice(0, spell.length - plainAlone.length);
+    if (p1 === prefAlone) return p1 + mark(p1) + restAlone;
+    /* 접두사 모음이 어간 모음과 합쳐져 사라진 경우만 축약 표시. 어간 첫 자음이 되살아난 경우(lég+agne)는 아래에서 처리 */
+    var pc = prefAlone; while (pc && hasV(pc.slice(-1))) pc = pc.slice(0, -1);
+    if (p1 === pc) return p1 + "'" + restAlone;
+  }
+  var pw = spellOf(m[1] + "-tal"), pp = spellOf("tal");
+  if (pw.slice(-pp.length) !== pp) return spell;
+  var pre = pw.slice(0, pw.length - pp.length);
+  var head = spell.slice(0, pre.length), rem = spell.slice(pre.length);
+  var isV = function (ch) { return !!ch && VOWEL_L.indexOf(ch.toLowerCase()) >= 0; };
+  var eVar = function (x) { return "eéè".indexOf(x) >= 0; };
+  if (pre && rem && (head === pre || (head.slice(0, -1) === pre.slice(0, -1) && eVar(head.slice(-1)) && eVar(pre.slice(-1)) && !isV(rem[0])))) {
+    if (!isV(rem[0]) || head === pre) return head + mark(head) + hyphenate(m[2], rem);
+  }
+  var k = pre.length;
+  while (k > 0 && isV(pre[k - 1])) k--;
+  if (k > 0 && k < pre.length && spell.slice(0, k) === pre.slice(0, k) && spell.length > k) return spell.slice(0, k) + "'" + spell.slice(k);
+  return spell;
+}
+
+/* 모음 앞에서 축약하는 문법 표지(닫힌 목록) → 축약형.
+   le- 속격, pe- 부정, ti- 보문, va- 소속, sa- 미래, kal- 의문(자음으로 끝나 형태는 그대로, 표기만 아포스트로피) */
+var ELIDE = { le: "l", pe: "p", ti: "t", va: "v", sa: "s", kal: "kal" };
+var ELIDE_RE = /(^|[-|·*+%])(le|pe|ti|va|sa|kal)([-|])(?=[@%&|]*[aeiouyɯə])/gu;
+var ELIDE_END_RE = /(^|[-|+%])(le|pe|ti|va|sa|kal)([-|])$/u;
+function convert(text) {
+  var lines = text.normalize("NFC").replace(/’/g, "'").split("\n").filter(function (l) { return l.trim().charAt(0) !== ";"; });
+  var src = lines.join("\n");
+  var tokens = src.match(TOKEN_RE) || [];
+  var items = [];
+  tokens.forEach(function (t) {
+    var isWord = !new RegExp("^[" + PUNCT + "]+$", "u").test(t);
+    if (!isWord) { items.push({ raw: t, word: false }); return; }
+    /* ^ 앞은 접어: 따로 변화시킨 뒤 강세 없이 띄어 결합 */
+    var parts = t.split("^").filter(function (x) { return x !== ""; });
+    parts.forEach(function (part, k) {
+      if (k < parts.length - 1) {
+        items.push({ raw: part, word: true, clitic: true });
+        items.push({ raw: " ", word: false, joiner: true });
+      } else items.push({ raw: part, word: true });
+    });
+  });
+  items.forEach(function (it) {
+    if (!it.word) return;
+    it.t1 = []; it.t2 = []; it.t3 = [];
+    it.input = it.raw.toLowerCase().replace(/~/g, "+");
+    /* 문법 표지 자동 축약: 닫힌 목록의 문법 표지는 모음 앞에서 모음을 잃음(le-astel → l'astel, pe-astel → p'astel).
+       파생 접두사(li-, ve-, pa- 등)는 목록에 없어 축약하지 않음. 어두 k가 ŋ으로 되살아나는 @k… 앞에서는 축약하지 않음 */
+    var keptMarks = [];
+    it.input = it.input.replace(ELIDE_RE, function (m, a, p, b) { if (ELIDE[p] === p) keptMarks.push(p); return a + ELIDE[p] + b; });
+    if (/[·*]/.test(it.input)) {
+      /* 에클레아어 단계 결합: 각 부분을 따로 변화시킨 뒤 잇는다.
+         문법 표지는 뒤 부분의 에클레아어 형태가 모음으로 시작하면 이 단계에서 축약(le-·@kiset → l'Ègnand) */
+      var segs = it.input.split(/([·*])/);
+      for (var si = 0; si + 2 < segs.length; si += 2) {
+        var em = segs[si].match(ELIDE_END_RE);
+        if (em && VOWEL_START.test(runSet(segs[si + 2], compiled.r1))) {
+          if (ELIDE[em[2]] === em[2]) keptMarks.push(em[2]);
+          segs[si] = segs[si].slice(0, segs[si].length - em[2].length - 1) + ELIDE[em[2]] + em[3];
+        }
+      }
+      it.input = segs.join("");
+      it.form = segs.filter(function (x, k) { return k % 2 === 0; }).map(function (part) { return runSet(part, compiled.r1, it.t1); }).join("");
+    } else it.form = runSet(it.input, compiled.r1, it.t1);
+    var sp0 = hyphenate(it.input, runSet(it.form, compiled.r2, it.t2));
+    /* 자음으로 끝나 모음을 잃지 않는 표지(kal-)도 모음 앞에서는 아포스트로피로 붙임(cal'eucle) */
+    keptMarks.forEach(function (p) {
+      var km = it.input.match(new RegExp("^%?" + p + "-(.+)$", "u"));
+      if (!km || /[·*]/.test(km[1])) return;
+      var rest = hyphenate(km[1], spellOf(km[1])), restPlain = rest.replace(/[-']/g, ""), plain = sp0.replace(/[-']/g, "");
+      if (plain.length > restPlain.length && plain.slice(-restPlain.length) === restPlain) sp0 = plain.slice(0, plain.length - restPlain.length) + "'" + rest;
+    });
+    it.spell = capitalizeParts(capitalize(sp0, it.raw), it.raw);
+  });
+  items.forEach(function (it, i) {
+    if (!it.word) return;
+    var next = items[i + 1], after = items[i + 2];
+    var liaison = next && !next.word && /^[ \t]+$/.test(next.raw) && after && after.word && VOWEL_START.test(after.form);
+    it.liaison = !!liaison;
+    var start = markStress(it.form) + (liaison ? "‿" : "");
+    it.ipa = placeStress(runSet(start, compiled.r3, it.t3));
+    it.ipaCite = liaison ? placeStress(runSet(markStress(it.form), compiled.r3)) : it.ipa;
+    if (it.clitic) { it.ipa = it.ipa.replace(/ˈ/g, ""); it.ipaCite = it.ipaCite.replace(/ˈ/g, ""); }
+    it.ko = toHangul(it.ipaCite);
+  });
+  var main = "", form = "", ipa = "", ko = "";
+  items.forEach(function (it, i) {
+    var prevIt = items[i - 1];
+    if (it.word) {
+      var sp = it.spell;
+      var nx = items[i + 2];
+      if (it.clitic && nx && nx.word && VOWEL_START.test(nx.form) && /ə$/.test(it.form) && /e$/.test(sp)) { sp = sp.slice(0, -1) + "'"; it.elided = true; }
+      main += sp; form += it.form; ipa += it.ipa; ko += it.ko;
+    }
+    else {
+      if (it.joiner && prevIt && prevIt.elided) { form += it.raw; ko += it.raw; return; }
+      main += it.raw; form += it.raw; ko += it.raw;
+      var prev = items[i - 1];
+      ipa += (prev && prev.liaison) ? "" : it.raw;
+    }
+  });
+  return { items: items, main: main, form: form, ipa: ipa, ko: ko };
+}
+
+/* ---------- 화면 ---------- */
+var $ = function (id) { return document.getElementById(id); };
+var input = $("input"), editor = $("editor");
+var current = "cats";
+
+function renderErrors() {
+  var box = $("errors");
+  box.innerHTML = "";
+  compiled.errors.slice(0, 20).forEach(function (e) {
+    var d = document.createElement("div");
+    d.className = "err";
+    d.textContent = e.where + " " + e.line + "행: " + e.msg;
+    box.appendChild(d);
+  });
+  $("status").textContent = "규칙 " + (compiled.r1.length + compiled.r2.length + compiled.r3.length) + "개" + (compiled.errors.length ? " · 오류 " + compiled.errors.length + "개" : "");
+}
+
+function renderOutput() {
+  var res = convert(input.value);
+  $("outMain").textContent = res.main.trim() ? res.main : "";
+  $("outForm").textContent = res.form;
+  $("outIpa").textContent = res.ipa.trim() ? "[" + res.ipa.trim() + "]" : "";
+  $("outKo").textContent = res.ko;
+  var words = $("words");
+  words.innerHTML = "";
+  var shown = 0;
+  res.items.forEach(function (it) {
+    if (!it.word || shown >= 300) return;
+    shown++;
+    var wrap = document.createElement("div");
+    wrap.className = "word";
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-expanded", "false");
+    [it.raw, it.form, it.spell, "[" + it.ipa.replace(/‿$/, "") + "]"].forEach(function (v, idx) {
+      var s = document.createElement("span"); s.textContent = v;
+      if (idx === 3) { var k = document.createElement("span"); k.className = "ko-sm"; k.textContent = it.ko; s.appendChild(k); }
+      b.appendChild(s);
+    });
+    var tr = document.createElement("div");
+    tr.className = "trace"; tr.hidden = true;
+    [["문자형 규칙", it.t1], ["기본 표기 규칙", it.t2], ["발음 규칙", it.t3]].forEach(function (pair) {
+      var h = document.createElement("h3"); h.textContent = pair[0] + " (" + pair[1].length + ")";
+      var ol = document.createElement("ol");
+      if (!pair[1].length) { var li0 = document.createElement("li"); li0.textContent = "바뀐 것 없음"; ol.appendChild(li0); }
+      pair[1].forEach(function (step) {
+        var li = document.createElement("li");
+        var code = document.createElement("code"); code.textContent = step.rule;
+        var out = document.createElement("span"); out.className = "res"; out.textContent = "  →  " + step.out;
+        li.appendChild(code); li.appendChild(out); ol.appendChild(li);
+      });
+      var sec = document.createElement("div"); sec.appendChild(h); sec.appendChild(ol); tr.appendChild(sec);
+    });
+    b.addEventListener("click", function () {
+      tr.hidden = !tr.hidden;
+      b.setAttribute("aria-expanded", tr.hidden ? "false" : "true");
+    });
+    wrap.appendChild(b); wrap.appendChild(tr); words.appendChild(wrap);
+  });
+}
+
+function showTab(key) {
+  current = key;
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
+    t.setAttribute("aria-selected", t.getAttribute("data-key") === key ? "true" : "false");
+  });
+  editor.value = state[key];
+  $("tabHint").textContent = HINTS[key];
+  editor.style.minHeight = key === "cats" ? "220px" : "360px";
+  $("confirmBox").hidden = true;
+}
+
+var timer = null;
+function refreshRules() {
+  compileAll(); renderErrors(); renderOutput(); lexCache = {}; renderLex();
+  save(STORE_RULES, JSON.stringify(state));
+  if (typeof renderDiff === "function") renderDiff();
+}
+editor.addEventListener("input", function () {
+  state[current] = editor.value;
+  clearTimeout(timer);
+  timer = setTimeout(refreshRules, 250);
+});
+var timer2 = null;
+input.addEventListener("input", function () {
+  clearTimeout(timer2);
+  timer2 = setTimeout(function () { renderOutput(); save(STORE_INPUT, input.value); }, 150);
+});
+$("clearInput").addEventListener("click", function () { input.value = ""; renderOutput(); save(STORE_INPUT, ""); input.focus(); });
+$("tabs").addEventListener("click", function (e) {
+  var t = e.target.closest(".tab"); if (t) showTab(t.getAttribute("data-key"));
+});
+
+$("resetTab").addEventListener("click", function () {
+  $("confirmText").textContent = "\"" + TAB_NAMES[current] + "\" 탭을 기본값으로 되돌릴까요? 고친 내용은 사라집니다.";
+  $("confirmBox").hidden = false;
+});
+$("confirmNo").addEventListener("click", function () { $("confirmBox").hidden = true; });
+$("confirmYes").addEventListener("click", function () {
+  state[current] = DEFAULTS[current];
+  editor.value = state[current];
+  $("confirmBox").hidden = true;
+  refreshRules();
+  flash("\"" + TAB_NAMES[current] + "\" 탭을 기본값으로 되돌렸습니다.");
+});
+
+function flash(msg) { $("copyStatus").textContent = msg; }
+function copyText(text, fallbackEl, okMsg) {
+  var done = function () { flash(okMsg); };
+  var fail = function () {
+    if (fallbackEl && fallbackEl.select) { fallbackEl.focus(); fallbackEl.select(); }
+    else if (fallbackEl) { var r = document.createRange(); r.selectNodeContents(fallbackEl); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+    flash("자동 복사가 막혀 있어 내용을 선택해 두었습니다. 직접 복사해 주세요.");
+  };
+  try { navigator.clipboard.writeText(text).then(done, fail); } catch (e) { fail(); }
+}
+$("copyAll").addEventListener("click", function () {
+  var all = "[범주]\n" + state.cats + "\n\n[문자형 규칙]\n" + state.r1 + "\n\n[기본 표기 규칙]\n" + state.r2 + "\n\n[발음 규칙]\n" + state.r3 + "\n";
+  copyText(all, editor, "규칙 전체를 복사했습니다.");
+});
+Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (b) {
+  b.addEventListener("click", function () {
+    var el = $(b.getAttribute("data-copy"));
+    copyText(el.textContent, el, "복사했습니다.");
+  });
+});
+
+/* ---------- 단어장 ---------- */
+var STORE_VIEW = "eklea-converter-view-v1";
+var lex = { status: "loading", words: [], col: null, editing: null, filter: "all", err: "" };
+var lexCache = {};
+var FOSSIL = "비음형 화석";
+function tagsOf(w) { return Array.isArray(w.tags) ? w.tags.filter(function (t) { return typeof t === "string" && t.trim(); }) : []; }
+function convOne(inp) {
+  var key = inp || "";
+  if (!key.trim()) return { spell: "", form: "", ipa: "" };
+  if (!lexCache[key]) {
+    var r = convert(key);
+    lexCache[key] = { spell: r.main.trim(), form: r.form.trim(), ipa: r.ipa.trim().replace(/‿/g, ""), ko: r.ko.trim() };
+  }
+  return lexCache[key];
+}
+function headKey(h) { return (h || "").toLowerCase().replace(/[()\-'\s,\/]/g, ""); }
+
+function renderLex() {
+  var list = $("lexList"), status = $("lexStatus");
+  if (!list) return;
+  list.innerHTML = "";
+  if (lex.status === "loading") { status.textContent = "단어장을 불러오는 중입니다."; return; }
+  if (lex.status === "unavailable") { status.textContent = "이 화면에서는 단어장을 쓸 수 없습니다. 페이지를 새로 고쳐 주세요."; return; }
+  if (lex.status === "error") { status.textContent = "단어장을 불러오지 못했습니다 (" + lex.err + "). 페이지를 새로 고쳐 주세요."; return; }
+
+  var words = lex.words.map(function (w) {
+    var c = convOne(w.input);
+    return { w: w, key: headKey(w.head), spell: c.spell, ipa: c.ipa, ko: c.ko };
+  });
+  var byHead = {};
+  words.forEach(function (x) { if (x.key) (byHead[x.key] = byHead[x.key] || []).push(x); });
+  var sg = soundGroups(words.map(function (x) { return { id: x.w.id, key: x.key || x.w.id, ipa: x.ipa, x: x }; }));
+  words.forEach(function (x) {
+    x.same = x.key && byHead[x.key].length > 1;
+    var g = sg[x.w.id] || { homo: [], near: [] };
+    x.homoW = g.homo.map(function (o) { return o.x; }); x.nearW = g.near.map(function (o) { return o.x; });
+    x.homo = x.homoW.length > 0; x.near = x.nearW.length > 0;
+  });
+  var sameCount = Object.keys(byHead).filter(function (k) { return byHead[k].length > 1; }).length;
+  var homoCount = words.filter(function (x) { return x.homo; }).length;
+  var nearCount = words.filter(function (x) { return x.near; }).length;
+
+  var tagCount = {};
+  words.forEach(function (x) { tagsOf(x.w).forEach(function (t) { tagCount[t] = (tagCount[t] || 0) + 1; }); });
+  var tagSel = $("lexTag"), curTag = tagSel.value;
+  var tagNames = Object.keys(tagCount).sort(function (a, b) { return a === FOSSIL ? -1 : b === FOSSIL ? 1 : a.localeCompare(b, "ko"); });
+  tagSel.innerHTML = "";
+  var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "모든 태그"; tagSel.appendChild(o0);
+  tagNames.forEach(function (t) { var o = document.createElement("option"); o.value = t; o.textContent = t + " (" + tagCount[t] + ")"; tagSel.appendChild(o); });
+  tagSel.value = tagCount[curTag] ? curTag : "";
+
+  var q = $("lexSearch").value.trim().toLowerCase();
+  var shown = words.filter(function (x) {
+    if (lex.filter === "same" && !x.same) return false;
+    if (lex.filter === "homo" && !x.homo) return false;
+    if (lex.filter === "near" && !x.near) return false;
+    if (lex.filter === "note" && !(x.w.note || "").trim()) return false;
+    if (tagSel.value && tagsOf(x.w).indexOf(tagSel.value) < 0) return false;
+    if (!q) return true;
+    return [x.w.head, x.w.mean, x.w.input, x.spell, x.w.note, tagsOf(x.w).join(" ")].some(function (v) { return (v || "").toLowerCase().indexOf(q) >= 0; });
+  });
+  var sort = $("lexSort").value;
+  shown.sort(function (a, b) {
+    if (sort === "abc") return headKey(a.w.head).localeCompare(headKey(b.w.head));
+    if (sort === "mean") return (a.w.mean || "").localeCompare(b.w.mean || "", "ko");
+    return (a.w.n || 0) - (b.w.n || 0);
+  });
+
+  status.textContent = "단어 " + words.length + "개 · 같은 형태 " + sameCount + "쌍 · 같은 발음 " + homoCount + "개 · 유사음 " + nearCount + "개" + (shown.length !== words.length ? " · 표시 " + shown.length + "개" : "");
+  if (!words.length) { list.innerHTML = '<p class="empty">아직 단어가 없습니다. "단어 추가"로 첫 단어를 넣어 주세요.</p>'; return; }
+  if (!shown.length) { list.innerHTML = '<p class="empty">조건에 맞는 단어가 없습니다.</p>'; return; }
+
+  var frag = document.createDocumentFragment();
+  shown.forEach(function (x) {
+    var row = document.createElement("div"); row.className = "lex-row";
+    var b = document.createElement("button"); b.type = "button";
+    var hw = document.createElement("span"); hw.className = "hw"; hw.textContent = x.w.head || "(형태 없음)";
+    if (tagsOf(x.w).indexOf(FOSSIL) >= 0) { var sf = document.createElement("span"); sf.className = "badge fossil"; sf.textContent = "비음형"; hw.appendChild(sf); }
+    if (x.same) { var s1 = document.createElement("span"); s1.className = "badge"; s1.textContent = "같은 형태"; hw.appendChild(s1); }
+    var mn = document.createElement("span"); mn.className = "mn"; mn.textContent = x.w.mean || "(뜻 없음)";
+    tagsOf(x.w).forEach(function (t) {
+      if (t === FOSSIL) return;
+      var st = document.createElement("span"); st.className = "badge tag"; st.textContent = t; mn.appendChild(st);
+    });
+    if ((x.w.note || "").trim()) { var s3 = document.createElement("span"); s3.className = "badge soft"; s3.textContent = "메모"; mn.appendChild(s3); }
+    var sp = document.createElement("span"); sp.className = "sp"; sp.textContent = x.spell;
+    var ip = document.createElement("span"); ip.className = "ip"; ip.textContent = x.ipa ? "[" + x.ipa + "]" : "";
+    if (x.homo) { var s2 = document.createElement("span"); s2.className = "badge"; s2.textContent = "같은 발음"; s2.title = whoList(x.homoW); ip.appendChild(s2); }
+    if (x.near) { var s4 = document.createElement("span"); s4.className = "badge near"; s4.textContent = "유사음 " + x.nearW.length; s4.title = whoList(x.nearW); ip.appendChild(s4); }
+    if (x.ko) { var kk = document.createElement("span"); kk.className = "ko-sm"; kk.textContent = x.ko; ip.appendChild(kk); }
+    b.appendChild(hw); b.appendChild(mn); b.appendChild(sp); b.appendChild(ip);
+    b.addEventListener("click", function () { openForm(x.w); });
+    row.appendChild(b); frag.appendChild(row);
+  });
+  list.appendChild(frag);
+}
+
+function whoList(arr) {
+  return arr.slice(0, 12).map(function (x) { return (x.spell || "") + " [" + (x.ipa || "") + "] " + (x.w.mean || x.w.head || ""); }).join("\n") + (arr.length > 12 ? "\n외 " + (arr.length - 12) + "개" : "");
+}
+function previewForm() {
+  var c = convOne($("fInput").value);
+  var p = $("fPreview"); p.innerHTML = "";
+  var wb = $("fWarn"); wb.innerHTML = "";
+  if (!c.spell) return;
+  [["", c.spell], ["", c.form], ["ipa", "[" + c.ipa + "]"], ["", c.ko]].forEach(function (pair) {
+    var s = document.createElement("span"); if (pair[0]) s.className = pair[0]; s.textContent = pair[1]; p.appendChild(s);
+  });
+  /* 등록 전에 같은 발음(강조)과 유사음(흐리게)을 알려 줌 */
+  var self = lex.editing ? lex.editing.id : "__new__";
+  var key = headKey($("fHead").value) || "__new__";
+  var pool = lex.words.filter(function (w) { return w.id !== self; }).map(function (w) {
+    var o = convOne(w.input); return { id: w.id, key: headKey(w.head) || w.id, ipa: o.ipa, x: { w: w, spell: o.spell, ipa: o.ipa } };
+  });
+  pool.push({ id: self, key: key, ipa: c.ipa, x: null });
+  var g = soundGroups(pool)[self];
+  var line = function (cls, label, arr) {
+    if (!arr.length) return;
+    var d = document.createElement("div"); d.className = cls;
+    d.textContent = label + ": " + arr.slice(0, 6).map(function (o) { return o.x.spell + " (" + (o.x.w.mean || o.x.w.head || "") + ")"; }).join(", ") + (arr.length > 6 ? " 외 " + (arr.length - 6) + "개" : "");
+    wb.appendChild(d);
+  };
+  line("w-homo", "같은 발음", g.homo);
+  line("w-near", "유사음(한 음소 차이)", g.near);
+}
+function autoInput(head) {
+  return (head || "").split(/\s*\/\s*|,/)[0].replace(/[()]/g, "").trim().toLowerCase();
+}
+function openForm(w) {
+  lex.editing = w || null;
+  $("fHead").value = w ? w.head || "" : "";
+  $("fMean").value = w ? w.mean || "" : "";
+  $("fInput").value = w ? w.input || "" : "";
+  $("fNote").value = w ? w.note || "" : "";
+  var tg = w ? tagsOf(w) : [];
+  $("fFossil").checked = tg.indexOf(FOSSIL) >= 0;
+  $("fTags").value = tg.filter(function (t) { return t !== FOSSIL; }).join(", ");
+  $("fDelete").hidden = !w;
+  $("fConfirm").hidden = true;
+  $("lexForm").hidden = false;
+  previewForm();
+  $("lexForm").scrollIntoView({ block: "nearest" });
+  $("fHead").focus();
+}
+function closeForm() { $("lexForm").hidden = true; lex.editing = null; }
+var inputTouched = false;
+$("fHead").addEventListener("input", function () {
+  if (!lex.editing && !inputTouched) { $("fInput").value = autoInput($("fHead").value); previewForm(); }
+});
+$("fInput").addEventListener("input", function () { inputTouched = true; previewForm(); });
+$("lexAdd").addEventListener("click", function () { inputTouched = false; openForm(null); });
+$("fCancel").addEventListener("click", closeForm);
+
+function busy(on) { ["fSave", "fDelete", "fConfirmYes"].forEach(function (id) { $(id).disabled = on; }); }
+$("lexForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  if (!lex.col) return;
+  var head = $("fHead").value.trim();
+  var mean = $("fMean").value.trim();
+  if (!head && !mean) { flashLex("에클라이아어 형태나 뜻 중 하나는 적어 주세요."); return; }
+  var maxN = lex.words.reduce(function (m, w) { return Math.max(m, w.n || 0); }, 0);
+  var tags = $("fTags").value.split(/[,，]/).map(function (t) { return t.trim(); }).filter(function (t, i, a) { return t && t !== FOSSIL && a.indexOf(t) === i; });
+  if ($("fFossil").checked) tags.unshift(FOSSIL);
+  var data = { head: head, mean: mean, input: $("fInput").value.trim(), note: $("fNote").value.trim(), tags: tags, n: lex.editing ? (lex.editing.n || maxN + 1) : maxN + 1 };
+  var ref = lex.editing ? lex.col.doc(lex.editing.id) : lex.col.doc();
+  busy(true);
+  ref.set(data).then(function () {
+    busy(false); flashLex(lex.editing ? "저장했습니다." : "추가했습니다."); closeForm();
+  }, function (err) {
+    busy(false); flashLex(err && err.code === "invalid_argument" ? "이 화면에서는 단어장을 고칠 권한이 없습니다." : "저장하지 못했습니다. 잠시 뒤 다시 저장해 주세요.");
+  });
+});
+$("fDelete").addEventListener("click", function () {
+  if (!lex.editing) return;
+  $("fConfirmText").textContent = "\"" + (lex.editing.head || lex.editing.mean) + "\"을(를) 단어장에서 지울까요?";
+  $("fConfirm").hidden = false;
+});
+$("fConfirmNo").addEventListener("click", function () { $("fConfirm").hidden = true; });
+$("fConfirmYes").addEventListener("click", function () {
+  if (!lex.editing || !lex.col) return;
+  busy(true);
+  lex.col.doc(lex.editing.id).delete().then(function () { busy(false); flashLex("삭제했습니다."); closeForm(); },
+    function () { busy(false); flashLex("삭제하지 못했습니다."); });
+});
+$("fToConv").addEventListener("click", function () {
+  var v = $("fInput").value.trim(); if (!v) return;
+  input.value = (input.value.replace(/\s+$/, "") + (input.value.trim() ? "\n" : "") + v);
+  save(STORE_INPUT, input.value);
+  renderOutput(); showView("conv");
+});
+function flashLex(msg) {
+  var s = $("lexStatus"); var base = s.textContent;
+  s.textContent = msg;
+  setTimeout(function () { renderLex(); }, 2500);
+}
+$("fFossil").addEventListener("change", function () {
+  var v = $("fInput").value.trim();
+  if ($("fFossil").checked) { if (v && v.indexOf("@") < 0) $("fInput").value = "@" + v; }
+  else { $("fInput").value = v.replace(/@/g, ""); }
+  inputTouched = true; previewForm();
+});
+$("lexTag").addEventListener("change", renderLex);
+$("lexSearch").addEventListener("input", renderLex);
+$("lexSort").addEventListener("change", renderLex);
+$("lexChips").addEventListener("click", function (e) {
+  var c = e.target.closest(".chip"); if (!c) return;
+  lex.filter = c.getAttribute("data-filter");
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (x) { x.setAttribute("aria-pressed", x === c ? "true" : "false"); });
+  renderLex();
+});
+
+/* ---------- 규칙 변경 비교 ---------- */
+var STORE_MARK = "eklea-converter-mark-v1";
+var diffTimer = null;
+function ruleCopy(st) { return { cats: st.cats, r1: st.r1, r2: st.r2, r3: st.r3 }; }
+function baseRules() {
+  if ($("diffBase").value === "mark") {
+    var m = load(STORE_MARK);
+    if (m) { try { var o = JSON.parse(m); if (o && typeof o.r1 === "string") return o; } catch (e) {} }
+    return null;
+  }
+  return DEFAULTS;
+}
+function outOf(inp) { var r = convert(inp || ""); return { spell: r.main.trim(), ipa: r.ipa.trim().replace(/‿/g, "") }; }
+function renderDiff() {
+  if (!$("diffBox").open) return;
+  clearTimeout(diffTimer);
+  diffTimer = setTimeout(renderDiffNow, 120);
+}
+function renderDiffNow() {
+  var st = $("diffStatus"), box = $("diffList");
+  box.innerHTML = "";
+  if (lex.status !== "ready") { st.textContent = "단어장을 불러온 뒤 비교할 수 있습니다."; return; }
+  var base = baseRules();
+  if (!base) { st.textContent = "저장한 기준점이 없습니다. \"지금 규칙을 기준점으로\"를 먼저 눌러 주세요."; return; }
+  var bc = compileFrom(base);
+  var words = lex.words.filter(function (w) { return (w.input || "").trim(); });
+  var before = withCompiled(bc, function () { return words.map(function (w) { return outOf(w.input); }); });
+  var after = words.map(function (w) { return convOne(w.input); });
+  var mk = function (arr) { return soundGroups(words.map(function (w, i) { return { id: w.id, key: headKey(w.head) || w.id, ipa: arr[i].ipa }; })); };
+  var gb = mk(before), ga = mk(after);
+  var changed = [], newHomo = 0;
+  words.forEach(function (w, i) {
+    var b = before[i], a = after[i];
+    var hb = gb[w.id].homo.map(function (o) { return o.id; }), ha = ga[w.id].homo.map(function (o) { return o.id; });
+    var fresh = ha.filter(function (id) { return hb.indexOf(id) < 0; });
+    if (b.spell !== a.spell || b.ipa !== a.ipa || fresh.length) {
+      changed.push({ w: w, b: b, a: a, fresh: fresh });
+      if (fresh.length) newHomo++;
+    }
+  });
+  st.textContent = changed.length
+    ? "바뀐 단어 " + changed.length + "개" + (newHomo ? " · 새로 같은 발음이 된 단어 " + newHomo + "개" : "") + " (단어 " + words.length + "개 중)"
+    : "기준과 비교해 바뀐 단어가 없습니다 (단어 " + words.length + "개).";
+  var byId = {}; words.forEach(function (w, i) { byId[w.id] = { w: w, a: after[i] }; });
+  var frag = document.createDocumentFragment();
+  changed.slice(0, 400).forEach(function (c) {
+    var row = document.createElement("div"); row.className = "diff-row";
+    var hw = document.createElement("span"); hw.className = "hw"; hw.textContent = c.w.head || c.w.input;
+    var mn = document.createElement("span"); mn.className = "mn"; mn.textContent = c.w.mean || ""; hw.appendChild(mn);
+    var bf = document.createElement("span"); bf.className = "bf"; bf.textContent = c.b.spell + " [" + c.b.ipa + "]";
+    var af = document.createElement("span"); af.className = "af";
+    af.appendChild(document.createTextNode(c.a.spell + " "));
+    var ip = document.createElement("span"); ip.className = "ip"; ip.textContent = "[" + c.a.ipa + "]"; af.appendChild(ip);
+    if (c.fresh.length) {
+      var bd = document.createElement("span"); bd.className = "badge"; bd.textContent = "새 같은 발음";
+      bd.title = c.fresh.map(function (id) { var o = byId[id]; return o.a.spell + " (" + (o.w.mean || o.w.head || "") + ")"; }).join("\n");
+      af.appendChild(bd);
+    }
+    row.appendChild(hw); row.appendChild(bf); row.appendChild(af); frag.appendChild(row);
+  });
+  box.appendChild(frag);
+}
+$("diffBox").addEventListener("toggle", renderDiff);
+$("diffBase").addEventListener("change", renderDiff);
+$("diffMark").addEventListener("click", function () {
+  save(STORE_MARK, JSON.stringify(ruleCopy(state)));
+  $("diffBase").value = "mark"; renderDiff();
+  flash("지금 규칙을 비교 기준점으로 저장했습니다.");
+});
+
+/* ---------- 프로젝트 파일 (규칙 + 단어장) ---------- */
+function wordData(w) {
+  var o = {}; ["head", "mean", "input", "note", "tags", "n"].forEach(function (k) { if (w[k] !== undefined) o[k] = w[k]; });
+  if (!Array.isArray(o.tags)) o.tags = [];
+  return o;
+}
+function projSave() {
+  var proj = { format: "eklea-project", version: 1, savedAt: new Date().toISOString(), rules: ruleCopy(state),
+    words: lex.words.map(function (w) { var o = wordData(w); o.id = w.id; return o; }) };
+  var text = JSON.stringify(proj, null, 2);
+  var name = "eklea-project-" + new Date().toISOString().slice(0, 10) + ".json";
+  var okMsg = "규칙 " + (compiled.r1.length + compiled.r2.length + compiled.r3.length) + "개와 단어 " + lex.words.length + "개를 프로젝트 파일로 저장했습니다.";
+  var plain = function () {
+    var blob = new Blob([text], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+    flash(okMsg); flashLex(okMsg);
+  };
+  /* claude.ai 안에서는 다운로드 기능을 거쳐 저장(보는 사람이 확인), 독립 실행판에서는 바로 저장 */
+  var c = window.claude;
+  if (!c || typeof c.use !== "function") { plain(); return; }
+  c.use("downloads").then(function (dl) {
+    if (!dl) { flash("이 화면에서는 파일을 저장할 수 없습니다."); return; }
+    dl.save({ filename: name, data: text }).then(function () { flash(okMsg); flashLex(okMsg); }, function (e) {
+      var m = e && e.code === "declined" ? "저장을 취소했습니다." : "파일을 저장하지 못했습니다.";
+      flash(m); flashLex(m);
+    });
+  }, function () { flash("이 화면에서는 파일을 저장할 수 없습니다."); });
+}
+var pendingMerge = null;
+function sameWord(a, b) { return JSON.stringify(wordData(a)) === JSON.stringify(wordData(b)); }
+/* 가져올 단어와 지금 단어장을 id로 맞춰 봄(id가 없으면 형태+입력으로) */
+function planMerge(incoming) {
+  var byId = {}, byForm = {};
+  lex.words.forEach(function (w) { byId[w.id] = w; byForm[(w.head || "") + "\u0000" + (w.input || "")] = w; });
+  var add = [], change = [], seen = {};
+  incoming.forEach(function (w) {
+    var cur = (w.id && byId[w.id]) || byForm[(w.head || "") + "\u0000" + (w.input || "")];
+    if (!cur) add.push(w);
+    else { seen[cur.id] = true; if (!sameWord(cur, w)) change.push({ id: cur.id, w: w }); }
+  });
+  var only = lex.words.filter(function (w) { return !seen[w.id]; }).length;
+  return { add: add, change: change, only: only };
+}
+function projApplyWords(plan) {
+  if (!lex.col) return;
+  var jobs = plan.change.map(function (c) { return { id: c.id, data: wordData(c.w) }; })
+    .concat(plan.add.map(function (w) { return { id: w.id || null, data: wordData(w) }; }));
+  var done = 0, failed = 0;
+  var next = function () {
+    if (!jobs.length) { flashLex("단어 " + done + "개를 합쳤습니다" + (failed ? " · 실패 " + failed + "개" : "") + "."); return; }
+    var j = jobs.shift();
+    var ref = j.id ? lex.col.doc(j.id) : lex.col.doc();
+    ref.set(j.data).then(function () { done++; next(); }, function () { failed++; next(); });
+  };
+  next();
+}
+function projLoad(file) {
+  var r = new FileReader();
+  r.onload = function () {
+    var p;
+    try { p = JSON.parse(r.result); } catch (e) { flash("프로젝트 파일을 읽지 못했습니다."); return; }
+    var words = Array.isArray(p) ? p : (p && Array.isArray(p.words) ? p.words : null);
+    var msg = [];
+    if (p && p.rules && typeof p.rules.r1 === "string") {
+      ["cats", "r1", "r2", "r3"].forEach(function (k) { if (typeof p.rules[k] === "string") state[k] = p.rules[k]; });
+      editor.value = state[current]; refreshRules(); msg.push("규칙을 불러왔습니다");
+    }
+    if (words && lex.status === "ready") {
+      var plan = planMerge(words);
+      if (!plan.add.length && !plan.change.length) msg.push("단어장은 이미 같습니다");
+      else {
+        pendingMerge = plan;
+        $("mergeText").textContent = "파일의 단어: 새 단어 " + plan.add.length + "개, 내용이 다른 단어 " + plan.change.length + "개. 이 단어장에만 있는 단어 " + plan.only + "개는 그대로 둡니다. 합칠까요?";
+        $("mergeBox").hidden = false; showView("lex");
+      }
+    } else if (words) msg.push("단어장을 아직 쓸 수 없어 단어는 가져오지 않았습니다");
+    if (msg.length) { flash(msg.join(" · ") + "."); flashLex(msg.join(" · ") + "."); }
+  };
+  r.readAsText(file);
+}
+$("projSave").addEventListener("click", projSave);
+$("projSave2").addEventListener("click", projSave);
+$("projLoad").addEventListener("click", function () { $("projFile").click(); });
+$("projLoad2").addEventListener("click", function () { $("projFile").click(); });
+$("projFile").addEventListener("change", function (e) { if (e.target.files[0]) projLoad(e.target.files[0]); e.target.value = ""; });
+$("mergeYes").addEventListener("click", function () { $("mergeBox").hidden = true; if (pendingMerge) projApplyWords(pendingMerge); pendingMerge = null; });
+$("mergeNo").addEventListener("click", function () { $("mergeBox").hidden = true; pendingMerge = null; });
+
+function showView(v) {
+  $("viewConv").hidden = v !== "conv";
+  $("viewLex").hidden = v !== "lex";
+  Array.prototype.forEach.call(document.querySelectorAll(".view-tab"), function (t) {
+    t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false");
+  });
+  save(STORE_VIEW, v);
+}
+$("views").addEventListener("click", function (e) {
+  var t = e.target.closest(".view-tab"); if (t) showView(t.getAttribute("data-view"));
+});
+
+/* 독립 실행판: 단어장은 이 파일에 내장된 초기 데이터와 브라우저 localStorage에 저장됨 */
+var SEED_WORDS = [{"head": "li-", "input": "li-", "mean": "확대접사", "n": 1, "note": "", "id": "w001"}, {"head": "elos-", "input": "elos-", "mean": "축소접사", "n": 2, "note": "이전 형태 telo-", "id": "w002"}, {"head": "ete", "input": "ete", "mean": "장소", "n": 3, "note": "", "id": "w003"}, {"head": "va", "input": "va", "mean": "사람, 인간", "n": 4, "note": "", "id": "w004"}, {"head": "ve", "input": "ve", "mean": "산 (눈 덮인)", "n": 5, "note": "", "id": "w005"}, {"head": "lok", "input": "lok", "mean": "도시", "n": 6, "note": "", "id": "w006"}, {"head": "topa", "input": "topa", "mean": "고을", "n": 7, "note": "", "id": "w007"}, {"head": "aklaia", "input": "aklaia", "mean": "강 이름, 그 강의 신", "n": 8, "note": "akla~ia: B 강 이름 kla + ia(신). 어두 kl이 허용되지 않아 a- 첨가(이전: klaia). 고유명이라 ia와 달리 비음형 화석이 되지 않음. Eklaia는 a- 첨가 이전에 e-kla~ia로 굳은 도시명", "tags": [], "id": "w008"}, {"head": "e-", "input": "e-", "mean": "장소, 주변", "n": 9, "note": "", "id": "w009"}, {"head": "eklaia", "input": "eklaia", "mean": "도시명", "n": 10, "note": "", "id": "w010"}, {"head": "kaspar", "input": "@kaspar", "mean": "가져가다, 없애다, 지우다", "n": 11, "note": "이전 형태 aste. @astu(바꾸다)와 같은 Ânde [ɑ̃d]가 되어 교체. Âmbar [ˈɑ̃baʁ]", "tags": ["비음형 화석", "종결상 동사"], "id": "w011"}, {"head": "epla", "input": "epla", "mean": "생명", "n": 12, "note": "", "id": "w012"}, {"head": "eplaste", "input": "eplaste", "mean": "도시명", "n": 13, "note": "", "id": "w013"}, {"head": "ace~ka", "input": "@ace~ka", "mean": "파리", "n": 14, "note": "에클라이아어 단계 합성어. ace(윙윙거리다)+ka(나는 것) '윙윙대는 날것'. 이전 형태 cea", "tags": ["비음형 화석", "생물"], "id": "w014"}, {"head": "ve-", "input": "ve-", "mean": "존칭접두사", "n": 15, "note": "", "id": "w015"}, {"head": "acia", "input": "acia", "mean": "날씨의 신", "n": 16, "note": "", "tags": [], "id": "w016"}, {"head": "kale", "input": "@kale", "mean": "까마귀", "n": 17, "note": "", "tags": ["비음형 화석", "생물"], "id": "w017"}, {"head": "ci", "input": "ci", "mean": "지키다", "n": 18, "note": "", "id": "w018"}, {"head": "ail", "input": "ail", "mean": "0", "n": 19, "note": "", "id": "w019"}, {"head": "le", "input": "le", "mean": "1", "n": 20, "note": "", "id": "w020"}, {"head": "sua", "input": "sua", "mean": "2", "n": 21, "note": "", "id": "w021"}, {"head": "ci", "input": "ci", "mean": "3", "n": 22, "note": "", "id": "w022"}, {"head": "vu", "input": "vu", "mean": "4", "n": 23, "note": "", "id": "w023"}, {"head": "ie", "input": "ie", "mean": "5", "n": 24, "note": "", "id": "w024"}, {"head": "leti", "input": "leti", "mean": "6", "n": 25, "note": "", "id": "w025"}, {"head": "sati", "input": "sati", "mean": "7", "n": 26, "note": "", "id": "w026"}, {"head": "eiti", "input": "eiti", "mean": "8", "n": 27, "note": "", "id": "w027"}, {"head": "kati", "input": "kati", "mean": "9", "n": 28, "note": "", "id": "w028"}, {"head": "letia-vu", "input": "letia|vu", "mean": "10", "n": 29, "note": "", "id": "w029"}, {"head": "letia-ie", "input": "letia|ie", "mean": "11", "n": 30, "note": "", "id": "w030"}, {"head": "sati", "input": "sati", "mean": "12", "n": 31, "note": "", "id": "w031"}, {"head": "satia-le", "input": "satia|le", "mean": "13", "n": 32, "note": "", "id": "w032"}, {"head": "satia-sua", "input": "satia|sua", "mean": "14", "n": 33, "note": "", "id": "w033"}, {"head": "satia-ci", "input": "satia|ci", "mean": "15", "n": 34, "note": "", "id": "w034"}, {"head": "satia-vu", "input": "satia|vu", "mean": "16", "n": 35, "note": "", "id": "w035"}, {"head": "satia-ie", "input": "satia|ie", "mean": "17", "n": 36, "note": "", "id": "w036"}, {"head": "kiltia", "input": "kiltia", "mean": "18", "n": 37, "note": "", "id": "w037"}, {"head": "vuti", "input": "vuti", "mean": "24", "n": 38, "note": "", "id": "w038"}, {"head": "ieti", "input": "ieti", "mean": "30", "n": 39, "note": "", "id": "w039"}, {"head": "kur", "input": "kur", "mean": "36", "n": 40, "note": "", "id": "w040"}, {"head": "teis", "input": "teis", "mean": "216", "n": 41, "note": "", "id": "w041"}, {"head": "tau", "input": "tau", "mean": "1296", "n": 42, "note": "", "id": "w042"}, {"head": "parsi", "input": "parsi", "mean": "7776", "n": 43, "note": "", "id": "w043"}, {"head": "atri", "input": "atri", "mean": "46656", "n": 44, "note": "", "id": "w044"}, {"head": "letia-atri", "input": "letia|atri", "mean": "279936", "n": 45, "note": "", "id": "w045"}, {"head": "kuria-atri", "input": "kuria|atri", "mean": "1679616", "n": 46, "note": "", "id": "w046"}, {"head": "teisia-atri", "input": "teisia|atri", "mean": "10077696", "n": 47, "note": "", "id": "w047"}, {"head": "tauia-atri", "input": "tauia|atri", "mean": "60466176", "n": 48, "note": "", "id": "w048"}, {"head": "parsia-atri", "input": "parsia|atri", "mean": "362797056", "n": 49, "note": "", "id": "w049"}, {"head": "alui", "input": "alui", "mean": "2176782336", "n": 50, "note": "", "id": "w050"}, {"head": "a-kiltia-atri", "input": "a|kiltia|atri", "mean": "101559956668416", "n": 51, "note": "", "id": "w051"}, {"head": "riel", "input": "riel", "mean": "이기다", "n": 52, "note": "", "id": "w052"}, {"head": "kiata", "input": "@kiata", "mean": "박쥐", "n": 53, "note": "", "tags": ["비음형 화석", "생물"], "id": "w053"}, {"head": "rao", "input": "rao", "mean": "화", "n": 54, "note": "", "id": "w054"}, {"head": "ka", "input": "@ka", "mean": "나는 것 (날짐승·날벌레를 아우르는 말)", "n": 55, "note": "이전 뜻 '새'. 새는 @cislia. 파리 ace~ka의 뒷 요소", "tags": ["비음형 화석", "생물"], "id": "w055"}, {"head": "elo", "input": "elo", "mean": "물", "n": 56, "note": "", "id": "w056"}, {"head": "oir", "input": "oir", "mean": "떼어내다/가르다/자르다/쪽", "n": 57, "note": "", "id": "w057"}, {"head": "pa-", "input": "pa-", "mean": "동사의 명사화", "n": 58, "note": "", "id": "w058"}, {"head": "leit", "input": "@leit", "mean": "나", "n": 59, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w059"}, {"head": "cisi-", "input": "cisi-", "mean": "다시", "n": 60, "note": "", "id": "w060"}, {"head": "ope", "input": "ope", "mean": "적다", "n": 61, "note": "", "id": "w061"}, {"head": "cisiepri", "input": "@cisiepri", "mean": "떠올리다, 기억하다", "n": 62, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w062"}, {"head": "La", "input": "la", "mean": "단어, 말하다", "n": 63, "note": "", "id": "w063"}, {"head": "Ep(a)-", "input": "epa-", "mean": "~하는 능력", "n": 64, "note": "", "id": "w064"}, {"head": "Ny-", "input": "ny-", "mean": "문장의 명사화", "n": 65, "note": "", "id": "w065"}, {"head": "teia", "input": "teia", "mean": "물질, 물건, 만물, 흔한 것, 뭇 것, 존재하다, 있다", "n": 66, "note": "", "id": "w066"}, {"head": "e", "input": "e", "mean": "장소", "n": 67, "note": "", "id": "w067"}, {"head": "te", "input": "te", "mean": "시간", "n": 68, "note": "", "id": "w068"}, {"head": "estai", "input": "estai", "mean": "살다, 거주하다, 거주지, 집", "n": 69, "note": "", "id": "w069"}, {"head": "areta", "input": "@areta", "mean": "일으키다, 유발하다", "n": 70, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w070"}, {"head": "estaiar", "input": "estaiar", "mean": "아늑한, 편안한", "n": 71, "note": "", "id": "w071"}, {"head": "koite", "input": "koite", "mean": "작은", "n": 72, "note": "", "id": "w072"}, {"head": "atia", "input": "atia", "mean": "예쁘다", "n": 73, "note": "", "id": "w073"}, {"head": "ir(e)-, y,", "input": "ire-", "mean": "또, 그리고, 와, 과", "n": 74, "note": "", "id": "w074"}, {"head": "letua", "input": "letua", "mean": "자주", "n": 75, "note": "", "id": "w075"}, {"head": "askaar", "input": "askaar", "mean": "멈추는", "n": 76, "note": "", "id": "w076"}, {"head": "tecaka", "input": "tecaka", "mean": "아직도", "n": 77, "note": "", "id": "w077"}, {"head": "teko", "input": "teko", "mean": "그러나, ~지만, ~인데도, (명사)에도 불구하고", "n": 78, "note": "접어(^ 입력), 모음 앞 tek'. 이전 형태 kace는 에클레아어에서 kac(a)-(에게)와 같은 Caze가 되어 교체", "id": "w078"}, {"head": "aska", "input": "@aska", "mean": "멈추다", "n": 79, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w079"}, {"head": "le-, l'-", "input": "le-", "mean": "~의", "n": 80, "note": "", "id": "w080"}, {"head": "leit", "input": "@leit", "mean": "1인칭 단수", "n": 81, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w081"}, {"head": "kas", "input": "kas", "mean": "1인칭 쌍수", "n": 82, "note": "", "id": "w082"}, {"head": "rak", "input": "rak", "mean": "1인칭 삼수", "n": 83, "note": "", "id": "w083"}, {"head": "tar", "input": "@tar", "mean": "1인칭 복수", "n": 84, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w084"}, {"head": "opia", "input": "@opia", "mean": "2인칭 단수", "n": 85, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w085"}, {"head": "tepia", "input": "@tepia", "mean": "2인칭 복수", "n": 86, "note": "에클레아어에서 자유 대명사는 dagne가 되어 @caso(개)와 동음 → orta-+ogne인 Ort'ogne로 대체됨(y'all·jullie 유형). 인칭 어미는 그대로", "tags": ["비음형 화석", "자유 대명사"], "id": "w086"}, {"head": "lai", "input": "@lai", "mean": "3인칭 단수", "n": 87, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w087"}, {"head": "tarkas", "input": "tarkas", "mean": "3인칭 쌍수", "n": 88, "note": "", "id": "w088"}, {"head": "tiek", "input": "tiek", "mean": "3인칭 삼수", "n": 89, "note": "", "id": "w089"}, {"head": "pate", "input": "@pate", "mean": "3인칭 복수", "n": 90, "note": "", "tags": ["비음형 화석", "자유 대명사"], "id": "w090"}, {"head": "ikuo", "input": "ikuo", "mean": "3인칭, 대화 당사자가 모름", "n": 91, "note": "", "id": "w091"}, {"head": "Cil", "input": "cil", "mean": "아무 물건", "n": 92, "note": "", "id": "w092"}, {"head": "Ter", "input": "ter", "mean": "이", "n": 93, "note": "", "id": "w093"}, {"head": "Pur", "input": "pur", "mean": "저", "n": 94, "note": "", "id": "w094"}, {"head": "Tos", "input": "tos", "mean": "그", "n": 95, "note": "", "id": "w095"}, {"head": "levre", "input": "levre", "mean": "보다", "n": 96, "note": "", "id": "w096"}, {"head": "tas", "input": "tas", "mean": "먹다", "n": 97, "note": "", "id": "w097"}, {"head": "arta", "input": "@arta", "mean": "왔다 (오다의 과거형)", "n": 98, "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 arta", "tags": ["비음형 화석", "종결상 동사"], "id": "w098"}, {"head": "vese", "input": "vese", "mean": "듣다", "n": 99, "note": "", "id": "w099"}, {"head": "laril", "input": "laril", "mean": "걷다", "n": 100, "note": "", "id": "w100"}, {"head": "tarta", "input": "tarta", "mean": "길", "n": 101, "note": "", "id": "w101"}, {"head": "Cislia", "input": "@cislia", "mean": "새", "n": 102, "note": "", "tags": ["비음형 화석", "생물"], "id": "w102"}, {"head": "casva", "input": "@casva", "mean": "물고기", "n": 103, "note": "", "tags": ["비음형 화석", "생물"], "id": "w103"}, {"head": "purel", "input": "@purel", "mean": "죽다", "n": 104, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w104"}, {"head": "caso", "input": "@caso", "mean": "개, 강아지", "n": 105, "note": "", "tags": ["비음형 화석", "생물"], "id": "w105"}, {"head": "pul", "input": "pul", "mean": "산", "n": 106, "note": "", "id": "w106"}, {"head": "lapel", "input": "lapel", "mean": "좋은, 좋다", "n": 107, "note": "", "id": "w107"}, {"head": "sasla", "input": "sasla", "mean": "새로운, 새, 새롭다", "n": 108, "note": "", "id": "w108"}, {"head": "lael", "input": "lael", "mean": "큰, 크다", "n": 109, "note": "", "id": "w109"}, {"head": "laspe", "input": "@laspe", "mean": "여성, 여자", "n": 110, "note": "", "tags": ["비음형 화석", "생물"], "id": "w110"}, {"head": "rale", "input": "rale", "mean": "남성, 남자", "n": 111, "note": "", "id": "w111"}, {"head": "lesvi", "input": "lesvi", "mean": "이름", "n": 112, "note": "", "id": "w112"}, {"head": "luro", "input": "luro", "mean": "비", "n": 113, "note": "", "id": "w113"}, {"head": "calke", "input": "calke", "mean": "돌", "n": 114, "note": "", "id": "w114"}, {"head": "cileva", "input": "cileva", "mean": "나무", "n": 115, "note": "", "id": "w115"}, {"head": "curo", "input": "curo", "mean": "뼈", "n": 116, "note": "", "id": "w116"}, {"head": "losir", "input": "losir", "mean": "밤", "n": 117, "note": "", "id": "w117"}, {"head": "par", "input": "par", "mean": "달", "n": 118, "note": "", "id": "w118"}, {"head": "ris", "input": "ris", "mean": "해, 태양", "n": 119, "note": "", "id": "w119"}, {"head": "rus", "input": "rus", "mean": "별", "n": 120, "note": "", "id": "w120"}, {"head": "lisvi", "input": "lisvi", "mean": "피", "n": 121, "note": "", "id": "w121"}, {"head": "cira", "input": "cira", "mean": "불", "n": 122, "note": "", "tags": [], "id": "w122"}, {"head": "uvla", "input": "uvla", "mean": "물", "n": 123, "note": "", "id": "w123"}, {"head": "tesa", "input": "tesa", "mean": "손", "n": 124, "note": "", "tags": [], "id": "w124"}, {"head": "cevos", "input": "cevos", "mean": "귀", "n": 125, "note": "", "id": "w125"}, {"head": "sitra", "input": "sitra", "mean": "이빨", "n": 126, "note": "", "id": "w126"}, {"head": "cisko", "input": "cisko", "mean": "작은, 작다", "n": 127, "note": "", "id": "w127"}, {"head": "poklo", "input": "poklo", "mean": "입", "n": 128, "note": "", "id": "w128"}, {"head": "levela", "input": "levela", "mean": "혀, 언어", "n": 129, "note": "", "id": "w129"}, {"head": "estic", "input": "estic", "mean": "코", "n": 130, "note": "", "id": "w130"}, {"head": "tisu", "input": "tisu", "mean": "자다", "n": 131, "note": "", "id": "w131"}, {"head": "ukla", "input": "@ukla", "mean": "갔다 (가다의 과거형)", "n": 132, "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 ukla", "tags": ["비음형 화석", "종결상 동사"], "id": "w132"}, {"head": "oslor", "input": "oslor", "mean": "알다", "n": 133, "note": "", "id": "w133"}, {"head": "astel", "input": "@astel", "mean": "개인, 사람, 외톨이, 방랑자", "n": 134, "note": "", "tags": ["비음형 화석", "생물"], "id": "w134"}, {"head": "kapu", "input": "kapu", "mean": "집", "n": 135, "note": "", "id": "w135"}, {"head": "lukus", "input": "lukus", "mean": "눈, 안구", "n": 136, "note": "", "id": "w136"}, {"head": "Pe", "input": "pe", "mean": "부정, 아니오", "n": 137, "note": "", "id": "w137"}, {"head": "Li", "input": "li", "mean": "긍정, 네, 예, 그래", "n": 138, "note": "", "id": "w138"}, {"head": "lat", "input": "lat", "mean": "있다", "n": 139, "note": "", "id": "w139"}, {"head": "ar(e)-", "input": "are-", "mean": "-하며", "n": 140, "note": "", "id": "w140"}, {"head": "tekla", "input": "@tekla", "mean": "왔다 (오다의 과거형)", "n": 141, "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 tekla", "tags": ["비음형 화석", "종결상 동사"], "id": "w141"}, {"head": "ekovese", "input": "eko·vese", "mean": "이어폰", "n": 142, "note": "vese의 뜻 미확인", "tags": ["후대 합성어"], "id": "w142"}, {"head": "keti", "input": "keti", "mean": "자라다", "n": 143, "note": "", "id": "w143"}, {"head": "rekia", "input": "rekia", "mean": "축복하다", "n": 144, "note": "", "id": "w144"}, {"head": "asti-", "input": "asti-", "mean": "능동형, 피동형 반대, 당하다, 었", "n": 145, "note": "", "id": "w145"}, {"head": "av(e)-", "input": "ave-", "mean": "형용사형", "n": 146, "note": "", "id": "w146"}, {"head": "or(a)-", "input": "ora-", "mean": "느낌, 감정", "n": 147, "note": "", "id": "w147"}, {"head": "etakly", "input": "@etakly", "mean": "끝내다, 마무리하다, 종결하다", "n": 148, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w148"}, {"head": "pia", "input": "pia", "mean": "싸우다", "n": 149, "note": "", "id": "w149"}, {"head": "eko-", "input": "eko-", "mean": "~개, 하는 도구, 하는 물건", "n": 150, "note": "", "id": "w150"}, {"head": "ekoir", "input": "ekoir", "mean": "톱", "n": 151, "note": "", "tags": [], "id": "w151"}, {"head": "ecia", "input": "ecia", "mean": "천둥", "n": 152, "note": "", "tags": [], "id": "w152"}, {"head": "arpal", "input": "arpal", "mean": "번개, 전기", "n": 153, "note": "", "tags": [], "id": "w153"}, {"head": "acura", "input": "acura", "mean": "폭풍, 눈폭풍, 눈보라", "n": 154, "note": "", "tags": [], "id": "w154"}, {"head": "et", "input": "et", "mean": "잇다, 계속하다, 지속하다", "n": 155, "note": "", "id": "w155"}, {"head": "lake", "input": "lake", "mean": "원, 둥글다", "n": 156, "note": "", "id": "w156"}, {"head": "etlake", "input": "etlake", "mean": "사슬", "n": 157, "note": "", "id": "w157"}, {"head": "a-", "input": "a-", "mean": "프랑스어 á; 수식; of에서 의 뺀 것", "n": 158, "note": "", "id": "w158"}, {"head": "arte", "input": "arte", "mean": "모임, 조, 회의, 평의회", "n": 159, "note": "", "tags": [], "id": "w159"}, {"head": "ratia", "input": "ratia", "mean": "실용", "n": 160, "note": "", "id": "w160"}, {"head": "suria", "input": "suria", "mean": "수염", "n": 161, "note": "", "id": "w161"}, {"head": "lo", "input": "lo", "mean": "다른, 다르다", "n": 162, "note": "", "id": "w162"}, {"head": "", "input": "", "mean": "여자 이름", "n": 163, "note": "", "id": "w163"}, {"head": "ilut", "input": "ilut", "mean": "우주", "n": 164, "note": "", "id": "w164"}, {"head": "kartoc", "input": "kartoc", "mean": "배, 선박", "n": 165, "note": "", "id": "w165"}, {"head": "irkua", "input": "@irkua", "mean": "단결하다, 뭉치다, 묶이다, 하나가 되다", "n": 166, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w166"}, {"head": "pairkua", "input": "pairkua", "mean": "연맹", "n": 167, "note": "", "id": "w167"}, {"head": "ekoilut", "input": "ekoilut", "mean": "우주선 (신화) + 우주선 (진)", "n": 168, "note": "신화 속 우주선을 뜻하는 계승어. 실제 우주선은 근대에 이 말을 재활용", "id": "w168"}, {"head": "liestai", "input": "liestai", "mean": "지구", "n": 169, "note": "", "id": "w169"}, {"head": "katai", "input": "katai", "mean": "낮", "n": 170, "note": "", "id": "w170"}, {"head": "riskatai", "input": "riskatai", "mean": "해", "n": 171, "note": "", "id": "w171"}, {"head": "ruslosir", "input": "ruslosir", "mean": "별", "n": 172, "note": "", "id": "w172"}, {"head": "parlosir", "input": "parlosir", "mean": "달", "n": 173, "note": "", "id": "w173"}, {"head": "kac(a)-", "input": "kaca-", "mean": "에게", "n": 174, "note": "", "id": "w174"}, {"head": "lar", "input": "lar", "mean": "묻다", "n": 175, "note": "", "id": "w175"}, {"head": "vau", "input": "vau", "mean": "가지, 당(정당)", "n": 176, "note": "지부·분파는 liska로 나눔", "id": "w176"}, {"head": "atar", "input": "atar", "mean": "일하다", "n": 177, "note": "", "id": "w177"}, {"head": "ciska", "input": "ciska", "mean": "농사짓다", "n": 178, "note": "", "id": "w178"}, {"head": "ak(a)-", "input": "aka-", "mean": "~하는 사람", "n": 179, "note": "", "id": "w179"}, {"head": "lie", "input": "lie", "mean": "세계", "n": 180, "note": "", "id": "w180"}, {"head": "peskia", "input": "peskia", "mean": "핵심, 중앙", "n": 181, "note": "", "id": "w181"}, {"head": "rate", "input": "rate", "mean": "행동, 하다", "n": 182, "note": "", "id": "w182"}, {"head": "aleya", "input": "aleya", "mean": "정합", "n": 183, "note": "", "id": "w183"}, {"head": "tasko", "input": "tasko", "mean": "분출", "n": 184, "note": "", "id": "w184"}, {"head": "etasko", "input": "etasko", "mean": "분화구", "n": 185, "note": "", "id": "w185"}, {"head": "uska", "input": "uska", "mean": "~주의", "n": 186, "note": "", "id": "w186"}, {"head": "ekete", "input": "ekete", "mean": "기구, 조합", "n": 187, "note": "", "id": "w187"}, {"head": "kai-", "input": "kai-", "mean": "~번째의", "n": 188, "note": "", "id": "w188"}, {"head": "paope", "input": "paope", "mean": "글자, 낱자", "n": 189, "note": "", "id": "w189"}, {"head": "tuka", "input": "@tuka", "mean": "건설하다, 짓다", "n": 190, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w190"}, {"head": "atlea", "input": "atlea", "mean": "조직", "n": 191, "note": "", "id": "w191"}, {"head": "Rasoko", "input": "rasoko", "mean": "부족의 일종", "n": 192, "note": "", "tags": [], "id": "w192"}, {"head": "telasei", "input": "telasei", "mean": "지도", "n": 193, "note": "", "id": "w193"}, {"head": "liaistau", "input": "liaistau", "mean": "(역사적) 에클라이아 상륙", "n": 194, "note": "", "id": "w194"}, {"head": "aistau", "input": "aistau", "mean": "상륙", "n": 195, "note": "", "id": "w195"}, {"head": "ais", "input": "@ais", "mean": "위로 가다, 오르다, 뜨다", "n": 196, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w196"}, {"head": "tau", "input": "tau", "mean": "뭍, 흙, 땅", "n": 197, "note": "", "id": "w197"}, {"head": "apre", "input": "apre", "mean": "위, (시간) 전/앞", "n": 198, "note": "", "id": "w198"}, {"head": "orais", "input": "orais", "mean": "아래, (시간) 후/뒤", "n": 199, "note": "", "id": "w199"}, {"head": "akrua", "input": "akrua", "mean": "돌다, 회전하다", "n": 200, "note": "", "id": "w200"}, {"head": "asl(e)", "input": "asle", "mean": "~~하는 것, ~~하는 물체", "n": 201, "note": "", "id": "w201"}, {"head": "arkatia", "input": "arkatia", "mean": "마기계", "n": 202, "note": "고대부터 쓰인 민간 계승어", "tags": [], "id": "w202"}, {"head": "arpalia", "input": "&arpalia", "mean": "기계", "n": 203, "note": "", "tags": ["학술 차용어"], "id": "w203"}, {"head": "olko", "input": "olko", "mean": "두뇌, 뇌", "n": 204, "note": "", "id": "w204"}, {"head": "ekolko", "input": "&ekolko", "mean": "인공 두뇌, 전뇌", "n": 205, "note": "", "tags": ["학술 차용어"], "id": "w205"}, {"head": "arci", "input": "arci", "mean": "학문, 배우다", "n": 206, "note": "", "id": "w206"}, {"head": "setloi", "input": "setloi", "mean": "부활", "n": 207, "note": "", "id": "w207"}, {"head": "loi", "input": "loi", "mean": "태어나다", "n": 208, "note": "", "id": "w208"}, {"head": "set(o)-", "input": "seto-", "mean": "다시-, 재-, 한번 더-", "n": 209, "note": "", "id": "w209"}, {"head": "iutasko", "input": "iutasko", "mean": "위대한", "n": 210, "note": "", "id": "w210"}, {"head": "Parlois", "input": "parlois", "mean": "여자 이름", "n": 211, "note": "", "tags": [], "id": "w211"}, {"head": "air", "input": "air", "mean": "모양, 도형", "n": 212, "note": "", "id": "w212"}, {"head": "etospi", "input": "etospi", "mean": "풍족한, 부,", "n": 213, "note": "", "id": "w213"}, {"head": "taisko", "input": "taisko", "mean": "창, 투창", "n": 214, "note": "", "tags": [], "id": "w214"}, {"head": "iscau", "input": "iscau", "mean": "늙다, 나이들다", "n": 215, "note": "", "id": "w215"}, {"head": "ekat", "input": "ekat", "mean": "어리다, 어린, 젊은", "n": 216, "note": "", "id": "w216"}, {"head": "ve~akiscau", "input": "@v'akiscau", "mean": "족장", "n": 217, "note": "존칭 ve-가 호칭에서 굳어 붙음(messire·monsieur와 같은 경로). 이전 입력 @akiscau는 ègne로 @ais(오르다)와 동음", "tags": ["비음형 화석", "통치자", "행위자 명사"], "id": "w217"}, {"head": "asiel", "input": "@asiel", "mean": "짓다, 만들다", "n": 218, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w218"}, {"head": "alkai", "input": "alkai", "mean": "자비롭다, 자비", "n": 219, "note": "", "id": "w219"}, {"head": "topa", "input": "topa", "mean": "느낌", "n": 220, "note": "", "id": "w220"}, {"head": "ort(a)-", "input": "orta-", "mean": "모든, 전체, 전부", "n": 221, "note": "", "id": "w221"}, {"head": "etlika", "input": "etlika", "mean": "새벽", "n": 222, "note": "", "id": "w222"}, {"head": "aplie", "input": "@aplie", "mean": "더하다, 덧셈, 합하다, 추가하다 (A+B->A')", "n": 223, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w223"}, {"head": "pasle", "input": "pasle", "mean": "배", "n": 224, "note": "", "id": "w224"}, {"head": "apl(i)-", "input": "apli-", "mean": "비교급", "n": 225, "note": "", "id": "w225"}, {"head": "islepol", "input": "islepol", "mean": "강제하다, 이끌다, 끌다, 밀다, 당기다", "n": 226, "note": "", "id": "w226"}, {"head": "oku", "input": "oku", "mean": "원하다, 바라다", "n": 227, "note": "", "id": "w227"}, {"head": "ikarsa", "input": "ikarsa", "mean": "샘, 원천, 시작, 출발", "n": 228, "note": "", "id": "w228"}, {"head": "cai", "input": "cai", "mean": "도착, 바다", "n": 229, "note": "", "id": "w229"}, {"head": "cirpo", "input": "cirpo", "mean": "누르다, 억누르다, 압제하다", "n": 230, "note": "", "id": "w230"}, {"head": "lovor", "input": "lovor", "mean": "한스러운, 한, 슬픔, 분개, 억울함,", "n": 231, "note": "", "id": "w231"}, {"head": "Ake", "input": "@ake", "mean": "일어나다, 일어서다, 떨치다", "n": 232, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w232"}, {"head": "ask(e)-", "input": "aske-", "mean": "A toB -> A와 B 사이", "n": 233, "note": "", "id": "w233"}, {"head": "sakue", "input": "sakue", "mean": "가운데, 사이, 틈", "n": 234, "note": "", "id": "w234"}, {"head": "it(o)-", "input": "ito-", "mean": "가능하다, 할 수 있다", "n": 235, "note": "", "id": "w235"}, {"head": "keploi", "input": "keploi", "mean": "평등하다", "n": 236, "note": "", "id": "w236"}, {"head": "etursa", "input": "etursa", "mean": "세다, 계산하다", "n": 237, "note": "", "id": "w237"}, {"head": "pecio", "input": "pecio", "mean": "거짓, 가짜, 조작", "n": 238, "note": "", "id": "w238"}, {"head": "istia", "input": "istia", "mean": "분명하다, 구별되다, 분별하다", "n": 239, "note": "", "id": "w239"}, {"head": "erkupe", "input": "erkupe", "mean": "용감하다, 용맹하다", "n": 240, "note": "", "id": "w240"}, {"head": "arpar", "input": "@arpar", "mean": "고치다, 수정하다", "n": 241, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w241"}, {"head": "veka", "input": "veka", "mean": "오래, 장기간", "n": 242, "note": "", "id": "w242"}, {"head": "orto", "input": "orto", "mean": "틀린, 불의", "n": 243, "note": "", "id": "w243"}, {"head": "aspi", "input": "@aspi", "mean": "열다", "n": 244, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w244"}, {"head": "licio", "input": "licio", "mean": "맞는, 참된", "n": 245, "note": "", "id": "w245"}, {"head": "cea", "input": "cea", "mean": "이해하다", "n": 246, "note": "", "id": "w246"}, {"head": "ekate", "input": "@ekate", "mean": "피하다, 탈출하다", "n": 247, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w247"}, {"head": "sikuve", "input": "sikuve", "mean": "산사태, 재앙, 재해, 재난", "n": 248, "note": "", "id": "w248"}, {"head": "siku", "input": "@siku", "mean": "미끄러지다", "n": 249, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w249"}, {"head": "etlesta", "input": "@etlesta", "mean": "다다르다, 이루다", "n": 250, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w250"}, {"head": "yple", "input": "yple", "mean": "행복, 기쁨", "n": 251, "note": "", "id": "w251"}, {"head": "erpaca", "input": "erpaca", "mean": "확실하다, 분명하다", "n": 252, "note": "", "id": "w252"}, {"head": "oslia", "input": "oslia", "mean": "조화롭다", "n": 253, "note": "", "id": "w253"}, {"head": "atraka", "input": "@atraka", "mean": "아트라카, 소+말같은 동물, 베이스는 사슴", "n": 254, "note": "", "tags": ["비음형 화석", "생물"], "id": "w254"}, {"head": "kartis", "input": "@kartis", "mean": "카르티스, 멧돼지 같은 동물, 베이스는 사향고양이", "n": 255, "note": "", "tags": ["비음형 화석", "생물"], "id": "w255"}, {"head": "paco", "input": "paco", "mean": "못생기다", "n": 256, "note": "", "id": "w256"}, {"head": "cetoca", "input": "cetoca", "mean": "잘생기다", "n": 257, "note": "", "id": "w257"}, {"head": "ratais", "input": "ratais", "mean": "머리, 얼굴", "n": 258, "note": "", "id": "w258"}, {"head": "etre", "input": "etre", "mean": "도시", "n": 259, "note": "", "id": "w259"}, {"head": "Lysirle", "input": "lysirle", "mean": "", "n": 260, "note": "", "id": "w260"}, {"head": "askepar", "input": "askepar", "mean": "월간", "n": 261, "note": "", "id": "w261"}, {"head": "aske", "input": "aske", "mean": "국제", "n": 262, "note": "", "id": "w262"}, {"head": "etako", "input": "etako", "mean": "가지다", "n": 263, "note": "", "id": "w263"}, {"head": "tiel", "input": "@tiel", "mean": "빼다", "n": 264, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w264"}, {"head": "alkas", "input": "@alkas", "mean": "나누다", "n": 265, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w265"}, {"head": "valkas", "input": "valkas", "mean": "계급", "n": 266, "note": "", "id": "w266"}, {"head": "liakla", "input": "liakla", "mean": "연방", "n": 267, "note": "", "id": "w267"}, {"head": "akla", "input": "akla", "mean": "(사어) 에클라이아 성립 초기에 Eklaia와 혼용되던 국명", "n": 268, "note": "B 강 이름 kla에 어두 a- 첨가(어두 kl 회피). akla~ia(신/강)에 화석으로 남음", "tags": [], "id": "w268"}, {"head": "kalepia", "input": "kalepia", "mean": "낯설다, 이방인, 외국인", "n": 269, "note": "", "tags": [], "id": "w269"}, {"head": "askal", "input": "askal", "mean": "피부, 가죽", "n": 270, "note": "", "id": "w270"}, {"head": "etlir", "input": "etlir", "mean": "싸움, 전쟁", "n": 271, "note": "", "id": "w271"}, {"head": "ia", "input": "@ia", "mean": "신", "n": 272, "note": "유생 일반명사라 비음형 화석(Dan). 고유명(akla~ia 등)은 화석화하지 않음", "tags": ["비음형 화석"], "id": "w272"}, {"head": "asure", "input": "asure", "mean": "종 (성당, 교회 등의)", "n": 273, "note": "이전 형태 asero. 계급 접두사 asur(a)-의 어원", "id": "w273"}, {"head": "iska", "input": "iska", "mean": "인형, 기물, (게임) 말, 조종당하는 사람", "n": 274, "note": "", "id": "w274"}, {"head": "aklia", "input": "aklia", "mean": "만두와 유사한 음식 이름, 성씨", "n": 275, "note": "", "id": "w275"}, {"head": "ais(a)-", "input": "aisa-", "mean": "옆, 곁, 함께", "n": 276, "note": "", "id": "w276"}, {"head": "siaklo", "input": "siaklo", "mean": "쇠", "n": 277, "note": "", "id": "w277"}, {"head": "kar", "input": "kar", "mean": "풀", "n": 278, "note": "", "id": "w278"}, {"head": "tipi", "input": "tipi", "mean": "색깔", "n": 279, "note": "", "id": "w279"}, {"head": "tipris", "input": "tipris", "mean": "하양, 하얗다, 희다, 흰색, 백색", "n": 280, "note": "", "id": "w280"}, {"head": "upikre", "input": "upikre", "mean": "송진", "n": 281, "note": "", "id": "w281"}, {"head": "epli", "input": "epli", "mean": "자유롭다, 해방되다", "n": 282, "note": "", "tags": [], "id": "w282"}, {"head": "kapra", "input": "@kapra", "mean": "왕", "n": 283, "note": "", "tags": ["비음형 화석", "통치자"], "id": "w283"}, {"head": "es(i)-", "input": "esi-", "mean": "(이름 앞에 붙어) 애칭", "n": 284, "note": "", "id": "w284"}, {"head": "kyr", "input": "kyr", "mean": "돌다", "n": 285, "note": "", "id": "w285"}, {"head": "kyrlevre", "input": "kyrlevre", "mean": "돌보다, 돕다, 보조하다", "n": 286, "note": "", "id": "w286"}, {"head": "akkyrle", "input": "&akkyrle", "mean": "장관, 재상, 각료", "n": 287, "note": "", "tags": ["학술 차용어", "행위자 명사"], "id": "w287"}, {"head": "aret", "input": "aret", "mean": "자리, 앉다, 의자", "n": 288, "note": "", "id": "w288"}, {"head": "los", "input": "los", "mean": "전방, 앞", "n": 289, "note": "", "id": "w289"}, {"head": "kiar", "input": "kiar", "mean": "후방, 뒤", "n": 290, "note": "", "id": "w290"}, {"head": "iska", "input": "iska", "mean": "왼쪽, 좌", "n": 291, "note": "", "id": "w291"}, {"head": "kosta", "input": "kosta", "mean": "오른쪽, 우", "n": 292, "note": "", "id": "w292"}, {"head": "sevia", "input": "sevia", "mean": "대신하다, 대체하다, 부-", "n": 293, "note": "", "id": "w293"}, {"head": "sir", "input": "@sir", "mean": "스스로, 자기, (명사 뒤) 그 자신, (명사 앞) 저, 그 (원칭 지시사)", "n": 294, "note": "자유어는 대명사처럼 비음형 화석 Dind [dɛ̃]. 명사 앞이면 지시사(dind va '저 사람'), 명사 뒤면 강조(va dind '그 사람 자신'). 강조어 → 전방조응 지시사 경로(라틴어 ipse → 사르데냐어 su, 그리스어 autós). 접어형은 관계절 표지 sir^(Chir)", "tags": ["비음형 화석", "자유 대명사"], "id": "w294"}, {"head": "ryl", "input": "ryl", "mean": "다스리다, 통치하다", "n": 295, "note": "", "id": "w295"}, {"head": "sirryl", "input": "sirryl", "mean": "자치", "n": 296, "note": "", "id": "w296"}, {"head": "kasar-", "input": "kasar-", "mean": "명령형", "n": 297, "note": "", "id": "w297"}, {"head": "sikla", "input": "sikla", "mean": "엇갈리다", "n": 298, "note": "", "id": "w298"}, {"head": "eiva", "input": "eiva", "mean": "다음", "n": 299, "note": "", "id": "w299"}, {"head": "ilo", "input": "ilo", "mean": "이전", "n": 300, "note": "", "id": "w300"}, {"head": "leiv(a)-", "input": "leiva-", "mean": "에서, 부터", "n": 301, "note": "", "id": "w301"}, {"head": "lil(o)-", "input": "lilo-", "mean": "까지", "n": 302, "note": "", "id": "w302"}, {"head": "aitai", "input": "aitai", "mean": "괜찮다", "n": 303, "note": "", "id": "w303"}, {"head": "ait(a)-", "input": "aita-", "mean": "좋은-, 좋다-", "n": 304, "note": "", "id": "w304"}, {"head": "iai", "input": "iai", "mean": "흐름", "n": 305, "note": "", "id": "w305"}, {"head": "ti-", "input": "ti-", "mean": "보문소 (that, 것)", "n": 306, "note": "", "id": "w306"}, {"head": "aitiai", "input": "aitiai", "mean": "번영", "n": 307, "note": "", "id": "w307"}, {"head": "vekla", "input": "vekla", "mean": "의문사", "n": 308, "note": "", "id": "w308"}, {"head": "pe-", "input": "pe-", "mean": "반대/아닌", "n": 309, "note": "", "id": "w309"}, {"head": "perekia", "input": "perekia", "mean": "저주하다", "n": 310, "note": "", "tags": [], "id": "w310"}, {"head": "iprot", "input": "@iprot", "mean": "가두다, 감옥", "n": 311, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w311"}, {"head": "eskosia", "input": "eskosia", "mean": "배고프다, 굶주리다", "n": 312, "note": "", "id": "w312"}, {"head": "tarpa", "input": "tarpa", "mean": "이성, 앎, 지성, 똑똑함", "n": 313, "note": "", "id": "w313"}, {"head": "atapri", "input": "@atapri", "mean": "덮다, 지우다, 쓸어버리다", "n": 314, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w314"}, {"head": "atio", "input": "@atio", "mean": "노예", "n": 315, "note": "", "tags": ["비음형 화석", "생물"], "id": "w315"}, {"head": "astu", "input": "@astu", "mean": "변화시키다, 바꾸다", "n": 316, "note": "", "tags": ["비음형 화석", "종결상 동사"], "id": "w316"}, {"head": "tuclo", "input": "tuclo", "mean": "토대, 기반", "n": 317, "note": "", "id": "w317"}, {"head": "liva", "input": "liva", "mean": "인류", "n": 318, "note": "대화에서 추가", "id": "w318"}, {"head": "litau", "input": "litau", "mean": "대지", "n": 319, "note": "대화에서 추가", "id": "w319"}, {"head": "esir-", "input": "esir-", "mean": "재귀 표지", "n": 320, "note": "대화에서 추가", "id": "w320"}, {"head": "kala", "input": "kala", "mean": "신호, 부름", "n": 321, "note": "인터내셔널가 번역 중 Claude가 만든 단어", "id": "w321"}, {"head": "talekia", "input": "talekia", "mean": "화산", "n": 322, "note": "인터내셔널가 번역 중 Claude가 만든 단어", "id": "w322"}, {"head": "tapru", "input": "tapru", "mean": "뿌리, 근본", "n": 323, "note": "인터내셔널가 번역 중 Claude가 만든 단어", "id": "w323"}, {"head": "aitu", "input": "aitu", "mean": "모서리", "n": 324, "note": "", "tags": [], "id": "w324"}, {"head": "aitu+vu", "input": "aitu~vu", "mean": "사각형", "n": 325, "note": "고대 소유 복합어 '모서리 넷'이 융합", "tags": [], "id": "w325"}, {"head": "aitu+ci", "input": "aitu~ci", "mean": "삼각형", "n": 326, "note": "고대 소유 복합어 '모서리 셋'이 융합", "tags": [], "id": "w326"}, {"head": "kala a-ia", "input": "kala a^@ia", "mean": "종교 상징물", "n": 327, "note": "kala le-@ia(신의 징조, 계시)와 구별", "tags": [], "id": "w327"}, {"head": "ukla", "input": "ukla", "mean": "가다 (현재형)", "n": 328, "note": "과거형은 비음형 @ukla", "tags": ["현재형"], "id": "w328"}, {"head": "tekla", "input": "tekla", "mean": "오다 (현재형)", "n": 329, "note": "과거형은 비음형 @tekla", "tags": ["현재형"], "id": "w329"}, {"head": "arta", "input": "arta", "mean": "오다 (현재형)", "n": 330, "note": "과거형은 비음형 @arta", "tags": ["현재형"], "id": "w330"}, {"head": "il", "input": "il", "mean": "발", "n": 331, "note": "", "tags": [], "id": "w331"}, {"head": "islas", "input": "islas", "mean": "보라색, 보랏빛", "n": 332, "note": "", "tags": [], "id": "w332"}, {"head": "va-", "input": "va-", "mean": "~인, ~에 속한 사람 (민족·지역·집단·성품, 모음 앞 v')", "n": 333, "note": "va a- 구가 접두사로 굳음. 행위자 ak-, 계급 asur(a)-와 구별", "tags": [], "id": "w333"}, {"head": "asur(a)-", "input": "asura-", "mean": "~민, ~계급의 사람 (신분·계급명). 보통 asur-, 허용되지 않는 자음군이 생길 때만 asura-", "n": 334, "note": "asure(종)의 변형. 같은 종소리에 모이는 사람들 → 공동체·신분 집단. 신분·계급명에만 쓰고 민족·지역명에는 va-", "tags": [], "id": "w334"}, {"head": "las", "input": "las", "mean": "먹이", "n": 335, "note": "e-las 먹이터", "tags": [], "id": "w335"}, {"head": "ratta", "input": "ratta", "mean": "멍에", "n": 336, "note": "", "tags": [], "id": "w336"}, {"head": "el-", "input": "el-", "mean": "~주의 (접두사)", "n": 337, "note": "대부분 후대 합성어로 붙음(el·어근). 이니셜은 접두사가 아닌 어근의 첫 글자. 단 부정 pe-는 P로 남김", "tags": [], "id": "w337"}, {"head": "leppe", "input": "leppe", "mean": "정합", "n": 338, "note": "el·leppe 정합주의", "tags": [], "id": "w338"}, {"head": "cateska", "input": "cateska", "mean": "품을 팔다, 삯일하다", "n": 339, "note": "일반적인 '일하다'는 atar. 무산자 Asura cateska p'etako eko-asiel(A.S.P.E.)", "tags": [], "id": "w339"}, {"head": "Ekete Aske a Esir·kyrlevre a Akatar, Liska a-Eklaia", "input": "ekete aske a esir·kyrlevre a @ak|atar, liska a^eklaia", "mean": "국제 노동자 상호원조 기구 에클레아 지부 (ÉACALÊ)", "n": 340, "note": "약칭 ÉACALÉ [eaˈkale] 에아칼레(이전 ÉACALÊ). 근대 명칭이라 연관 속격 a는 접어로 따로 씀. 약칭은 원래 단어의 악센트를 살려 적음", "tags": ["정당"], "id": "w340"}, {"head": "Vau a-Eklaia l'Asura Cateska P'etako Eko·asiel El·leppe", "input": "vau a^eklaia l'asura cateska p'etako eko·asiel el·leppe", "mean": "에클레아 무산자 정합주의당 (VÊASPAL)", "n": 341, "note": "약칭 VÉASPAL [veˈaspal] 베아스팔(이전 VÊASPAL), 산 이름 Véaspal과 같음. ÉACALÉ 소속. 약칭은 원래 단어의 악센트를 살려 적음", "tags": ["정당"], "id": "w341"}, {"head": "Vau Irkua El·leppe", "input": "vau @irkua el·leppe", "mean": "통일 정합주의당 (VIL)", "n": 342, "note": "약칭 VIL [vil] 빌. ÉACALÊ 소속", "tags": ["정당"], "id": "w342"}, {"head": "Pairkua a Arata El·leppe", "input": "pairkua a arata el·leppe", "mean": "국민 정합주의 연맹 (PAL)", "n": 344, "note": "약칭 PAL [pal] 팔. ÉACALÊ 소속. 근대 명칭이라 연관 속격 a는 따로 씀. 이전: akla(사어)", "tags": ["정당"], "id": "w344"}, {"head": "aspal", "input": "aspal", "mean": "(B 기원) 산의 옛 이름, 원뜻 불명", "n": 346, "note": "에클라이아어 이전 원주민어 B의 지명. 에클레아어 단계에서 존칭 ve를 붙여 Ve·aspal로 부름 (이전: 에클라이아어 단계 Ve-a-aspal. 이전 안 aspai, aspaa, aspar)", "tags": ["B 기원", "지명"], "id": "w346"}, {"head": "Ve·aspal", "input": "ve·aspal", "mean": "산 이름 (눈 덮인 아스파이 산)", "n": 347, "note": "Véaspal [veˈaspal] 베아스팔. 에클레아어 단계 합성어(존칭 ve + aspal). 에클레아 무산자당 약칭 VÉASPAL과 같은 형태 (이전: ve-a-aspal, Vêaspal)", "tags": ["지명"], "id": "w347"}, {"head": "liska", "input": "liska", "mean": "지부, 분파", "n": 348, "note": "Lisque [lisk] 리스크", "tags": [], "id": "w348"}, {"head": "iversa", "input": "iversa", "mean": "뒤엎다, 혁명", "n": 349, "note": "Ivèrche [iˈveʁʃ] 이베르슈. '뒤엎다'가 근대에 '혁명'으로 확대. 형용사형 a Ivèrche", "tags": [], "id": "w349"}, {"head": "Arte a Iversa El·leppe", "input": "arte a iversa el·leppe", "mean": "혁명적 정합주의 위원회 (AIL)", "n": 350, "note": "약칭 AIL [ail] 아일. ÉACALÊ 소속", "tags": ["정당"], "id": "w350"}, {"head": "seprua", "input": "seprua", "mean": "목소리", "n": 351, "note": "대화에서 추가", "tags": [], "id": "w351"}, {"head": "kate", "input": "kate", "mean": "잃다", "n": 352, "note": "대화에서 추가", "tags": [], "id": "w352"}, {"head": "ispika", "input": "ispika", "mean": "꿈꾸다", "n": 353, "note": "대화에서 추가", "tags": [], "id": "w353"}, {"head": "soiva", "input": "soiva", "mean": "견디다, 참다", "n": 354, "note": "대화에서 추가. 불관용은 pe-soiva", "tags": [], "id": "w354"}, {"head": "arota", "input": "arota", "mean": "잊다", "n": 355, "note": "대화에서 추가", "tags": [], "id": "w355"}, {"head": "ascoa", "input": "ascoa", "mean": "마음", "n": 356, "note": "대화에서 추가", "tags": [], "id": "w356"}, {"head": "ikia", "input": "ikia", "mean": "두렵다", "n": 357, "note": "대화에서 추가", "tags": [], "id": "w357"}, {"head": "tetaloi", "input": "tetaloi", "mean": "머뭇거리다", "n": 358, "note": "제망매가 번역에서 추가. 첫 음절 반복(te-ta)", "tags": [], "id": "w358"}, {"head": "tosi", "input": "@tosi", "mean": "누이", "n": 359, "note": "제망매가 번역에서 추가. 친족어라 비음형 화석", "tags": ["비음형 화석", "생물"], "id": "w359"}, {"head": "veila", "input": "veila", "mean": "잎", "n": 360, "note": "제망매가 번역에서 추가", "tags": [], "id": "w360"}, {"head": "kepla", "input": "kepla", "mean": "떨어지다 (낙하)", "n": 361, "note": "제망매가 번역에서 추가. @siku(미끄러지다)와 구별", "tags": [], "id": "w361"}, {"head": "ruva", "input": "ruva", "mean": "바람", "n": 362, "note": "제망매가 번역에서 추가. acura(폭풍)와 구별되는 일반적인 바람", "tags": [], "id": "w362"}, {"head": "etli", "input": "etli", "mean": "이르다 (早)", "n": 363, "note": "제망매가 번역에서 추가. etlika(새벽)에서 역형성", "tags": [], "id": "w363"}, {"head": "rel", "input": "rel", "mean": "가을", "n": 364, "note": "제망매가 번역에서 추가", "tags": [], "id": "w364"}, {"head": "air-", "input": "air-", "mean": "~처럼, ~같이", "n": 365, "note": "제망매가 번역에서 추가. air(모양)에서 문법화", "tags": [], "id": "w365"}, {"head": "kir", "input": "kir", "mean": "만나다", "n": 366, "note": "제망매가 번역에서 추가", "tags": [], "id": "w366"}, {"head": "tesva", "input": "tesva", "mean": "기다리다", "n": 367, "note": "제망매가 번역에서 추가", "tags": [], "id": "w367"}, {"head": "purarte", "input": "purarte", "mean": "내세, 저승", "n": 368, "note": "제망매가 번역에서 추가. pur(저)+arte(모임) '저편의 모임'이 어휘화된 계승어", "tags": [], "id": "w368"}, {"head": "pasva", "input": "pasva", "mean": "고통", "n": 369, "note": "대화에서 추가", "tags": [], "id": "w369"}, {"head": "laspe~areta", "input": "@laspe~areta", "mean": "산파", "n": 370, "note": "에클라이아어 단계 합성어. 여성+일으키다 '일으키는 여인'. Hebamme(heben), levatrice와 같은 발상. 이전 안 laspe~loi(산모로 읽힘), aisa~laspe(비모음+l) 폐기", "tags": ["비음형 화석", "생물"], "id": "w370"}, {"head": "apre~la", "input": "apre~la", "mean": "역사", "n": 371, "note": "에클라이아어 단계 합성어. 앞(옛)+말 '옛이야기'에서 서술된 과거, 과거의 흐름으로 확대 (histoire와 같은 경로)", "tags": [], "id": "w371"}, {"head": "pa~islepol", "input": "p'islepol", "mean": "힘, 강제, 폭력 (Gewalt)", "n": 372, "note": "에클라이아어 단계 합성어. 명사화 pa- + islepol(강제하다), 모음 앞 축약으로 p'", "tags": [], "id": "w372"}, {"head": "ace", "input": "ace", "mean": "윙윙거리다, 웅웅대다 (날벌레 소리)", "n": 373, "note": "의성어 어근. 파리 ace~ka의 앞 요소", "tags": [], "id": "w373"}, {"head": "orta-opia", "input": "ort'·@opia", "mean": "2인칭 복수 (에클레아어 자유 대명사)", "n": 374, "note": "에클레아어 단계 합성어. orta-(모든)+ogne(2단) '너희 모두'. 기존 2복 자유 대명사 dagne(@tepia)가 개(@caso)와 동음이 되어 생김", "tags": ["자유 대명사", "후대 합성어"], "id": "w374"}, {"head": "arata", "input": "arata", "mean": "국가", "n": 375, "note": "사어가 된 akla를 대신함", "tags": [], "id": "w375"}, {"head": "akkala~puro", "input": "akkala~puro", "mean": "왕국 1 (Kla의 계곡)", "n": 376, "note": "B at-kla pɯro (속격-강 Kla 계곡). A에서 tk를 kk로 동화, kl 사이 모음 삽입. Accalapre", "tags": ["B 기원", "지명"], "id": "w376"}, {"head": "urtei~sa", "input": "urtei~sa", "mean": "왕국 2 (해협의 남쪽, 초기 상륙지)", "n": 377, "note": "B t-rɯ ei ʃa (속격-좋은 습기 남쪽). B 내부: 첫 모음 복사 ɯt-, 유음 도치 tr→rt, 약모음 ɯ 모음 앞 탈락 → ɯrtei ʃa. Eurtêge", "tags": ["B 기원", "지명"], "id": "w377"}, {"head": "iro~sepi", "input": "iro~sepi", "mean": "왕국 3 (서쪽 + 민족 A)", "n": 378, "note": "B iro ʃemi (서쪽 + '좁다'에서 온 민족명). 장소 부류라 비음 없음. Irchépi", "tags": ["B 기원", "지명"], "id": "w378"}, {"head": "sora~so", "input": "sora~so", "mean": "왕국 4 (동쪽 + 민족 B)", "n": 379, "note": "B ʃora ʃo (동쪽 + '단검'에서 온 민족명). 장소 부류라 비음 없음. Chorage", "tags": ["B 기원", "지명"], "id": "w379"}, {"head": "orail", "input": "orail", "mean": "왕국 5 (경계의 땅)", "n": 380, "note": "B orail (경계). 장소 부류라 사람 표지 *N-·집합 -n이 붙지 않음. 민족명은 @orailit. Orêl", "tags": ["B 기원", "지명"], "id": "w380"}, {"head": "eppelot", "input": "eppelot", "mean": "왕국 6 (숲의 부대)", "n": 381, "note": "B et-pelo-n (속격-숲-부대). -n은 '쫓다'에서 문법화한 부대 접미사라 땅 이름에도 남음. A에서 tp를 pp로 동화. Éppélot", "tags": ["B 기원", "지명"], "id": "w381"}, {"head": "sepi", "input": "@sepi", "mean": "민족 A (좁은 사람들)", "n": 382, "note": "B N-ʃemi. 유생 부류라 비음형 화석. Dambi", "tags": ["B 기원", "민족명", "비음형 화석"], "id": "w382"}, {"head": "so", "input": "@so", "mean": "민족 B (단검의 사람들)", "n": 383, "note": "B N-ʃo. 유생 부류라 비음형 화석. Don", "tags": ["B 기원", "민족명", "비음형 화석"], "id": "w383"}, {"head": "orailit", "input": "@orailit", "mean": "경계 민족", "n": 384, "note": "B N-orail-n (사람-경계-집합). A에서 어말 자음군 lt 사이에 앞 모음 복사. Orêlind", "tags": ["B 기원", "민족명", "비음형 화석"], "id": "w384"}, {"head": "rei", "input": "rei", "mean": "해협 이름 (좋은 습기)", "n": 385, "note": "B rɯ ei. 약모음 ɯ가 모음 앞에서 탈락. Rê", "tags": ["B 기원", "지명"], "id": "w385"}, {"head": "pelo", "input": "pelo", "mean": "숲 이름 (왕국 6의 숲)", "n": 386, "note": "B pelo (숲). Pèle", "tags": ["B 기원", "지명"], "id": "w386"}, {"head": "atrepor", "input": "@atrepor", "mean": "동굴에 사는 흔한 동물", "n": 387, "note": "마태 8:20 번역에서 추가(여우 자리). 동물이라 비음형 화석", "tags": ["비음형 화석", "생물"], "id": "w387"}, {"head": "ailicis", "input": "ailicis", "mean": "동굴, (짐승의) 굴", "n": 388, "note": "마태 8:20 번역에서 추가", "tags": [], "id": "w388"}, {"head": "cipe", "input": "cipe", "mean": "둥지", "n": 389, "note": "마태 8:20 번역에서 추가", "tags": [], "id": "w389"}, {"head": "lere", "input": "@lere", "mean": "아들", "n": 390, "note": "친족어라 비음형 화석. '인간의 아들'은 합성어가 아닌 구 @lere a-liva", "tags": ["비음형 화석", "생물"], "id": "w390"}, {"head": "rate", "input": "@rate", "mean": "딸", "n": 391, "note": "친족어라 비음형 화석", "tags": ["비음형 화석", "생물"], "id": "w391"}, {"head": "iai", "input": "iai", "mean": "하늘", "n": 392, "note": "Yê [je]. 숫자 ie(5) Yé [je]와 동음, 철자로만 구별", "tags": [], "id": "w392"}, {"head": "attu", "input": "attu", "mean": "두다", "n": 393, "note": "", "tags": [], "id": "w393"}, {"head": "oskia", "input": "oskia", "mean": "눕히다", "n": 394, "note": "머리를 누이다(쉬다)에도 씀", "tags": [], "id": "w394"}, {"head": "sir^", "input": "sir", "mean": "관계절 표지 (명사 뒤, 관계절 앞)", "n": 395, "note": "지시사 sir의 접어형, 구강형 Chir [ʃiʁ]. 입력은 sir^. 절대격 논항(자동사 주어, 타동사 목적어)만 바로 관계화하고 능격 논항은 반피동 asti-를 거침. 빠진 자리는 비워 둠", "tags": [], "id": "w395"}, {"head": "risau", "input": "risau", "mean": "투쟁", "n": 396, "note": "인터내셔널가 번역에서 추가. etlir(전쟁)와 구별", "tags": [], "id": "w396"}, {"head": "tas", "input": "tas", "mean": "끝", "n": 397, "note": "인터내셔널가 번역에서 추가. tas(먹다)와 동음이의어(원가사 faim/fin과 같은 관계)", "tags": [], "id": "w397"}, {"head": "kiset", "input": "@kiset", "mean": "B 민족 전체 (에냥어 자칭 N-kiʃe-n '말하는 사람들'의 차용)", "n": 398, "note": "Ègnand [ˈeɲɑ̃] 에냥. B 원형 N-kiʃe-n [kĩʃẽn], 학술 명칭 N-kiʃe-n어. B 어근 kiʃe '말하다'는 B·F 공통 조상에서 물려받은 말이고, 이를 민족 자칭으로 쓴 것은 정복 뒤 Irchépi 시기 B의 혁신(F에는 대응하는 민족명 없음). 어두 k는 비음형에서 ŋ이 되어 탈락, ʃ는 gn. 언어명 Lévèle l'Ègnand(에클레아어 단계에서 만든 구라 속격이 모음 앞에서 축약, 입력 le-·@Kiset). @etlesta Ègnânde [eˈɲɑ̃d]와 강세·잠재 자음으로 구별", "tags": ["B 기원", "민족명", "비음형 화석"], "id": "w398"}, {"head": "powəxa", "input": "%powəxa", "mean": "F 민족 (포브르어 자칭 pʰowəχa의 차용)", "n": 399, "note": "Fovre [fovʁ] 포브르. F 원형 pʰowəχa, 어근 뜻 미정. 경로 pʰowəχa → fowəʁ → fowʁ → fovʁ(pʰ→f, χ→ʁ, 어말 a 탈락, ʁ 앞 ə 탈락, 중세 w→v). 언어명 Lévèle lé-Fovre(에클레아어 단계에서 만든 구, 입력 le-·%Powəxa). 에클라이아 F 화자는 난민 국가 집단과 약 130km 떨어진 지역 출신으로, pʰ→f 개신의 주변부([pʰ~ɸ] 변이)라 A 화자가 f로 받아들임. 가장 큰 난민 집단이 세운 국가의 방언 자칭은 Vischwa [ˈviʃwa]: 출신 지역 단계 pʰ→f·ə 탈락(fowχa) → 정착 후 약 300년 동안 wχ→χw 음위전환, 어두 f→v, o→u→y, y 뒤 χ→ç, y→i, ç→ʃ", "tags": ["F 기원", "민족명"], "id": "w399"}, {"head": "eril", "input": "eril", "mean": "여행", "n": 400, "note": "Éril [ˈeʁil]. 역사가 Érquepêril Urre Calêl Calêllurre의 이름 요소(erkupe~eril)", "tags": [], "id": "w400"}, {"head": "yrra", "input": "yrra", "mean": "으르렁거리다", "n": 401, "note": "Urre [yʁʁ]. 굴리는 r을 겹친 의성어 어근. 역사가 Érquepêril의 부성", "tags": [], "id": "w401"}, {"head": "ka~lael", "input": "@ka~lael", "mean": "수리, 매", "n": 402, "note": "Alêl [aˈlel]. ka(날짐승) + lael(큰). 인명 요소로는 고유명사라 구강형 Calêl [kaˈlel](역사가 Érquepêril의 모성)", "tags": ["비음형 화석", "생물"], "id": "w402"}];
+var STORE_LEX = "eklea-standalone-words-v1";
+function lexLoad() {
+  var raw = load(STORE_LEX);
+  if (raw) { try { var a = JSON.parse(raw); if (Array.isArray(a)) return a; } catch (e) {} }
+  return SEED_WORDS.map(function (w) { return Object.assign({}, w); });
+}
+function lexPersist() { save(STORE_LEX, JSON.stringify(lex.words)); }
+function lexRefresh() {
+  lex.words.sort(function (x, y) { return (x.n || 0) - (y.n || 0); });
+  lexPersist(); lexCache = {}; renderLex(); renderDiff();
+}
+function newId() { return "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function startLex() {
+  lex.words = lexLoad();
+  lex.col = {
+    doc: function (id) {
+      var docId = id || newId();
+      return {
+        set: function (data) {
+          var o = Object.assign({}, data, { id: docId });
+          var i = lex.words.findIndex(function (w) { return w.id === docId; });
+          if (i >= 0) lex.words[i] = o; else lex.words.push(o);
+          lexRefresh(); return Promise.resolve();
+        },
+        delete: function () {
+          lex.words = lex.words.filter(function (w) { return w.id !== docId; });
+          lexRefresh(); return Promise.resolve();
+        }
+      };
+    }
+  };
+  lex.status = "ready";
+  renderLex();
+}
+$("lexReset").addEventListener("click", function () {
+  if (!confirm("단어장을 이 파일에 내장된 초기 상태로 되돌릴까요? 브라우저에 저장한 수정 내용은 사라집니다.")) return;
+  lex.words = SEED_WORDS.map(function (w) { return Object.assign({}, w); }); lexRefresh();
+});
+
+var savedInput = load(STORE_INPUT);
+input.value = savedInput !== null && savedInput !== "" ? savedInput : SAMPLE;
+showTab("cats");
+compileAll(); renderErrors(); renderOutput();
+showView(load(STORE_VIEW) === "lex" ? "lex" : "conv");
+renderLex();
+startLex();
+
+if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
+})();
+</script>
+
+</body></html>
