@@ -210,6 +210,9 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
 .gen-bar input.lang { font-family: var(--font-lang); width: 7em; }
+.gen-counts { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gen-counts::before { content: "생성"; font-size: 0.85rem; color: var(--muted); margin-right: 2px; }
+.gen-counts button { min-width: 3.6em; }
 .gen-head, .gen-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr) auto; gap: 10px; align-items: baseline; }
 .gen-row .ko { font-family: var(--font-ui); font-size: 0.95rem; overflow-wrap: anywhere; min-width: 0; }
 .gen-head { padding: 6px 2px 4px; }
@@ -261,13 +264,14 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
         <div class="field"><label for="gNasal">비음형</label>
           <select id="gNasal"><option value="oral">구강형</option><option value="nasal">비음형 (@)</option><option value="mix">섞어서</option></select></div>
         <div class="field"><label for="gStart">시작 글자 (선택)</label><input id="gStart" class="lang" autocomplete="off" spellcheck="false" maxlength="3"></div>
-        <div class="field"><label for="gCount">생성 개수 (1~100)</label><input id="gCount" type="number" min="1" max="100" step="1" value="20" inputmode="numeric"></div>
       </div>
       <div class="gen-bar">
         <label class="check"><input type="checkbox" id="gHomo" checked> 단어장과 같은 발음인 것 제외</label>
         <label class="check"><input type="checkbox" id="gNear" checked> 단어장과 유사음(한 음소 차이)인 것 제외</label>
         <label class="check"><input type="checkbox" id="gHard" checked> 발음하기 어려운 형태 제외</label>
-        <button id="gRun" type="button" class="primary">생성</button>
+        <span class="gen-counts" id="gRun" role="group" aria-label="생성 개수">
+          <button type="button" class="primary" data-n="1">1개</button><button type="button" class="primary" data-n="3">3개</button><button type="button" class="primary" data-n="10">10개</button><button type="button" class="primary" data-n="30">30개</button><button type="button" class="primary" data-n="100">100개</button><button type="button" class="primary" data-n="300">300개</button>
+        </span>
       </div>
       <p class="hint" id="gHint"></p>
       <p class="status" id="gStatus"></p>
@@ -1787,7 +1791,7 @@ var GEN_HINTS = {
   e: "단어장의 에클레아어 형태끼리 에클레아어 단계에서 합친 새 합성어(·)입니다. 뜻은 두 구성 요소의 조합으로 보여 줍니다.",
   b: "에냥어 음소(p t k ʃ s m r l, 모음 a e i o u ɯ)로 원형을 만들고, 차용 규칙(ʃ → s, ɯ → u, m → p)으로 에클라이아어 형태를 얻은 뒤 변환합니다.",
   bp: "에냥어 사람·민족 이름 N-어근-n을 비음형 @어근+t로 받습니다. 어근이 자음으로 끝나면 끝 모음을 복사해 넣습니다(orail-n → @orailit).",
-  f: "포브르어 음소(pʰ tʰ kʰ, b d g, ᵐb ⁿd ᵑg, s χ l m n j w, 모음 a e i o u ə)와 CV(C) 음절로 원형을 만들어 % 단어로 변환합니다."
+  f: "포브르어 음소(pʰ tʰ kʰ, b d g, ᵐb ⁿd ᵑg, s χ l m n j w, 모음 a e i o u ə)와 (C)V(C) 음절로 원형을 만들어 % 단어로 변환합니다."
 };
 function pickW(arr) { var t = 0, i; for (i = 0; i < arr.length; i++) t += arr[i][1]; var r = Math.random() * t; for (i = 0; i < arr.length; i++) { r -= arr[i][1]; if (r < 0) return arr[i][0]; } return arr[arr.length - 1][0]; }
 function sylCount(n) { return n > 0 ? n : pickW([[1, 2], [2, 6], [3, 3]]); }
@@ -1900,11 +1904,9 @@ function genPool() {
       !/지명|민족명|정당|자유 대명사/.test(tg) && !/인칭|왕국|도시명|이름|해협|접두사|표지|지시사|보문소|의문사|\(사어\)|과거형|현재형|^부정|^긍정|^(이|저|그)$/.test(w.mean || "") && !!firstMean(w.mean);
   });
 }
-/* 생성 개수: 최소 1, 최대 100. 100개를 넘으면 한 화면에서 비교하기 어렵고, 유사음 검사 시간도 개수에 비례해 늘어남 */
-function genCount() { var raw = $("gCount").value.trim(), v = Math.round(+raw); if (!raw || isNaN(v)) return 20; return Math.max(1, Math.min(v, 100)); }
-function runGen() {
+function runGen(want) {
+  want = want || 20;
   var origin = $("gOrigin").value, n = +$("gSyl").value, nas = $("gNasal").value;
-  var want = genCount(); $("gCount").value = want;
   var start = $("gStart").value.trim().toLowerCase(), noHomo = $("gHomo").checked, noNear = $("gNear").checked, noHard = $("gHard").checked;
   var st = $("gStatus"), list = $("gList");
   list.innerHTML = "";
@@ -1982,7 +1984,7 @@ function genHint() {
   $("gSyl").disabled = o === "e";
 }
 $("gOrigin").addEventListener("change", genHint);
-$("gRun").addEventListener("click", runGen);
+$("gRun").addEventListener("click", function (e) { var b = e.target.closest("button[data-n]"); if (b) runGen(+b.dataset.n); });
 genHint();
 
 function showView(v) {
