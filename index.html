@@ -1790,20 +1790,41 @@ var GEN_HINTS = {
 };
 function pickW(arr) { var t = 0, i; for (i = 0; i < arr.length; i++) t += arr[i][1]; var r = Math.random() * t; for (i = 0; i < arr.length; i++) { r -= arr[i][1]; if (r < 0) return arr[i][0]; } return arr[arr.length - 1][0]; }
 function sylCount(n) { return n > 0 ? n : pickW([[1, 2], [2, 6], [3, 3]]); }
-var A_ON = [["", 3], ["p", 2], ["t", 2], ["k", 2], ["c", 2], ["s", 2], ["v", 2], ["r", 2], ["l", 2], ["pl", 0.4], ["tr", 0.4], ["pr", 0.4], ["kr", 0.3], ["vr", 0.3], ["sl", 0.3], ["cl", 0.2]];
-var A_NU = [["a", 4], ["e", 4], ["i", 3], ["o", 3], ["u", 3], ["y", 1], ["ai", 0.6], ["ia", 0.5], ["ie", 0.4], ["au", 0.3], ["ua", 0.3], ["ei", 0.3]];
-var A_COD_MID = [["", 6], ["r", 1.2], ["l", 1], ["s", 1]];
+var A_ON = [["", 3], ["p", 2], ["t", 2], ["k", 2], ["c", 2], ["s", 2], ["v", 2], ["r", 2], ["l", 2], ["pl", 0.4], ["tl", 0.3], ["kl", 0.4], ["cl", 0.2], ["vl", 0.15], ["sl", 0.3], ["tr", 0.4], ["pr", 0.4], ["kr", 0.2], ["vr", 0.2]];
+var A_NU = [["a", 4], ["e", 4], ["i", 3], ["o", 3], ["u", 3], ["y", 1], ["ia", 0.8], ["ai", 0.6], ["ie", 0.3], ["ei", 0.3], ["oi", 0.3], ["au", 0.25], ["ua", 0.2], ["io", 0.1]];
+var A_COD_MID = [["", 6], ["r", 1.2], ["l", 0.6], ["s", 1.2]];
 var A_COD_END = [["", 6], ["l", 1], ["r", 1], ["s", 1], ["t", 0.6], ["k", 0.4], ["c", 0.5], ["v", 0.3]];
+/* 에클라이아어 음소배열: 어두 자음군 없음(Akla처럼 모음을 덧붙임), 어말 자음군 없음,
+   모음 사이 자음 연쇄는 홑자음, 장자음, 온셋 자음군(C+l, vr, C+r), 코다 r/s + 홑자음, lk lt만 */
+var A_MED_OK = /^(?:[ptkcsvrl]|([ptkcsvrl])\1|[ptkcvsr]l|[ptkvs]r|r[ptkcsvl]|s[ptkcvl]|l[kt])$/;
+function aLegal(s) {
+  var w = s.replace(/^@/, "");
+  if (/^[^aeiouy]{2}/.test(w)) return false;
+  if (/[^aeiouy]{2}$/.test(w)) return false;
+  if (/[mnŋzž]/.test(w)) return false;
+  var m, re = /[aeiouy]([^aeiouy]+)(?=[aeiouy])/g;
+  while ((m = re.exec(w))) { if (!A_MED_OK.test(m[1])) return false; re.lastIndex = m.index + 1; }
+  return true;
+}
+function aProthesis(s) {
+  /* 어두 자음군은 그 단어의 첫 모음을 앞에 덧붙여 고침 (kl → Akla 유형) */
+  if (!/^[^aeiouy]{2}/.test(s)) return s;
+  var v = (s.match(/[aeiouy]/) || ["a"])[0];
+  return v + s;
+}
 function genA(n) {
-  var s = "";
-  for (var i = 0; i < n; i++) {
-    var on = pickW(A_ON);
-    if (i === 0 && /^(kl|cl)/.test(on)) on = on[0];
-    if (i > 0 && on === "" && /[aeiouy]$/.test(s)) on = pickW(A_ON.slice(1, 9));
-    if (i > 0 && on.length > 1 && /[rls]$/.test(s)) on = on[0];
-    s += on + pickW(A_NU) + (i === n - 1 ? pickW(A_COD_END) : pickW(A_COD_MID));
+  for (var tries = 0; tries < 50; tries++) {
+    var s = "";
+    for (var i = 0; i < n; i++) {
+      var on = i === 0 ? pickW([["", 7]].concat(A_ON.slice(1, 9))) : pickW(A_ON.slice(1));
+      if (i > 0 && on.length > 1 && /[^aeiouy]$/.test(s)) on = on[on.length - 1] === "l" || on[on.length - 1] === "r" ? on[0] : on;
+      s += on + pickW(A_NU) + (i === n - 1 ? pickW(A_COD_END) : pickW(A_COD_MID));
+    }
+    /* 장자음은 어휘집에서 드묾 */
+    if (/([^aeiouy])\1/.test(s) && Math.random() < 0.8) continue;
+    if (aLegal(s)) return s;
   }
-  return s.replace(/tk/g, "kk");
+  return null;
 }
 var B_C = [["p", 2], ["t", 2], ["k", 2], ["ʃ", 2], ["s", 1], ["m", 1.5], ["r", 2], ["l", 2]];
 var B_V = [["a", 3], ["e", 3], ["i", 3], ["o", 3], ["u", 2], ["ɯ", 2], ["ei", 0.4], ["ai", 0.4]];
@@ -1815,9 +1836,11 @@ function genB(n) {
     s += on + pickW(B_V);
     if (Math.random() < (i === n - 1 ? 0.25 : 0.1)) s += pickW([["r", 1], ["l", 1]]);
   }
+  /* 에냥어도 CV(C): 자음 셋 연쇄와 rl, lr 같은 유음 연쇄는 만들지 않음 */
+  if (/[^aeiouɯ]{3}|[rl][rl](?![aeiouɯ])|lr|rl/.test(s.replace(/ei|ai/g, "a"))) return null;
   return s;
 }
-function bToA(b) { return b.replace(/ʃ/g, "s").replace(/ɯ/g, "u").replace(/m/g, "p"); }
+function bToA(b) { return aProthesis(b.replace(/ʃ/g, "s").replace(/ɯ/g, "u").replace(/m/g, "p")); }
 function bPerson(b) {
   var a = bToA(b);
   if (/[aeiouy]$/.test(a)) return "@" + a + "t";
@@ -1829,13 +1852,12 @@ var F_V = [["a", 4], ["e", 3], ["i", 3], ["o", 3], ["u", 3], ["ə", 2]];
 function genF(n) {
   var s = "";
   for (var i = 0; i < n; i++) {
-    var on = (i === 0 && Math.random() < 0.15) ? "" : pickW(F_C);
+    var on = pickW(F_C); /* 포브르어 음절은 CV(C): 온셋 필수 */
     var v = pickW(F_V);
     if (on === "w" && /[ou]/.test(v)) v = "a";
     s += on + v;
     if (Math.random() < (i === n - 1 ? 0.2 : 0.15)) s += pickW([["l", 2], ["s", 1], ["x", 1], ["h", 0.6]]);
   }
-  if (!/[^aeiouə]/.test(s.slice(0, 1)) && /^[aeiouə][aeiouə]/.test(s)) s = "l" + s;
   return s;
 }
 var F_IPA = { p: "pʰ", t: "tʰ", k: "kʰ", x: "χ", "ƀ": "ᵐb", "đ": "ⁿd", "ǥ": "ᵑg" };
@@ -1848,7 +1870,7 @@ function genE(pool) {
   if (a === b) return null;
   return { input: a.input + "·" + b.input, meaning: firstMean(a.mean) + " + " + firstMean(b.mean) };
 }
-function firstMean(m) { return (m || "").split(/[,(/]/)[0].trim(); }
+function firstMean(m) { return (m || "").replace(/^\s*\([^)]*\)\s*/, "").split(/[,(/]/)[0].trim(); }
 function hardForm(ipa) {
   var x = (ipa || "").replace(/[ˈˌ‿\s]/g, "").normalize("NFC");
   var sg = ipaSegs(x);
@@ -1860,6 +1882,11 @@ function hardForm(ipa) {
   if (/̃l/.test(x)) return true;
   if (/^lal|lj|^ɛ̃|^œl/.test(x)) return true;
   if ((x.match(/[œø]/g) || []).length > 1) return true;
+  /* 모음 충돌: 같은 모음이 잇달아 오거나(ee), 약모음 ə 뒤에 모음이 바로 옴(kəe) */
+  for (var j = 1; j < sg.length; j++) {
+    var a1 = sg[j - 1], a2 = sg[j], isV = /[aeiouyəœøɛɔɑ]/;
+    if (isV.test(a1) && isV.test(a2) && (a1 === a2 || /^ə/.test(a1))) return true;
+  }
   return false;
 }
 function genPool() {
@@ -1868,7 +1895,7 @@ function genPool() {
     /* 일반 어휘만: 고유명사, 대명사, 문법 표지, 옛 합성어는 뺌 */
     var tg = tagsOf(w).join(" ");
     return /^[@%&]?[a-zəɯy|']+$/u.test(i) && !/^\d/.test(w.mean || "") && i.replace(/[@%&|']/g, "").length >= 2 && i.length <= 9 &&
-      !/지명|민족명|정당|자유 대명사/.test(tg) && !/인칭|왕국|도시명|이름|해협|접두사|표지|지시사|보문소|의문사|\(사어\)/.test(w.mean || "");
+      !/지명|민족명|정당|자유 대명사/.test(tg) && !/인칭|왕국|도시명|이름|해협|접두사|표지|지시사|보문소|의문사|\(사어\)|과거형|현재형|^부정|^긍정|^(이|저|그)$/.test(w.mean || "") && !!firstMean(w.mean);
   });
 }
 function runGen() {
@@ -1887,13 +1914,14 @@ function runGen() {
     tries++;
     var c = null, k = sylCount(n);
     if (origin === "a") {
-      var r = genA(k); if (start && r.indexOf(start) !== 0) continue;
+      var r = genA(k); if (!r || (start && r.indexOf(start) !== 0)) continue;
       var at = nas === "nasal" || (nas === "mix" && Math.random() < 0.5);
       c = { input: (at ? "@" : "") + r, native: "" };
     } else if (origin === "e") {
       c = genE(pool); if (!c) continue; if (start && c.input.replace(/^[@%&]/, "").indexOf(start) !== 0) continue;
     } else if (origin === "b" || origin === "bp") {
-      var b = genB(k); if (start && b.indexOf(start) !== 0) continue;
+      var b = genB(k); if (!b || (start && b.indexOf(start) !== 0)) continue;
+      if (!aLegal(origin === "bp" ? bPerson(b) : bToA(b))) continue;
       if (origin === "bp") c = { input: bPerson(b), native: "N-" + b + "-n" };
       else { var at2 = nas === "nasal" || (nas === "mix" && Math.random() < 0.5); c = { input: (at2 ? "@" : "") + bToA(b), native: b }; }
     } else {
