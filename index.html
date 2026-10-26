@@ -210,7 +210,8 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
 .gen-bar input.lang { font-family: var(--font-lang); width: 7em; }
-.gen-head, .gen-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 10px; align-items: baseline; }
+.gen-head, .gen-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr) auto; gap: 10px; align-items: baseline; }
+.gen-row .ko { font-family: var(--font-ui); font-size: 0.95rem; overflow-wrap: anywhere; min-width: 0; }
 .gen-head { padding: 6px 2px 4px; }
 .gen-row { border-top: 1px solid var(--line); padding: 8px 2px; }
 .gen-row .src { font-family: var(--font-lang); font-size: 1rem; overflow-wrap: anywhere; min-width: 0; }
@@ -269,7 +270,7 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
       </div>
       <p class="hint" id="gHint"></p>
       <p class="status" id="gStatus"></p>
-      <div class="gen-head label"><span>원형</span><span>에클레아어</span><span>발음</span><span></span></div>
+      <div class="gen-head label"><span>원형</span><span>에클레아어</span><span>발음</span><span>한글</span><span></span></div>
       <div id="gList"></div>
     </div>
   </section>
@@ -1923,7 +1924,7 @@ function runGen() {
     var sp2 = document.createElement("span"); sp2.className = "sp"; sp2.textContent = c.spell;
     if (c.homo) { var hb = document.createElement("span"); hb.className = "badge"; hb.textContent = "같은 발음"; hb.title = c.homo.join("\n"); sp2.appendChild(hb); var hs = document.createElement("small"); hs.className = "ko-sm"; hs.textContent = c.homo.slice(0, 3).join(", "); sp2.appendChild(hs); }
     var ip = document.createElement("span"); ip.className = "ip"; ip.textContent = "[" + c.ipa + "]";
-    var ko = document.createElement("span"); ko.className = "ko-sm"; ko.textContent = c.ko; ip.appendChild(ko);
+    var ko = document.createElement("span"); ko.className = "ko"; ko.textContent = c.ko;
     var acts = document.createElement("span"); acts.className = "acts";
     var b1 = document.createElement("button"); b1.type = "button"; b1.textContent = "변환기에 넣기";
     b1.addEventListener("click", function () { input.value = (input.value.replace(/\s+$/, "") + (input.value.trim() ? "\n" : "") + c.input); save(STORE_INPUT, input.value); renderOutput(); showView("conv"); });
@@ -1937,7 +1938,7 @@ function runGen() {
       previewForm();
     });
     acts.appendChild(b1); acts.appendChild(b2);
-    row.appendChild(src); row.appendChild(sp2); row.appendChild(ip); row.appendChild(acts); frag.appendChild(row);
+    row.appendChild(src); row.appendChild(sp2); row.appendChild(ip); row.appendChild(ko); row.appendChild(acts); frag.appendChild(row);
   });
   list.appendChild(frag);
 }
