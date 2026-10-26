@@ -210,7 +210,8 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
 .gen-bar input.lang { font-family: var(--font-lang); width: 7em; }
-.ipa-pad { flex-basis: 100%; }
+.ipa-pad, .start-note { flex-basis: 100%; }
+.start-note { margin: 0; }
 .ipa-keys { display: flex; flex-wrap: wrap; gap: 4px; }
 .ipa-keys button { font-family: var(--font-lang); font-size: 1rem; min-width: 2.2em; padding: 3px 6px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); cursor: pointer; }
 .ipa-keys button:hover { border-color: var(--muted); }
@@ -269,8 +270,9 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
         <div class="field"><label for="gNasal">비음형</label>
           <select id="gNasal"><option value="oral">구강형</option><option value="nasal">비음형 (@)</option><option value="mix">섞어서</option></select></div>
         <div class="field"><label for="gStartBy">시작 글자 기준</label>
-          <select id="gStartBy"><option value="root">원형</option><option value="spell">에클레아어 표기</option><option value="ipa">발음</option></select></div>
+          <select id="gStartBy"><option value="root">원형 (권장)</option><option value="spell">에클레아어 표기</option><option value="ipa">발음</option></select></div>
         <div class="field"><label for="gStart">시작 글자 (선택)</label><input id="gStart" class="lang" autocomplete="off" spellcheck="false" maxlength="8"></div>
+        <p class="hint start-note" id="gStartNote" hidden>원형(에클라이아어형) 기준 검색을 권장합니다. 표기·발음 기준은 원형을 변환해 본 뒤에 거르므로 더 느리고, 드문 첫소리는 후보가 적게 나올 수 있습니다.</p>
         <div class="ipa-pad" id="gIpaPad" hidden role="group" aria-label="발음 기호 넣기">
           <div class="ipa-keys"></div>
           <p class="hint">자판으로도 칠 수 있습니다: R→ʁ, S→ʃ, Z→ʒ, J→ɲ, E→ɛ, O→ɔ, 9→œ, @→ə / 비모음 A~→ɑ̃, E~→ɛ̃, O~→ɔ̃, 9~→œ̃</p>
@@ -2051,7 +2053,7 @@ function insertAtCaret(el, s) {
     var nb = conv(before), na = conv(after);
     if (nb + na !== el.value) { el.value = nb + na; el.selectionStart = el.selectionEnd = nb.length; }
   });
-  function syncBy() { var ipa = $("gStartBy").value === "ipa"; $("gIpaPad").hidden = !ipa; $("gStart").classList.toggle("ipa", ipa); }
+  function syncBy() { var ipa = $("gStartBy").value === "ipa"; $("gIpaPad").hidden = !ipa; $("gStartNote").hidden = $("gStartBy").value === "root"; $("gStart").classList.toggle("ipa", ipa); }
   $("gStartBy").addEventListener("change", syncBy); syncBy();
 })();
 $("gRun").addEventListener("click", function (e) { var b = e.target.closest("button[data-n]"); if (b) runGen(+b.dataset.n); });
