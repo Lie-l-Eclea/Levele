@@ -210,6 +210,11 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
 .gen-bar input.lang { font-family: var(--font-lang); width: 7em; }
+.ipa-pad { flex-basis: 100%; }
+.ipa-keys { display: flex; flex-wrap: wrap; gap: 4px; }
+.ipa-keys button { font-family: var(--font-lang); font-size: 1rem; min-width: 2.2em; padding: 3px 6px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); cursor: pointer; }
+.ipa-keys button:hover { border-color: var(--muted); }
+.ipa-pad .hint { margin: 4px 0 0; }
 .gen-counts { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .gen-counts::before { content: "생성"; font-size: 0.85rem; color: var(--muted); margin-right: 2px; }
 .gen-counts button { min-width: 3.6em; }
@@ -263,7 +268,13 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
           <select id="gSyl"><option value="0">상관없음</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
         <div class="field"><label for="gNasal">비음형</label>
           <select id="gNasal"><option value="oral">구강형</option><option value="nasal">비음형 (@)</option><option value="mix">섞어서</option></select></div>
-        <div class="field"><label for="gStart">시작 글자 (선택)</label><input id="gStart" class="lang" autocomplete="off" spellcheck="false" maxlength="3"></div>
+        <div class="field"><label for="gStartBy">시작 글자 기준</label>
+          <select id="gStartBy"><option value="root">원형</option><option value="spell">에클레아어 표기</option><option value="ipa">발음</option></select></div>
+        <div class="field"><label for="gStart">시작 글자 (선택)</label><input id="gStart" class="lang" autocomplete="off" spellcheck="false" maxlength="8"></div>
+        <div class="ipa-pad" id="gIpaPad" hidden role="group" aria-label="발음 기호 넣기">
+          <div class="ipa-keys"></div>
+          <p class="hint">자판으로도 칠 수 있습니다: R→ʁ, S→ʃ, Z→ʒ, J→ɲ, E→ɛ, O→ɔ, 9→œ, @→ə / 비모음 A~→ɑ̃, E~→ɛ̃, O~→ɔ̃, 9~→œ̃</p>
+        </div>
       </div>
       <div class="gen-bar">
         <label class="check"><input type="checkbox" id="gHomo" checked> 단어장과 같은 발음인 것 제외</label>
@@ -1907,7 +1918,8 @@ function genPool() {
 function runGen(want) {
   want = want || 20;
   var origin = $("gOrigin").value, n = +$("gSyl").value, nas = $("gNasal").value;
-  var start = $("gStart").value.trim().toLowerCase(), noHomo = $("gHomo").checked, noNear = $("gNear").checked, noHard = $("gHard").checked;
+  var startBy = $("gStartBy").value, startRaw = $("gStart").value.trim();
+  var start = startBy === "root" ? startRaw.toLowerCase() : "", post = startBy === "root" ? null : startTest(startBy, startRaw), noHomo = $("gHomo").checked, noNear = $("gNear").checked, noHard = $("gHard").checked;
   var st = $("gStatus"), list = $("gList");
   list.innerHTML = "";
   if (lex.status !== "ready") { st.textContent = "단어장을 불러온 뒤 생성할 수 있습니다."; return; }
@@ -1916,8 +1928,9 @@ function runGen(want) {
   known.forEach(function (k) { var hk = homoKey(k.ipa); if (hk) (keys[hk] = keys[hk] || []).push(k.label); var sgs = ipaSegs(k.ipa); (byLen[sgs.length] = byLen[sgs.length] || []).push(sgs); });
   var heads = {}; lex.words.forEach(function (w) { heads[(w.input || "").toLowerCase()] = true; heads[(w.head || "").toLowerCase()] = true; });
   var pool = origin === "e" ? genPool() : null;
-  var res = [], seen = {}, tries = 0;
-  while (res.length < want && tries < want * 300) {
+  var res = [], seen = {}, tries = 0, t0 = Date.now();
+  /* 표기·발음 기준은 변환 뒤에 거르므로 시도가 많이 듦: 시간 상한 4초 */
+  while (res.length < want && tries < want * (post ? 3000 : 300) && Date.now() - t0 < 4000) {
     tries++;
     var c = null, k = sylCount(n);
     if (origin === "a") {
@@ -1938,6 +1951,7 @@ function runGen(want) {
     if (heads[c.input.toLowerCase()] || seen[c.input]) continue;
     var out = convert(c.input), ipa = out.ipa.trim().replace(/‿/g, ""), sp = out.main.trim();
     if (!sp || seen["s:" + sp.toLowerCase()]) continue;
+    if (post && !post(sp, ipa)) continue;
     if (noHard && hardForm(ipa)) continue;
     var homoOf = keys[homoKey(ipa)];
     if (homoOf && noHomo) continue;
@@ -1950,6 +1964,7 @@ function runGen(want) {
     c.spell = sp; c.ipa = ipa; c.ko = out.ko.trim(); c.homo = homoOf || null;
     res.push(c);
   }
+  if (post && !res.length) { st.textContent = "이 기원과 비음형 설정에서는 그 " + (startBy === "ipa" ? "소리" : "글자") + "로 시작하는 형태가 나오지 않는 것 같습니다. 비음형 설정이나 기원을 바꿔 보세요. (예: 비음 ɑ̃, 유성음 b d는 비음형에서만 어두에 옵니다.)"; return; }
   st.textContent = res.length ? "후보 " + res.length + "개" + (res.length < want ? " (조건에 맞는 형태가 적어 " + res.length + "개만 찾았습니다. 조건을 풀어 보세요.)" : "") : "조건에 맞는 형태를 찾지 못했습니다. 시작 글자나 음절 수를 바꿔 보세요.";
   var frag = document.createDocumentFragment();
   res.forEach(function (c) {
@@ -1984,6 +1999,41 @@ function genHint() {
   $("gSyl").disabled = o === "e";
 }
 $("gOrigin").addEventListener("change", genHint);
+/* 시작 글자: 원형 / 에클레아어 표기 / 발음 */
+function stripMarks(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function startTest(by, raw) {
+  if (!raw) return null;
+  if (by === "spell") {
+    var q = raw.toLowerCase().normalize("NFC"), loose = stripMarks(q) === q;
+    return function (sp) { var w = sp.toLowerCase().normalize("NFC"); if (loose) w = stripMarks(w); return w.indexOf(q) === 0; };
+  }
+  var qs = ipaSegs(raw);
+  return function (sp, ipa) { var ws = ipaSegs(ipa); if (ws.length < qs.length) return false; for (var i = 0; i < qs.length; i++) if (ws[i] !== qs[i]) return false; return true; };
+}
+/* 에클레아어 발음에 실제로 나오는 기호만 (ɑ는 비모음 ɑ̃로만 나옴) */
+var IPA_KEYS = ["ʁ", "ʃ", "ʒ", "ɲ", "ɛ", "ɔ", "œ", "ə", "ɑ̃", "ɛ̃", "ɔ̃", "œ̃"];
+var SAMPA = { R: "ʁ", S: "ʃ", Z: "ʒ", A: "ɑ", E: "ɛ", O: "ɔ", "9": "œ", "2": "ø", J: "ɲ", "@": "ə" };
+function insertAtCaret(el, s) {
+  var a = el.selectionStart == null ? el.value.length : el.selectionStart, b = el.selectionEnd == null ? a : el.selectionEnd;
+  el.value = el.value.slice(0, a) + s + el.value.slice(b);
+  el.selectionStart = el.selectionEnd = a + s.length;
+}
+(function () {
+  var pad = $("gIpaPad").querySelector(".ipa-keys");
+  IPA_KEYS.forEach(function (k) { var b = document.createElement("button"); b.type = "button"; b.textContent = k; b.dataset.k = k; b.title = k + " 넣기"; pad.appendChild(b); });
+  pad.addEventListener("mousedown", function (e) { if (e.target.closest("button")) e.preventDefault(); });
+  pad.addEventListener("click", function (e) { var b = e.target.closest("button[data-k]"); if (!b) return; var el = $("gStart"); el.focus(); insertAtCaret(el, b.dataset.k); });
+  $("gStart").addEventListener("input", function () {
+    if ($("gStartBy").value !== "ipa") return;
+    var el = this, pos = el.selectionStart == null ? el.value.length : el.selectionStart;
+    var before = el.value.slice(0, pos), after = el.value.slice(pos);
+    function conv(s) { return s.replace(/[RSZAEO92J@]/g, function (c) { return SAMPA[c]; }).replace(/([aeiouyɑɛɔœøə])~/g, "$1\u0303"); }
+    var nb = conv(before), na = conv(after);
+    if (nb + na !== el.value) { el.value = nb + na; el.selectionStart = el.selectionEnd = nb.length; }
+  });
+  function syncBy() { var ipa = $("gStartBy").value === "ipa"; $("gIpaPad").hidden = !ipa; $("gStart").classList.toggle("ipa", ipa); }
+  $("gStartBy").addEventListener("change", syncBy); syncBy();
+})();
 $("gRun").addEventListener("click", function (e) { var b = e.target.closest("button[data-n]"); if (b) runGen(+b.dataset.n); });
 genHint();
 
