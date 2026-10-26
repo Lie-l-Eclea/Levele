@@ -261,12 +261,13 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
         <div class="field"><label for="gNasal">비음형</label>
           <select id="gNasal"><option value="oral">구강형</option><option value="nasal">비음형 (@)</option><option value="mix">섞어서</option></select></div>
         <div class="field"><label for="gStart">시작 글자 (선택)</label><input id="gStart" class="lang" autocomplete="off" spellcheck="false" maxlength="3"></div>
+        <div class="field"><label for="gCount">생성 개수 (1~100)</label><input id="gCount" type="number" min="1" max="100" step="1" value="20" inputmode="numeric"></div>
       </div>
       <div class="gen-bar">
         <label class="check"><input type="checkbox" id="gHomo" checked> 단어장과 같은 발음인 것 제외</label>
         <label class="check"><input type="checkbox" id="gNear" checked> 단어장과 유사음(한 음소 차이)인 것 제외</label>
         <label class="check"><input type="checkbox" id="gHard" checked> 발음하기 어려운 형태 제외</label>
-        <button id="gRun" type="button" class="primary">20개 생성</button>
+        <button id="gRun" type="button" class="primary">생성</button>
       </div>
       <p class="hint" id="gHint"></p>
       <p class="status" id="gStatus"></p>
@@ -1899,8 +1900,11 @@ function genPool() {
       !/지명|민족명|정당|자유 대명사/.test(tg) && !/인칭|왕국|도시명|이름|해협|접두사|표지|지시사|보문소|의문사|\(사어\)|과거형|현재형|^부정|^긍정|^(이|저|그)$/.test(w.mean || "") && !!firstMean(w.mean);
   });
 }
+/* 생성 개수: 최소 1, 최대 100. 100개를 넘으면 한 화면에서 비교하기 어렵고, 유사음 검사 시간도 개수에 비례해 늘어남 */
+function genCount() { var raw = $("gCount").value.trim(), v = Math.round(+raw); if (!raw || isNaN(v)) return 20; return Math.max(1, Math.min(v, 100)); }
 function runGen() {
   var origin = $("gOrigin").value, n = +$("gSyl").value, nas = $("gNasal").value;
+  var want = genCount(); $("gCount").value = want;
   var start = $("gStart").value.trim().toLowerCase(), noHomo = $("gHomo").checked, noNear = $("gNear").checked, noHard = $("gHard").checked;
   var st = $("gStatus"), list = $("gList");
   list.innerHTML = "";
@@ -1911,7 +1915,7 @@ function runGen() {
   var heads = {}; lex.words.forEach(function (w) { heads[(w.input || "").toLowerCase()] = true; heads[(w.head || "").toLowerCase()] = true; });
   var pool = origin === "e" ? genPool() : null;
   var res = [], seen = {}, tries = 0;
-  while (res.length < 20 && tries < 6000) {
+  while (res.length < want && tries < want * 300) {
     tries++;
     var c = null, k = sylCount(n);
     if (origin === "a") {
@@ -1944,7 +1948,7 @@ function runGen() {
     c.spell = sp; c.ipa = ipa; c.ko = out.ko.trim(); c.homo = homoOf || null;
     res.push(c);
   }
-  st.textContent = res.length ? "후보 " + res.length + "개" + (res.length < 20 ? " (조건에 맞는 형태가 적어 " + res.length + "개만 찾았습니다. 조건을 풀어 보세요.)" : "") : "조건에 맞는 형태를 찾지 못했습니다. 시작 글자나 음절 수를 바꿔 보세요.";
+  st.textContent = res.length ? "후보 " + res.length + "개" + (res.length < want ? " (조건에 맞는 형태가 적어 " + res.length + "개만 찾았습니다. 조건을 풀어 보세요.)" : "") : "조건에 맞는 형태를 찾지 못했습니다. 시작 글자나 음절 수를 바꿔 보세요.";
   var frag = document.createDocumentFragment();
   res.forEach(function (c) {
     var row = document.createElement("div"); row.className = "gen-row";
