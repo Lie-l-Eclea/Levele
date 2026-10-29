@@ -1217,14 +1217,40 @@ function hyphenate(input, spell) {
   return spell;
 }
 
-/* 모음 앞에서 축약하는 문법 표지(닫힌 목록) → 축약형.
+/* 에클라이아어 음소배열: 어두 자음군 없음(Akla처럼 모음을 덧붙임), 어말 자음군 없음,
+   모음 사이 자음 연쇄는 홑자음, 장자음, 온셋 자음군(C+l, vr, C+r), ks, 코다 l/r/s + 아무 홑자음 */
+var A_MED_OK = /^(?:[ptkcsvrl]|([ptkcsvrl])\1|[ptkcvsr]l|[ptkvs]r|ks|[lrs][ptkcsvrl])$/;
+
+/* 축약하는 문법 표지(닫힌 목록) → 축약형.
    le- 속격, pe- 부정, ti- 보문, va- 소속, sa- 미래, kal- 의문(자음으로 끝나 형태는 그대로, 표기만 아포스트로피),
-   ire- 등위(ire A ire B, 모음 앞 ir') */
-var ELIDE = { le: "l", pe: "p", ti: "t", va: "v", sa: "s", kal: "kal", ire: "ir" };
-var ELIDE_RE = /(^|[-|·*+%])(le|pe|ti|va|sa|kal|ire)([-|])(?=[@%&|]*[aeiouyɯə])/gu;
-var ELIDE_END_RE = /(^|[-|+%])(le|pe|ti|va|sa|kal|ire)([-|])$/u;
-/* 축약형에 모음이 남는 표지(kal, ir)는 표기에서 하이픈 대신 아포스트로피로 붙임 */
-function keepsVowel(s) { return /[aeiouyɯə]/u.test(s); }
+   ire- 등위(ire A ire B), are- -하며, ave- 형용사형, ito- 가능, epa- 능력, asti- 능동·피동, apli- 비교급, orta- 전체.
+   축약은 결과가 에클라이아어 음소배열에 맞을 때만 일어남:
+   - 모음 앞에서는 언제나 축약
+   - 모음으로 시작하는 표지는 자음 앞에서도, 줄어든 자음과 뒤 자음이 모음 사이 자음군으로 허용되면 축약
+     (ire-·are-는 코다 r이라 사실상 언제나, ave-는 l·r·v 앞, asti-·apli-·orta-는 자음 셋이 되어 자음 앞 불가)
+   - 자음+모음 표지(le- 등)는 자음 앞에서 줄면 어두 자음군이 되므로 모음 앞에서만
+   - 어두 k가 ŋ으로 되살아나는 @k… 앞에서는 축약하지 않음
+   파생 접두사(li-, ve-, pa-, ora-, aisa- 등)는 목록에 없어 축약하지 않음 */
+var ELIDE = { le: "l", pe: "p", ti: "t", va: "v", sa: "s", kal: "kal",
+  ire: "ir", are: "ar", ave: "av", ito: "it", epa: "ep", asti: "ast", apli: "apl", orta: "ort" };
+var ELIDE_KEYS = "le|pe|ti|va|sa|kal|ire|are|ave|ito|epa|asti|apli|orta";
+var ELIDE_RE = new RegExp("(^|[-|·*+%])(" + ELIDE_KEYS + ")([-|])", "gu");
+var ELIDE_END_RE = new RegExp("(^|[-|+%])(" + ELIDE_KEYS + ")([-|])$", "u");
+var A_VOWEL = /[aeiouyɯə]/u;
+/* 뒤에 오는 입력(rest)을 보고 표지 p가 축약되는지 판정 */
+function elidesBefore(p, rest) {
+  if (/^[%&|]*@k/u.test(rest)) return false;
+  var r = rest.replace(/^[@%&|]+/u, "");
+  var c0 = r.charAt(0), c1 = r.charAt(1);
+  if (!c0 || !/\p{L}/u.test(c0)) return false;
+  if (A_VOWEL.test(c0)) return true;
+  if (!A_VOWEL.test(p.charAt(0))) return false;
+  if (c1 && /\p{L}/u.test(c1) && !A_VOWEL.test(c1)) return false;
+  var tail = (ELIDE[p].match(/[^aeiouyɯə]+$/u) || [""])[0];
+  return A_MED_OK.test(tail + c0);
+}
+/* 축약형에 모음이 남는 표지(kal, ir, ar 등)는 자음 앞이든 모음 앞이든 표기에서 아포스트로피로 붙임(ar'rip) */
+function keepsVowel(s) { return A_VOWEL.test(s); }
 function convert(text) {
   var lines = text.normalize("NFC").replace(/’/g, "'").split("\n").filter(function (l) { return l.trim().charAt(0) !== ";"; });
   var src = lines.join("\n");
@@ -1246,10 +1272,13 @@ function convert(text) {
     if (!it.word) return;
     it.t1 = []; it.t2 = []; it.t3 = [];
     it.input = it.raw.toLowerCase().replace(/~/g, "+");
-    /* 문법 표지 자동 축약: 닫힌 목록의 문법 표지는 모음 앞에서 모음을 잃음(le-astel → l'astel, pe-astel → p'astel).
-       파생 접두사(li-, ve-, pa- 등)는 목록에 없어 축약하지 않음. 어두 k가 ŋ으로 되살아나는 @k… 앞에서는 축약하지 않음 */
+    /* 문법 표지 자동 축약(le-astel → l'astel, are-rip → ar'rip). 조건은 ELIDE 위 주석 참고 */
     var keptMarks = [];
-    it.input = it.input.replace(ELIDE_RE, function (m, a, p, b) { if (keepsVowel(ELIDE[p])) keptMarks.push(ELIDE[p]); return a + ELIDE[p] + b; });
+    it.input = it.input.replace(ELIDE_RE, function (m, a, p, b, off, whole) {
+      if (!elidesBefore(p, whole.slice(off + m.length))) return m;
+      if (keepsVowel(ELIDE[p])) keptMarks.push(ELIDE[p]);
+      return a + ELIDE[p] + b;
+    });
     if (/[·*]/.test(it.input)) {
       /* 에클레아어 단계 결합: 각 부분을 따로 변화시킨 뒤 잇는다.
          문법 표지는 뒤 부분의 에클레아어 형태가 모음으로 시작하면 이 단계에서 축약(le-·@kiset → l'Ègnand) */
@@ -1265,7 +1294,7 @@ function convert(text) {
       it.form = segs.filter(function (x, k) { return k % 2 === 0; }).map(function (part) { return runSet(part, compiled.r1, it.t1); }).join("");
     } else it.form = runSet(it.input, compiled.r1, it.t1);
     var sp0 = hyphenate(it.input, runSet(it.form, compiled.r2, it.t2));
-    /* 자음으로 끝나 모음을 잃지 않는 표지(kal-)도 모음 앞에서는 아포스트로피로 붙임(cal'eucle) */
+    /* 축약형에 모음이 남는 표지(kal-, ire- 등)도 아포스트로피로 붙임(cal'eucle, ar'rip) */
     keptMarks.forEach(function (p) {
       var km = it.input.match(new RegExp("^%?" + p + "-(.+)$", "u"));
       if (!km || /[·*]/.test(km[1])) return;
@@ -1815,9 +1844,7 @@ var A_ON = [["", 3], ["p", 2], ["t", 2], ["k", 2], ["c", 2], ["s", 2], ["v", 2],
 var A_NU = [["a", 4], ["e", 4], ["i", 3], ["o", 3], ["u", 3], ["y", 1], ["ia", 0.8], ["ai", 0.6], ["ie", 0.3], ["ei", 0.3], ["oi", 0.3], ["au", 0.25], ["ua", 0.2], ["io", 0.1]];
 var A_COD_MID = [["", 6], ["r", 1.2], ["l", 0.6], ["s", 1.2]];
 var A_COD_END = [["", 6], ["l", 1], ["r", 1], ["s", 1], ["t", 0.6], ["k", 0.4], ["c", 0.5], ["v", 0.3]];
-/* 에클라이아어 음소배열: 어두 자음군 없음(Akla처럼 모음을 덧붙임), 어말 자음군 없음,
-   모음 사이 자음 연쇄는 홑자음, 장자음, 온셋 자음군(C+l, vr, C+r), 코다 l/r/s + 아무 홑자음 */
-var A_MED_OK = /^(?:[ptkcsvrl]|([ptkcsvrl])\1|[ptkcvsr]l|[ptkvs]r|[lrs][ptkcsvrl])$/;
+/* 에클라이아어 음소배열 판정식 A_MED_OK는 축약 규칙(ELIDE) 위에 정의 */
 function aLegal(s) {
   var w = s.replace(/^@/, "");
   if (/^[^aeiouy]{2}/.test(w)) return false;
