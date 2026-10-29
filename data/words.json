@@ -1228,14 +1228,12 @@
   "id": "w141"
  },
  {
-  "head": "ekovese",
-  "input": "eko·vese",
-  "mean": "이어폰",
+  "head": "eko~vese",
+  "input": "eko~vese",
+  "mean": "듣개 (마법으로 소리를 듣는 도구)",
   "n": 142,
-  "note": "vese의 뜻 미확인",
-  "tags": [
-   "후대 합성어"
-  ],
+  "note": "에클라이아어 단계 합성어. eko-(도구)+vese(듣다). 기계 이어폰은 &ekovese(Écovège)로 따로 씀",
+  "tags": [],
   "id": "w142"
  },
  {
@@ -3582,5 +3580,16 @@
    "생물"
   ],
   "id": "w402"
+ },
+ {
+  "head": "ekovese",
+  "input": "&ekovese",
+  "mean": "이어폰 (기계)",
+  "n": 403,
+  "note": "근대에 &ekolko(전뇌)처럼 옛 형태로 새로 지은 말. 마법 듣개 eko~vese(Écvège)와 구별",
+  "tags": [
+   "학술 차용어"
+  ],
+  "id": "w403"
  }
 ]
