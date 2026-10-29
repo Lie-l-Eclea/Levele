@@ -1218,10 +1218,13 @@ function hyphenate(input, spell) {
 }
 
 /* 모음 앞에서 축약하는 문법 표지(닫힌 목록) → 축약형.
-   le- 속격, pe- 부정, ti- 보문, va- 소속, sa- 미래, kal- 의문(자음으로 끝나 형태는 그대로, 표기만 아포스트로피) */
-var ELIDE = { le: "l", pe: "p", ti: "t", va: "v", sa: "s", kal: "kal" };
-var ELIDE_RE = /(^|[-|·*+%])(le|pe|ti|va|sa|kal)([-|])(?=[@%&|]*[aeiouyɯə])/gu;
-var ELIDE_END_RE = /(^|[-|+%])(le|pe|ti|va|sa|kal)([-|])$/u;
+   le- 속격, pe- 부정, ti- 보문, va- 소속, sa- 미래, kal- 의문(자음으로 끝나 형태는 그대로, 표기만 아포스트로피),
+   ire- 등위(ire A ire B, 모음 앞 ir') */
+var ELIDE = { le: "l", pe: "p", ti: "t", va: "v", sa: "s", kal: "kal", ire: "ir" };
+var ELIDE_RE = /(^|[-|·*+%])(le|pe|ti|va|sa|kal|ire)([-|])(?=[@%&|]*[aeiouyɯə])/gu;
+var ELIDE_END_RE = /(^|[-|+%])(le|pe|ti|va|sa|kal|ire)([-|])$/u;
+/* 축약형에 모음이 남는 표지(kal, ir)는 표기에서 하이픈 대신 아포스트로피로 붙임 */
+function keepsVowel(s) { return /[aeiouyɯə]/u.test(s); }
 function convert(text) {
   var lines = text.normalize("NFC").replace(/’/g, "'").split("\n").filter(function (l) { return l.trim().charAt(0) !== ";"; });
   var src = lines.join("\n");
@@ -1246,7 +1249,7 @@ function convert(text) {
     /* 문법 표지 자동 축약: 닫힌 목록의 문법 표지는 모음 앞에서 모음을 잃음(le-astel → l'astel, pe-astel → p'astel).
        파생 접두사(li-, ve-, pa- 등)는 목록에 없어 축약하지 않음. 어두 k가 ŋ으로 되살아나는 @k… 앞에서는 축약하지 않음 */
     var keptMarks = [];
-    it.input = it.input.replace(ELIDE_RE, function (m, a, p, b) { if (ELIDE[p] === p) keptMarks.push(p); return a + ELIDE[p] + b; });
+    it.input = it.input.replace(ELIDE_RE, function (m, a, p, b) { if (keepsVowel(ELIDE[p])) keptMarks.push(ELIDE[p]); return a + ELIDE[p] + b; });
     if (/[·*]/.test(it.input)) {
       /* 에클레아어 단계 결합: 각 부분을 따로 변화시킨 뒤 잇는다.
          문법 표지는 뒤 부분의 에클레아어 형태가 모음으로 시작하면 이 단계에서 축약(le-·@kiset → l'Ègnand) */
@@ -1254,7 +1257,7 @@ function convert(text) {
       for (var si = 0; si + 2 < segs.length; si += 2) {
         var em = segs[si].match(ELIDE_END_RE);
         if (em && VOWEL_START.test(runSet(segs[si + 2], compiled.r1))) {
-          if (ELIDE[em[2]] === em[2]) keptMarks.push(em[2]);
+          if (keepsVowel(ELIDE[em[2]])) keptMarks.push(ELIDE[em[2]]);
           segs[si] = segs[si].slice(0, segs[si].length - em[2].length - 1) + ELIDE[em[2]] + em[3];
         }
       }
