@@ -206,6 +206,55 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .view-tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 .out.main { font-size: 1.5rem; }
 .badge.fossil { background: var(--dusk); color: var(--surface); }
+.gen-head[hidden], #gPair[hidden] { display: none; }
+/* 뜻과 단어 짝짓기: 좁은 화면에서는 단어 후보가 화면 아래에 붙어 따라오고, 넓은 화면에서는 오른쪽 열에 붙음 */
+#gPair { display: grid; gap: 10px; }
+.pair-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.pair-tools button { min-height: 40px; }
+.pair { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+.pair-means { display: grid; gap: 8px; min-width: 0; }
+.m-card { border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px 8px 10px; display: grid; gap: 4px; background: var(--surface); min-width: 0; }
+.m-card.done { border-left: 4px solid var(--accent); }
+.m-card.sel { border-color: var(--accent); background: var(--accent-soft); }
+.m-top { display: flex; gap: 4px; align-items: center; }
+.m-pick { flex: 1; min-width: 0; text-align: left; border: 0; background: transparent; padding: 6px 2px; min-height: 44px; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; color: var(--fg); }
+.m-pick:hover { color: var(--fg); }
+.m-mean { font-weight: 700; font-size: 1.02rem; overflow-wrap: anywhere; }
+.m-pick small, .w-pick small { color: var(--muted); font-size: 0.78rem; font-family: var(--font-ui); }
+button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem; line-height: 1; }
+.m-word { display: grid; gap: 4px; min-width: 0; }
+.w-line { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; min-width: 0; }
+.w-line .sp, .w-pick .sp { font-family: var(--font-lang); font-size: 1.12rem; overflow-wrap: anywhere; }
+.w-line .ip { font-family: var(--font-lang); color: var(--accent); overflow-wrap: anywhere; }
+.w-line .ko { font-size: 0.9rem; }
+.m-word .src { font-family: var(--font-lang); color: var(--muted); font-size: 0.82rem; overflow-wrap: anywhere; }
+.m-word .warn { color: var(--err); font-size: 0.8rem; }
+.m-acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.m-acts button { min-height: 36px; }
+.m-in { width: 100%; font-family: var(--font-lang); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
+.pair-pool { position: sticky; bottom: 0; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 12px 12px 0 0;
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.12); padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 6px; max-height: 40vh; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.pool-head { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: var(--muted); min-width: 0; }
+.pool-sel { color: var(--accent); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.pool-chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-y: auto; min-height: 0; align-content: flex-start; overscroll-behavior: contain; }
+.w-chip { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); max-width: 100%; }
+.w-chip.sel { border-color: var(--accent); background: var(--accent-soft); }
+.w-chip.loading { opacity: 0.45; }
+.w-pick { border: 0; background: transparent; display: grid; text-align: left; padding: 4px 8px; min-height: 44px; color: var(--fg); min-width: 0; }
+.w-pick:hover { color: var(--fg); }
+.w-chip button.icon { border: 0; border-left: 1px solid var(--line); border-radius: 0 8px 8px 0; background: transparent; min-width: 38px; }
+.pool-foot { display: flex; justify-content: flex-end; }
+.m-empty { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
+.m-empty button { min-height: 36px; }
+button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
+.pair-pool.fold .pool-chips, #gPair.typing .pool-chips { display: none; }
+.pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
+@media (min-width: 820px) {
+  .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .pair-pool { top: 12px; bottom: auto; border-radius: 12px; max-height: calc(100vh - 24px); box-shadow: none; }
+  #gPair.typing .pool-chips { display: flex; }
+}
 .gen-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
@@ -267,6 +316,8 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
           </select></div>
         <div class="field"><label for="gSyl">원형 음절 수</label>
           <select id="gSyl"><option value="0">상관없음</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+        <div class="field"><label for="gDomain">뜻 분야</label>
+          <select id="gDomain"><option value="">전체</option></select></div>
         <div class="field"><label for="gNasal">비음형</label>
           <select id="gNasal"><option value="oral">구강형</option><option value="nasal">비음형 (@)</option><option value="mix">섞어서</option></select></div>
         <div class="field"><label for="gStartBy">시작 글자 기준</label>
@@ -282,14 +333,16 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
         <label class="check"><input type="checkbox" id="gHomo" checked> 단어장과 같은 발음인 것 제외</label>
         <label class="check"><input type="checkbox" id="gNear" checked> 단어장과 유사음(한 음소 차이)인 것 제외</label>
         <label class="check"><input type="checkbox" id="gHard" checked> 발음하기 어려운 형태 제외</label>
+        <label class="check"><input type="checkbox" id="gMeanOn" checked> 아직 없는 뜻도 함께 생성</label>
         <span class="gen-counts" id="gRun" role="group" aria-label="생성 개수">
           <button type="button" class="primary" data-n="1">1개</button><button type="button" class="primary" data-n="3">3개</button><button type="button" class="primary" data-n="10">10개</button><button type="button" class="primary" data-n="30">30개</button><button type="button" class="primary" data-n="100">100개</button><button type="button" class="primary" data-n="300">300개</button>
         </span>
       </div>
       <p class="hint" id="gHint"></p>
       <p class="status" id="gStatus"></p>
-      <div class="gen-head label"><span>원형</span><span>에클레아어</span><span>발음</span><span>한글</span><span></span></div>
+      <div class="gen-head label" id="gHeadRow"><span>원형</span><span>에클레아어</span><span>발음</span><span>한글</span><span></span></div>
       <div id="gList"></div>
+      <div id="gPair" hidden></div>
     </div>
   </section>
 
@@ -1841,7 +1894,7 @@ var GEN_HINTS = {
   e: "단어장의 에클레아어 형태끼리 에클레아어 단계에서 합친 새 합성어(·)입니다. 뜻은 두 구성 요소의 조합으로 보여 줍니다.",
   b: "에냥어 음소(p t k ʃ s m r l, 모음 a e i o u ɯ)로 원형을 만들고, 차용 규칙(ʃ → s, ɯ → u, m → p)으로 에클라이아어 형태를 얻은 뒤 변환합니다.",
   bp: "에냥어 사람·민족 이름 N-어근-n을 비음형 @어근+t로 받습니다. 어근이 자음으로 끝나면 끝 모음을 복사해 넣습니다(orail-n → @orailit).",
-  f: "포브르어 음소(pʰ tʰ kʰ, b d g, ᵐb ⁿd ᵑg, s χ l m n j w h, 모음 a e i o u ə)로 원형을 만들어 % 단어로 변환합니다. 어두 C+l·C+χ 자음군, 모음 사이 b d g, 어말 n m이 자주 나옵니다."
+  f: "포브르어 음소(pʰ tʰ kʰ, b d g, ᵐb ⁿd ᵑg, s χ l m n j w h, 모음 a e i o u ə)로 원형을 만들어 % 단어로 변환합니다. 유성·무성 파열음이 모든 자리에 오고, 어두 C+l·C+χ 자음군과 어말 n m이 자주 나옵니다."
 };
 function pickW(arr) { var t = 0, i; for (i = 0; i < arr.length; i++) t += arr[i][1]; var r = Math.random() * t; for (i = 0; i < arr.length; i++) { r -= arr[i][1]; if (r < 0) return arr[i][0]; } return arr[arr.length - 1][0]; }
 function sylCount(n) { return n > 0 ? n : pickW([[1, 2], [2, 6], [3, 3]]); }
@@ -1965,30 +2018,50 @@ function genPool() {
       !/지명|민족명|정당|자유 대명사/.test(tg) && !/인칭|왕국|도시명|이름|해협|접두사|표지|지시사|보문소|의문사|\(사어\)|과거형|현재형|^부정|^긍정|^(이|저|그)$/.test(w.mean || "") && !!firstMean(w.mean);
   });
 }
-function runGen(want) {
-  want = want || 20;
+/* 뜻 생성용 개념 목록. "·"로 구분, 같은 말이 여럿이면 괄호로 구별(눈 (날씨)). 지구의 특정 동식물 종은 넣지 않음 */
+var MEAN_BANK = {
+  "몸": "머리카락·이마·눈썹·속눈썹·뺨·턱·입술·이빨·혀·목·목구멍·어깨·팔·팔꿈치·손목·손가락·엄지·손톱·손바닥·가슴·젖가슴·배 (몸)·배꼽·등·허리·엉덩이·다리 (몸)·허벅지·무릎·종아리·발목·발가락·발꿈치·발바닥·살갗·살·근육·힘줄·핏줄·심장·허파·간·위장·창자·콩팥·뇌·갈비뼈·등뼈·두개골·골수·땀·눈물·침·콧물·오줌·똥·고름·상처·흉터·멍·수염·털·주름·점 (피부)·정수리·관자놀이·콧구멍·귓불·겨드랑이·옆구리·숨·맥박·자궁·태아·탯줄·몸통·목덜미",
+  "짐승의 몸": "뿔·꼬리·날개·깃털·비늘·발톱·부리·아가미·지느러미·껍데기·털가죽·가죽·갈기·발굽·송곳니·주둥이·더듬이·알·알껍데기·새끼·암컷·수컷·무리·둥지·굴 (짐승)·먹이·사냥감",
+  "생물": "짐승·가축·물고기·벌레·날벌레·뱀·거미·꿀벌·개구리·조개·벌레알·애벌레·들짐승·물새·맹수·작은 짐승·쥐 같은 짐승",
+  "식물": "뿌리·줄기·가지·나무껍질·꽃·꽃잎·열매·씨앗·싹·이끼·버섯·덤불·가시·짚·갈대·덩굴·송진·수액·곡식·이삭·겨·콩·뿌리채소·약초·독초·잡초·꽃가루·그루터기·숲 가장자리·장작·나뭇가지 다발",
+  "자연": "해·달·별·구름·비·눈 (날씨)·우박·서리·얼음·안개·이슬·무지개·번개·폭풍·눈보라·산·언덕·골짜기·고개·절벽·봉우리·바위·자갈·모래·진흙·시내·샘·호수·늪·바다·파도·섬·해안·들판·초원·빙하·불꽃·연기·재·숯·그림자·빛·어둠·새벽·아침·저녁·밤·봄·여름·겨울·낮과 밤의 하루·한 해·한 달·추위·더위·가뭄·홍수·지진·눈사태·물살·소용돌이·땅속",
+  "음식": "빵·고기·젖 (마시는 것)·굳힌 젖·버터·기름·소금·꿀·죽·국·술·식초·가루·반죽·떡·말린 고기·소시지·양념·식사·아침밥·저녁밥·잔치 음식·국물·뼈국·훈제·절임·과일즙·삶은 알·껍질 벗긴 곡식·엿·찌꺼기",
+  "살림": "칼·도끼·망치·못·바늘·실·끈·밧줄·그물·바구니·자루 (포대)·상자·통·항아리·냄비·솥·그릇·접시·숟가락·국자·잔·병 (그릇)·뚜껑·체·맷돌·절구·화덕·아궁이·굴뚝·등잔·초·횃불·빗자루·걸레·비누·빗·거울·열쇠·자물쇠·문·창문·벽·지붕·바닥·기둥·계단·침대·이불·베개·탁자·선반·사다리·방·부엌·마당·문지방·화로·물동이·빨래",
+  "옷": "옷·천·털실·외투·모자·장갑·신발·장화·허리띠·단추·주머니·소매·옷깃·치마·바지·망토·두건·목도리·속옷·바늘땀·옷감 염색·가죽옷·털옷·반지·목걸이·귀걸이·팔찌",
+  "농사와 일": "밭·이랑·거름·씨뿌리기·수확·타작·방앗간·대장간·곳간·헛간·울타리·우리 (가축)·우물·삽·괭이·쟁기·낫·갈퀴·쇠스랑·수레·바퀴·썰매·배 (선박)·노·돛·다리 (건너는 것)·길·마을·장터·쇠·구리·금·은·납·가마·도자기·벽돌·목재·판자·톱밥·아교·물감·물레·베틀·무두질·품삯·광산·채석장·불씨·땔감·짐·짐꾼·목초지·양털 같은 털",
+  "사람": "아이·아기·어른·노인·아버지·어머니·형제·자매·남편·아내·할아버지·할머니·손주·삼촌·고모·사촌·친척·조상·후손·이웃·친구·적·손님·주인·하인·장인·상인·농부·목동·사냥꾼·어부·대장장이·직공·병사·의사·사제·마법사·도둑·거지·과부·고아·쌍둥이·약혼자·신부 (혼인)·신랑·나그네·첩자·포로·심부름꾼·주민·떠돌이",
+  "사회": "이름·결혼·장례·무덤·잔치·선물·빚·값·돈·일·집안·부족·마을 사람·약속·맹세·법·벌·재판·세금·전쟁 포로·몸값·손님 대접·인사·작별·초대·소문·편지·문서·도장·경계·영토·성벽·문지기·감옥·시장 가격·이익·손해·몫",
+  "믿음과 마법": "신전·제물·기도·축복·주문·마력·부적·예언·영혼·유령·제사·성소·점 (점치기)·운명·징조·악령·수호신·순례·성물·저주받은 것",
+  "마음과 생각": "기쁨·슬픔·분노·부끄러움·사랑·미움·생각·기억·이야기·노래·말 (언어)·소리·냄새·맛·색·수수께끼·거짓말·진실·비밀·운·병 (질병)·약·독·휴식·놀이·장난감·희망·질투·자랑·후회·그리움·용기·의심·지혜·어리석음·버릇·뜻 (의미)·까닭·방법",
+  "때와 양": "어제·오늘·내일·지금·나중·아까·늘·가끔·다시·벌써·아직·곧·오래·많다·적다·몇·반 (절반)·쌍·조각·무게·길이·너비·높이·깊이·처음·마지막·가운데·옆·사이·안·밖·여기·저기·어디·언제·왜·어떻게",
+  "움직임": "마시다·주다·받다·잡다·놓다·던지다·밀다·당기다·들다·나르다·끌다·자르다·베다·찌르다·때리다·깨뜨리다·부수다·묶다·풀다·꿰매다·짜다 (천)·쥐어짜다·씻다·빨래하다·닦다·쓸다·파다·묻다 (땅에)·심다·거두다·줍다·따다·굽다·끓이다·볶다·찌다·데우다·식히다·섞다·붓다·담그다·말리다·젓다·빻다·반죽하다·깨다 (잠)·눕다·서다·뛰다·달리다·기다·오르다·내려가다·헤엄치다·날다·넘어지다·구르다·뛰어오르다·숨다·찾다·보내다·흔들다·떨다·돌다·돌리다·열다·닫다·잠그다·채우다·비우다·쌓다·세우다·짓다 (건물)·고치다·만들다·쓰다 (사용)·빌리다·갚다·사다·팔다·세다 (수)·재다·더하다·빼다·춤추다·사냥하다·낚다·기르다·젖을 짜다·털을 깎다·물을 긷다·불을 피우다·태우다·끄다·녹다·얼다·끓다·흐르다·넘치다·마르다·젖다·썩다·자라다·피다 (꽃)·시들다·낳다·태어나다·늙다·앓다·낫다·죽다·숨쉬다",
+  "말과 마음의 움직임": "부르다·대답하다·묻다 (질문)·외치다·속삭이다·노래하다·웃다·울다·한숨 쉬다·기침하다·재채기하다·하품하다·삼키다·씹다·핥다·빨다 (입으로)·물다 (이로)·뱉다·토하다·냄새 맡다·만지다·쓰다듬다·안다·입 맞추다·기대다·가르치다·배우다·알다·모르다·생각하다·믿다·의심하다·바라다·사랑하다·미워하다·화내다·기뻐하다·슬퍼하다·부끄러워하다·놀라다·쉬다·일하다·놀다·싸우다·이기다·지다 (패배)·돕다·훔치다·속이다·숨기다·보여 주다·가리키다·고르다·정하다·약속하다·맹세하다·빌다 (기도)·용서하다·벌주다·칭찬하다·꾸짖다·자랑하다·부탁하다·거절하다·허락하다·막다·따르다·이끌다·기다리게 하다",
+  "모양과 성질": "크다·작다·길다·짧다·높다·낮다·넓다·좁다·두껍다·얇다·무겁다·가볍다·뜨겁다·차갑다·따뜻하다·시원하다·단단하다·무르다·날카롭다·무디다·매끄럽다·거칠다·곧다·굽다 (휘다)·둥글다·가득하다·비다·새롭다·낡다·젊다·빠르다·느리다·강하다·약하다·밝다·어둡다·깨끗하다·더럽다·달다·쓰다 (맛)·짜다 (맛)·시다·맵다·싱겁다·배고프다·목마르다·배부르다·피곤하다·아프다·튼튼하다·아름답다·못생기다·착하다·나쁘다·옳다·그르다·쉽다·어렵다·가깝다·멀다·깊다·얕다·조용하다·시끄럽다·부유하다·가난하다·게으르다·부지런하다·용감하다·비겁하다·똑똑하다·어리석다·슬프다·기쁘다·외롭다·하얗다·검다·붉다·노랗다·푸르다·초록빛·갈색·잿빛·벌거벗다·살찌다·마르다 (몸)·눈멀다·귀먹다·벙어리이다·취하다·졸리다·춥다·덥다"
+};
+
+/* 현재 생성 조건으로 단어 후보를 찾음. excl: 이미 화면에 있는 원형·표기(겹치지 않게). token.dead가 되면 멈춤 */
+function findWords(want, excl, token, onDone, onProgress) {
   var origin = $("gOrigin").value, n = +$("gSyl").value, nas = $("gNasal").value;
   var startBy = $("gStartBy").value, startRaw = $("gStart").value.trim();
   var start = startBy === "root" ? startRaw.toLowerCase() : "", post = startBy === "root" ? null : startTest(startBy, startRaw), noHomo = $("gHomo").checked, noNear = $("gNear").checked, noHard = $("gHard").checked;
-  var st = $("gStatus"), list = $("gList");
-  list.innerHTML = "";
-  if (lex.status !== "ready") { st.textContent = "단어장을 불러온 뒤 생성할 수 있습니다."; return; }
+  if (lex.status !== "ready") { onDone([], "단어장을 불러온 뒤 생성할 수 있습니다."); return; }
   var known = lex.words.map(function (w) { var o = convOne(w.input); return { id: w.id, key: headKey(w.head) || w.id, ipa: o.ipa, label: o.spell + " (" + firstMean(w.mean || w.head) + ")" }; });
   var keys = {}, byLen = {};
   known.forEach(function (k) { var hk = homoKey(k.ipa); if (hk) (keys[hk] = keys[hk] || []).push(k.label); var sgs = ipaSegs(k.ipa); (byLen[sgs.length] = byLen[sgs.length] || []).push(sgs); });
   var heads = {}; lex.words.forEach(function (w) { heads[(w.input || "").toLowerCase()] = true; heads[(w.head || "").toLowerCase()] = true; });
   var pool = origin === "e" ? genPool() : null;
-  var res = [], seen = {}, bad = {}, tries = 0, t0 = Date.now(), run = ++genRunId;
+  var res = [], seen = {}, bad = {}, tries = 0, t0 = Date.now();
+  (excl || []).forEach(function (c) { if (c.input) seen[c.input] = true; if (c.spell) seen["s:" + c.spell.toLowerCase()] = true; });
   /* 표기·발음 기준은 변환한 뒤에야 거를 수 있음. 에클레아어 첫소리는 원형의 첫머리(비음 여부, 첫 자음, 첫 모음, 그 다음 글자)로 거의 정해지므로,
      그 첫머리로 변환해 본 결과가 여러 번 모두 어긋나면 그 첫머리는 더 변환하지 않고 건너뜀. 건너뛰기만 계속되면 나올 수 없는 조건으로 보고 멈춤 */
   var headStat = {}, skipRun = 0, PRUNE_AFTER = 6;
   function headOf(inp) { var h = inp.split(/[·|'~\-]/)[0], m = h.match(/^[@%&]?[^aeiouyəɯ]*[aeiouyəɯ]+.?/); return m ? m[0] : h; }
-  if (post) st.textContent = "찾는 중…";
+  if (post && onProgress) onProgress("찾는 중…");
   function step() {
-  if (run !== genRunId) return;
+  if (token.dead) return;
   var tEnd = Date.now() + 30;
-  while (res.length < want && tries < want * (post ? 20000 : 300) && Date.now() - t0 < 3000 && skipRun < 3000) {
-    if (Date.now() > tEnd) { st.textContent = "찾는 중… " + res.length + "/" + want; setTimeout(step, 0); return; }
+  while (res.length < want && tries < want * (post ? 20000 : 300) && Date.now() - t0 < 3000 + want * 20 && skipRun < 3000) {
+    if (Date.now() > tEnd) { if (onProgress) onProgress("찾는 중… " + res.length + "/" + want); setTimeout(step, 0); return; }
     tries++;
     var c = null, k = sylCount(n);
     if (origin === "a") {
@@ -2006,6 +2079,7 @@ function runGen(want) {
       var f = genF(k); if (start && fNative(f).indexOf(start) !== 0 && f.indexOf(start) !== 0) continue;
       c = { input: "%" + f, native: fNative(f) };
     }
+    c.origin = origin;
     if (heads[c.input.toLowerCase()] || seen[c.input] || bad[c.input]) continue;
     bad[c.input] = true; /* 한 번 변환해 본 원형은 다시 변환하지 않음 (통과하면 seen에 들어감) */
     var hk0 = post ? headOf(c.input) : "", hs = post ? (headStat[hk0] = headStat[hk0] || { n: 0, hit: 0 }) : null;
@@ -2028,11 +2102,30 @@ function runGen(want) {
     c.spell = sp; c.ipa = ipa; c.ko = out.ko.trim(); c.homo = homoOf || null;
     res.push(c);
   }
-  finish();
+  var msg;
+  if (post && !res.length) msg = "이 기원과 비음형 설정에서는 그 " + (startBy === "ipa" ? "소리" : "글자") + "로 시작하는 형태가 나오지 않는 것 같습니다. 비음형 설정이나 기원을 바꿔 보세요. (예: 비음 ɑ̃, 유성음 b d는 비음형에서만 어두에 옵니다.)";
+  else msg = res.length ? "후보 " + res.length + "개" + (res.length < want ? " (조건에 맞는 형태가 적어 " + res.length + "개만 찾았습니다. 조건을 풀어 보세요.)" : "") : "조건에 맞는 형태를 찾지 못했습니다. 시작 글자나 음절 수를 바꿔 보세요.";
+  onDone(res, msg);
   }
-  function finish() {
-  if (post && !res.length) { st.textContent = "이 기원과 비음형 설정에서는 그 " + (startBy === "ipa" ? "소리" : "글자") + "로 시작하는 형태가 나오지 않는 것 같습니다. 비음형 설정이나 기원을 바꿔 보세요. (예: 비음 ɑ̃, 유성음 b d는 비음형에서만 어두에 옵니다.)"; return; }
-  st.textContent = res.length ? "후보 " + res.length + "개" + (res.length < want ? " (조건에 맞는 형태가 적어 " + res.length + "개만 찾았습니다. 조건을 풀어 보세요.)" : "") : "조건에 맞는 형태를 찾지 못했습니다. 시작 글자나 음절 수를 바꿔 보세요.";
+  step();
+}
+var genToken = { dead: false };
+function runGen(want) {
+  want = want || 20;
+  genToken.dead = true; var token = genToken = { dead: false };
+  var st = $("gStatus"), list = $("gList"), meanOn = $("gMeanOn").checked;
+  list.innerHTML = ""; $("gPair").hidden = true; $("gHeadRow").hidden = meanOn;
+  if (meanOn) { pair = null; }
+  findWords(want, [], token, function (res, msg) {
+    if (token.dead) return;
+    if (!meanOn) { st.textContent = msg; renderGenList(res); return; }
+    var means = pickMeanings(want, []);
+    startPair(means, res);
+    st.textContent = "뜻 " + means.length + "개, 단어 " + res.length + "개" + (means.length < want ? " (이 분야에서 아직 단어장에 없는 뜻이 " + means.length + "개뿐입니다)" : "") + (res.length < want ? " (" + msg + ")" : "");
+  }, function (p) { st.textContent = p; });
+}
+function renderGenList(res) {
+  var list = $("gList");
   var frag = document.createDocumentFragment();
   res.forEach(function (c) {
     var row = document.createElement("div"); row.className = "gen-row";
@@ -2058,10 +2151,226 @@ function runGen(want) {
     row.appendChild(src); row.appendChild(sp2); row.appendChild(ip); row.appendChild(ko); row.appendChild(acts); frag.appendChild(row);
   });
   list.appendChild(frag);
-  }
-  step();
 }
-var genRunId = 0;
+
+/* ---------- 뜻 생성과 짝짓기 ---------- */
+var MEAN_LIST = [];
+Object.keys(MEAN_BANK).forEach(function (d) { MEAN_BANK[d].split("·").forEach(function (t) { t = t.trim(); if (t) MEAN_LIST.push({ text: t, dom: d }); }); });
+(function () { var sel = $("gDomain"); Object.keys(MEAN_BANK).forEach(function (d) { var o = document.createElement("option"); o.value = d; o.textContent = d; sel.appendChild(o); }); })();
+function meanKey(t) { var m = t.match(/^(.*?)\s*\((.*)\)\s*$/); return m ? { key: m[1].trim(), hint: m[2].trim() } : { key: t.trim(), hint: "" }; }
+/* 단어장에 이미 있는 뜻인지: 뜻 칸을 쉼표 등으로 나눈 말과 견줌. 괄호로 구별한 뜻(눈 (날씨))은 단어장 뜻에 그 구별어가 있거나 단어장 뜻이 그 말 하나뿐일 때만 있는 것으로 봄 */
+function usedMeanTest() {
+  var entries = lex.words.map(function (w) {
+    var m = (w.mean || "").replace(/\([^)]*\)/g, " ");
+    var toks = m.split(/[,，/+·;]/).map(function (x) { return x.trim(); }).filter(Boolean);
+    return { all: w.mean || "", toks: toks };
+  });
+  return function (t) {
+    var k = meanKey(t);
+    return entries.some(function (e) {
+      if (e.toks.indexOf(k.key) < 0) return false;
+      if (!k.hint) return true;
+      return e.all.indexOf(k.hint) >= 0 || e.toks.length === 1 && e.all.trim() === k.key;
+    });
+  };
+}
+function pickMeanings(n, exclTexts) {
+  var dom = $("gDomain").value, used = usedMeanTest(), ex = {};
+  exclTexts.forEach(function (t) { ex[t] = true; });
+  var cand = MEAN_LIST.filter(function (m) { return (!dom || m.dom === dom) && !ex[m.text] && !used(m.text); });
+  for (var i = cand.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cand[i]; cand[i] = cand[j]; cand[j] = t; }
+  return cand.slice(0, n);
+}
+var pair = null, pairSeq = 0;
+function startPair(means, words) {
+  pair = { items: means.map(function (m) { return { id: ++pairSeq, mean: m.text, dom: m.dom, word: null, manual: "", manualOn: false }; }),
+    pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null };
+  if (pair.items.length) pair.sel = { t: "m", id: pair.items[0].id };
+  $("gPair").hidden = false;
+  renderPair();
+}
+function pairExcl() {
+  var a = pair.pool.slice();
+  pair.items.forEach(function (it) { if (it.word) a.push(it.word); });
+  return a;
+}
+function findItem(id) { for (var i = 0; i < pair.items.length; i++) if (pair.items[i].id === id) return pair.items[i]; return null; }
+function findPool(id) { for (var i = 0; i < pair.pool.length; i++) if (pair.pool[i].id === id) return i; return -1; }
+function linkPair(itemId, wordId) {
+  var it = findItem(itemId), wi = findPool(wordId);
+  if (!it || wi < 0) return;
+  if (it.word) pair.pool.push(it.word);
+  it.word = pair.pool.splice(wi, 1)[0]; it.manualOn = false; it.manual = "";
+  /* 다음 빈 뜻으로 선택을 옮겨, 단어만 차례로 누르면 이어지게 함 */
+  var idx = pair.items.indexOf(it), next = null;
+  for (var k = 1; k <= pair.items.length; k++) { var c = pair.items[(idx + k) % pair.items.length]; if (!c.word && !c.manual) { next = c; break; } }
+  pair.sel = next ? { t: "m", id: next.id } : null;
+}
+function unlink(it) { if (it.word) { pair.pool.unshift(it.word); it.word = null; } }
+function manualConv(v) {
+  v = (v || "").trim(); if (!v) return null;
+  try { var o = convert(v); return { spell: o.main.trim(), ipa: o.ipa.trim().replace(/‿/g, ""), ko: o.ko.trim() }; } catch (e) { return null; }
+}
+function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function btn(text, title, fn, cls) { var b = el("button", cls || "", text); b.type = "button"; if (title) { b.title = title; b.setAttribute("aria-label", title); } b.addEventListener("click", fn); return b; }
+function readyCount() { return pair.items.filter(function (it) { return it.word || it.manual.trim(); }).length; }
+function renderPair() {
+  var box = $("gPair"); box.innerHTML = ""; box.classList.remove("typing");
+  if (!pair) return;
+  var tools = el("div", "pair-tools");
+  tools.appendChild(btn("순서대로 잇기", "남은 뜻과 단어를 위에서부터 차례로 잇습니다", function () {
+    pair.items.forEach(function (it) { if (!it.word && !it.manual.trim() && pair.pool.length) { it.word = pair.pool.shift(); it.manualOn = false; } });
+    pair.sel = null; renderPair();
+  }));
+  tools.appendChild(btn("남은 뜻 다시", "단어가 이어지지 않은 뜻을 모두 새로 뽑습니다", function () {
+    var keep = pair.items.map(function (it) { return it.mean; });
+    var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
+    var fresh = pickMeanings(free.length, keep);
+    free.forEach(function (it, i) { if (fresh[i]) { it.mean = fresh[i].text; it.dom = fresh[i].dom; } });
+    renderPair();
+  }));
+  tools.appendChild(btn("남은 단어 다시", "이어지지 않은 단어 후보를 모두 새로 만듭니다", function () {
+    var n = pair.pool.length; if (!n) return;
+    var keepW = pair.items.filter(function (it) { return it.word; }).map(function (it) { return it.word; }).concat(pair.pool);
+    $("gStatus").textContent = "단어를 다시 만드는 중…";
+    findWords(n, keepW, { dead: false }, function (res, msg) {
+      res.forEach(function (w) { w.id = ++pairSeq; });
+      pair.pool = res; $("gStatus").textContent = msg; renderPair();
+    }, function (p) { $("gStatus").textContent = p; });
+  }));
+  box.appendChild(tools);
+
+  var wrap = el("div", "pair");
+  var mcol = el("div", "pair-means");
+  if (!pair.items.length) mcol.appendChild(el("p", "hint", "남은 뜻이 없습니다. 분야를 바꾸거나 다시 생성해 보세요."));
+  pair.items.forEach(function (it) {
+    var card = el("div", "m-card" + (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? " sel" : "") + (it.word || it.manual.trim() ? " done" : ""));
+    var top = el("div", "m-top");
+    var pick = btn("", "이 뜻 고르기", function () {
+      if (pair.sel && pair.sel.t === "w") { linkPair(it.id, pair.sel.id); renderPair(); return; }
+      pair.sel = (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id) ? null : { t: "m", id: it.id }; renderPair();
+    }, "m-pick");
+    pick.appendChild(el("span", "m-mean", it.mean));
+    pick.appendChild(el("small", "", it.dom));
+    top.appendChild(pick);
+    top.appendChild(btn("↻", "이 뜻만 다시 뽑기", function () {
+      var keep = pair.items.map(function (x) { return x.mean; });
+      var f = pickMeanings(1, keep)[0];
+      if (!f) { $("gStatus").textContent = "이 분야에 남은 뜻이 없습니다."; return; }
+      it.mean = f.text; it.dom = f.dom; renderPair();
+    }, "icon"));
+    top.appendChild(btn("✕", "이 뜻 빼기", function () {
+      unlink(it); pair.items.splice(pair.items.indexOf(it), 1);
+      if (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id) pair.sel = null;
+      renderPair();
+    }, "icon"));
+    card.appendChild(top);
+    var body = el("div", "m-word");
+    if (it.word) {
+      var w = it.word;
+      var line = el("div", "w-line");
+      line.appendChild(el("span", "sp", w.spell));
+      line.appendChild(el("span", "ip", "[" + w.ipa + "]"));
+      line.appendChild(el("span", "ko", w.ko));
+      body.appendChild(line);
+      body.appendChild(el("small", "src", w.input + (w.native ? " · 원형 " + w.native : w.meaning ? " · " + w.meaning : "")));
+      if (w.homo) body.appendChild(el("small", "warn", "같은 발음: " + w.homo.slice(0, 3).join(", ")));
+      var acts = el("div", "m-acts");
+      acts.appendChild(btn("풀기", "이 단어를 후보로 되돌리기", function () { unlink(it); pair.sel = { t: "m", id: it.id }; renderPair(); }));
+      acts.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { unlink(it); it.manualOn = true; renderPair(); focusManual(it.id); }));
+      body.appendChild(acts);
+    } else if (it.manualOn || it.manual) {
+      var inp = el("input", "lang m-in"); inp.type = "text"; inp.value = it.manual; inp.placeholder = "변환기 입력 (예: %pala, @rate)";
+      inp.setAttribute("aria-label", it.mean + "의 형태 직접 입력"); inp.autocomplete = "off"; inp.spellcheck = false; inp.dataset.id = it.id;
+      var prev = el("div", "w-line m-prev");
+      function upd() {
+        it.manual = inp.value; prev.innerHTML = "";
+        var o = manualConv(inp.value);
+        if (o) { prev.appendChild(el("span", "sp", o.spell)); prev.appendChild(el("span", "ip", "[" + o.ipa + "]")); prev.appendChild(el("span", "ko", o.ko)); }
+        card.classList.toggle("done", !!inp.value.trim()); updAdd();
+      }
+      inp.addEventListener("input", upd);
+      body.appendChild(inp); body.appendChild(prev); upd();
+      var acts2 = el("div", "m-acts");
+      acts2.appendChild(btn("입력 취소", "직접 입력을 지우기", function () { it.manual = ""; it.manualOn = false; renderPair(); }));
+      body.appendChild(acts2);
+    } else {
+      body.className = "m-word m-empty";
+      body.appendChild(el("span", "hint", pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? "단어 후보를 누르면 이어집니다" : "눌러서 고른 뒤 단어 후보를 누르세요"));
+      body.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { it.manualOn = true; renderPair(); focusManual(it.id); }));
+    }
+    card.appendChild(body);
+    mcol.appendChild(card);
+  });
+  wrap.appendChild(mcol);
+
+  var pcol = el("div", "pair-pool" + (pair.fold ? " fold" : ""));
+  var ph = el("div", "pool-head");
+  var selItem = pair.sel && pair.sel.t === "m" ? findItem(pair.sel.id) : null;
+  ph.appendChild(btn((pair.fold ? "▴ " : "▾ ") + "단어 후보 " + pair.pool.length + "개", pair.fold ? "후보 펼치기" : "후보 접기", function () { var b = $("gPair"); if (b.classList.contains("typing")) { b.classList.remove("typing"); pair.fold = false; } else pair.fold = !pair.fold; renderPair(); }, "pool-fold"));
+  ph.appendChild(el("span", "pool-sel", selItem ? "→ " + selItem.mean : (pair.sel && pair.sel.t === "w" ? "뜻을 누르면 이어집니다" : "")));
+  pcol.appendChild(ph);
+  var chips = el("div", "pool-chips");
+  pair.pool.forEach(function (w) {
+    var chip = el("div", "w-chip" + (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id ? " sel" : "") + (w.loading ? " loading" : ""));
+    var p = btn("", selItem ? selItem.mean + "에 잇기" : "이 단어 고르기", function () {
+      if (w.loading) return;
+      if (pair.sel && pair.sel.t === "m") { linkPair(pair.sel.id, w.id); renderPair(); return; }
+      pair.sel = (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id) ? null : { t: "w", id: w.id }; renderPair();
+    }, "w-pick");
+    p.appendChild(el("span", "sp", w.spell));
+    p.appendChild(el("small", "", "[" + w.ipa + "] " + w.ko));
+    chip.appendChild(p);
+    chip.appendChild(btn("↻", "이 단어만 다시 만들기", function () {
+      if (w.loading) return;
+      w.loading = true; renderPair();
+      findWords(1, pairExcl(), { dead: false }, function (res) {
+        var i = findPool(w.id); if (i < 0) return;
+        if (res[0]) { res[0].id = ++pairSeq; pair.pool[i] = res[0]; if (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id) pair.sel = null; }
+        else { w.loading = false; $("gStatus").textContent = "조건에 맞는 새 단어를 찾지 못했습니다."; }
+        renderPair();
+      });
+    }, "icon"));
+    chips.appendChild(chip);
+  });
+  if (!pair.pool.length) chips.appendChild(el("span", "hint", "남은 후보가 없습니다. 뜻에 직접 입력하거나 \"남은 단어 다시\"로 새로 만드세요."));
+  pcol.appendChild(chips);
+  var foot = el("div", "pool-foot");
+  var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
+  add.id = "gAddPairs";
+  foot.appendChild(add);
+  pcol.appendChild(foot);
+  wrap.appendChild(pcol);
+  box.appendChild(wrap);
+  updAdd();
+}
+/* 좁은 화면에서 직접 입력하는 동안에는 후보 칸을 접어 입력란이 가려지지 않게 함.
+   입력란을 벗어날 때 바로 펼치면 버튼이 움직여 누른 자리가 어긋나므로, 다른 조작(다시 그리기)이나 후보 머리를 누를 때 펼침 */
+$("gPair").addEventListener("focusin", function (e) { if (e.target.classList && e.target.classList.contains("m-in")) this.classList.add("typing"); });
+function updAdd() { var b = $("gAddPairs"); if (!b) return; var n = readyCount(); b.textContent = n ? n + "개 단어장에 추가" : "이은 단어가 없습니다"; b.disabled = !n; }
+function focusManual(id) { var i = $("gPair").querySelector('input.m-in[data-id="' + id + '"]'); if (i) i.focus(); }
+function addPairs() {
+  if (!lex.col || !pair) return;
+  var ready = pair.items.filter(function (it) { return it.word || it.manual.trim(); });
+  if (!ready.length) return;
+  var maxN = lex.words.reduce(function (m, w) { return Math.max(m, w.n || 0); }, 0);
+  var jobs = ready.map(function (it, i) {
+    var inp = it.word ? it.word.input : it.manual.trim(), tags = [];
+    if (/^@|[\-|·~]@/.test(inp)) tags.push(FOSSIL);
+    var org = it.word ? it.word.origin : (/^%/.test(inp) ? "f" : "");
+    if (org === "f" || /^%/.test(inp)) tags.push("F 기원");
+    if (org === "b" || org === "bp") tags.push("B 기원");
+    var note = it.word && it.word.native ? "원형 " + it.word.native : it.word && it.word.meaning ? "구성: " + it.word.meaning : "";
+    var data = { head: inp.replace(/^[@%&]+/, ""), mean: it.mean, input: inp, note: note, tags: tags, n: maxN + 1 + i };
+    return lex.col.doc().set(data);
+  });
+  Promise.all(jobs).then(function () {
+    pair.items = pair.items.filter(function (it) { return ready.indexOf(it) < 0; });
+    pair.sel = pair.items.length ? { t: "m", id: pair.items[0].id } : null;
+    $("gStatus").textContent = ready.length + "개를 단어장에 추가했습니다.";
+    renderPair();
+  }, function () { $("gStatus").textContent = "단어장에 추가하지 못했습니다."; });
+}
 function genHint() {
   var o = $("gOrigin").value;
   $("gHint").textContent = GEN_HINTS[o];
