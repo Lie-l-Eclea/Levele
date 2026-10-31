@@ -226,6 +226,7 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .stat-bar b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--err); }
 .stat-gap { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
 .stat-gap.lo { color: var(--err); }
+.stat-gap.hi { color: #b9770e; }
 button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-family: var(--font-lang); font-size: 1.05rem; color: var(--accent); min-height: 32px; }
 .stat-sub td { background: var(--bg); }
 .stat-sub td.ph { padding-left: 12px; font-size: 0.95rem; }
@@ -275,7 +276,8 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .o-chip.on { border-color: var(--fg); font-weight: 700; }
 .o-chip .o-n { color: var(--muted); }
 .o-chip.lo .o-g { color: #c0392b; font-weight: 700; }
-.o-chip:not(.lo) .o-g { color: #2e7d32; }
+.o-chip.hi .o-g { color: #b9770e; font-weight: 700; }
+.o-chip.ok .o-g { color: #2e7d32; }
 .gh-bar { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--line, #ccc); border-radius: 3px; font-size: 13px; }
 .gh-title { font-weight: 600; }
 .gh-tok { flex: 0 1 180px; min-width: 0; padding: 4px 6px; border: 1px solid var(--line, #ccc); border-radius: 3px; background: transparent; color: inherit; font: inherit; }
@@ -2033,25 +2035,33 @@ function shortPhonemes() {
   return out;
 }
 var ORIGIN_SHORT = { a: "계승어", f: "포브르", b: "에냥", e: "신어", l: "학술" };
+var ORIGIN_BAND = 0.05;   /* 목표 비율의 ±5%(상대값)를 충족 범위로 봄 */
+function sgn(x) { return (x > 0 ? "+" : x < 0 ? "−" : "±") + pct2(Math.abs(x)); }
+function pct2(x) { return (Math.round(x * 100) / 100).toFixed(2); }
 function originGaps() {
   var ws = statWords(), T = ws.length, cnt = { a: 0, f: 0, b: 0, e: 0, l: 0 };
   ws.forEach(function (w) { cnt[originOfWord(w)]++; });
   var tSum = Object.keys(statT.o).reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
   return ["a", "f", "b", "e", "l"].map(function (k) {
-    var tg = statT.o[k] / tSum * 100, t = tg / 100;
-    return { k: k, n: cnt[k], cur: T ? cnt[k] / T * 100 : 0, tg: tg, need: t < 1 ? Math.max(0, Math.ceil((t * T - cnt[k]) / (1 - t))) : 0 };
+    var tg = statT.o[k] / tSum * 100, t = tg / 100, cur = T ? cnt[k] / T * 100 : 0;
+    var lo = tg * (1 - ORIGIN_BAND), hi = tg * (1 + ORIGIN_BAND), eps = 1e-9;
+    var state = cur < lo - eps ? "lo" : cur > hi + eps ? "hi" : "ok";
+    var need = state === "lo" && t < 1 ? Math.max(1, Math.ceil((t * T - cnt[k]) / (1 - t))) : 0;
+    var over = state === "hi" && t < 1 ? Math.max(1, Math.ceil((cnt[k] - t * T) / (1 - t))) : 0;
+    return { k: k, n: cnt[k], cur: cur, tg: tg, lo: lo, hi: hi, state: state, need: need, over: over, diff: cur - tg };
   });
 }
+function gapText(g) { return g.state === "lo" ? "부족 +" + g.need : g.state === "hi" ? "과다 " + sgn(g.diff) + "%p" : "충족"; }
 function renderOriginBrief() {
   var box = $("gOriginBrief"); if (!box || lex.status !== "ready") return;
   var sel = $("gOrigin").value; if (sel === "bp") sel = "b";
   box.innerHTML = "";
   originGaps().forEach(function (g) {
-    var c = el("span", "o-chip" + (g.k === sel ? " on" : "") + (g.need > 0 ? " lo" : ""));
+    var c = el("span", "o-chip " + g.state + (g.k === sel ? " on" : ""));
     c.appendChild(el("span", "o-n", ORIGIN_SHORT[g.k]));
-    c.appendChild(el("span", "o-v", pct(g.cur) + "%"));
-    c.appendChild(el("span", "o-g", g.need > 0 ? "+" + g.need : "충족"));
-    c.title = ORIGIN_LABEL[g.k] + ": " + g.n + "개, 현재 " + pct(g.cur) + "%, 목표 " + pct(g.tg) + "%" + (g.need > 0 ? ", 목표까지 " + g.need + "개 부족" : ", 목표 충족");
+    c.appendChild(el("span", "o-v", pct2(g.cur) + "%"));
+    c.appendChild(el("span", "o-g", gapText(g)));
+    c.title = ORIGIN_LABEL[g.k] + ": " + g.n + "개, 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (목표 대비 " + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%";
     box.appendChild(c);
   });
 }
@@ -2061,6 +2071,7 @@ function renderStats() {
   var ws = statWords(), T = ws.length, cnt = { a: 0, f: 0, b: 0, e: 0, l: 0 };
   ws.forEach(function (w) { cnt[originOfWord(w)]++; });
   var tSum = Object.keys(statT.o).reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
+  var gaps = {}; originGaps().forEach(function (g) { gaps[g.k] = g; });
   var tbl = el("table", "stat-table"), hd = el("tr");
   ["어원", "단어", "현재", "", "목표 %", "목표까지"].forEach(function (h, i) { var th = el("th", i === 3 ? "opt" : "", h); hd.appendChild(th); });
   tbl.appendChild(hd);
@@ -2071,8 +2082,8 @@ function renderStats() {
     tr.appendChild(el("td", "num", pct(cur) + "%"));
     var bc = barCell(cur, tg, 100); bc.className = "opt"; tr.appendChild(bc);
     var ti = el("td", "num"); ti.appendChild(numInput(statT.o[k], function (v) { statT.o[k] = v; }, ORIGIN_LABEL[k] + " 목표 비율")); tr.appendChild(ti);
-    var t = tg / 100, need = t < 1 ? Math.ceil((t * T - cnt[k]) / (1 - t)) : 0;
-    tr.appendChild(el("td", "num stat-gap" + (need > 0 ? " lo" : ""), need > 0 ? "+" + need : "충족"));
+    var gg = gaps[k];
+    tr.appendChild(el("td", "num stat-gap" + (gg.state !== "ok" ? " " + gg.state : ""), gapText(gg) + (gg.state === "ok" ? " (" + sgn(gg.diff) + "%p)" : "")));
     tbl.appendChild(tr);
   });
   var foot = el("tr"); foot.appendChild(el("td", "", "합계")); foot.appendChild(el("td", "num", String(T))); foot.appendChild(el("td", "num", "100%"));
