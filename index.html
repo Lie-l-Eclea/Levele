@@ -221,6 +221,9 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .stat-bar b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--err); }
 .stat-gap { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
 .stat-gap.lo { color: var(--err); }
+button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-family: var(--font-lang); font-size: 1.05rem; color: var(--accent); min-height: 32px; }
+.stat-sub td { background: var(--bg); }
+.stat-sub td.ph { padding-left: 12px; font-size: 0.95rem; }
 .stat-wrap { overflow-x: auto; max-width: 100%; min-width: 0; }
 .stat-cols > * { min-width: 0; }
 .stat-cols { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
@@ -1779,6 +1782,7 @@ var statT = (function () {
   try { var v1 = JSON.parse(load("eklea-stat-targets-v1") || "null"); if (v1 && v1.o) return { o: v1.o, p: Object.assign({}, PHON_TARGET0) }; } catch (e) {}
   return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) };
 })();
+var MERGED_EOE = "ə+œ", statOpenEoe = false;
 function saveStatT() { save(STORE_STAT, JSON.stringify(statT)); }
 function originOfWord(w) {
   var inp = w.input || "", tg = tagsOf(w);
@@ -1846,19 +1850,38 @@ function renderStats() {
     var t2 = el("table", "stat-table"), h2 = el("tr");
     [title, "수", "현재", "", "기준 %", "차이"].forEach(function (h, i) { h2.appendChild(el("th", i === 3 ? "opt" : "", h)); });
     t2.appendChild(h2);
-    var mx = Math.max.apply(null, list.map(function (k) { return Math.max((pc[k] || 0) / (total || 1) * 100, statT.p[k] || 0); }).concat([1]));
-    list.forEach(function (k) {
-      var tr = el("tr"), cur = total ? (pc[k] || 0) / total * 100 : 0, tg = statT.p[k] || 0;
-      tr.appendChild(el("td", "ph", k)); tr.appendChild(el("td", "num", String(pc[k] || 0))); tr.appendChild(el("td", "num", pct(cur) + "%"));
+    var mx = Math.max.apply(null, list.map(function (k) {
+      if (k === MERGED_EOE) return Math.max(((pc["ə"] || 0) + (pc["œ"] || 0)) / (total || 1) * 100, (statT.p["ə"] || 0) + (statT.p["œ"] || 0));
+      return Math.max((pc[k] || 0) / (total || 1) * 100, statT.p[k] || 0); }).concat([1]));
+    function gapCell(cur, tg) {
+      var d = cur - tg, ratio = tg ? cur / tg : (cur ? 9 : 1);
+      return el("td", "num stat-gap" + (ratio < 0.5 || ratio > 2 ? " lo" : ""), (d >= 0 ? "+" : "") + pct(d));
+    }
+    function row(k, sub) {
+      var tr = el("tr", sub ? "stat-sub" : ""), cur = total ? (pc[k] || 0) / total * 100 : 0, tg = statT.p[k] || 0;
+      tr.appendChild(el("td", "ph", (sub ? "└ " : "") + k)); tr.appendChild(el("td", "num", String(pc[k] || 0))); tr.appendChild(el("td", "num", pct(cur) + "%"));
       var bc = barCell(cur, tg, mx); bc.className = "opt"; tr.appendChild(bc);
       var ti = el("td", "num"); ti.appendChild(numInput(tg, function (v) { statT.p[k] = v; }, k + " 기준 비율")); tr.appendChild(ti);
-      var d = cur - tg, ratio = tg ? cur / tg : (cur ? 9 : 1);
-      tr.appendChild(el("td", "num stat-gap" + (ratio < 0.5 || ratio > 2 ? " lo" : ""), (d >= 0 ? "+" : "") + pct(d)));
+      tr.appendChild(gapCell(cur, tg));
       t2.appendChild(tr);
+    }
+    list.forEach(function (k) {
+      if (k !== MERGED_EOE) { row(k); return; }
+      /* 프랑스어 자료는 무음 e를 낱말에 따라 ə(samedi)나 ø(le, de, je)로 적으므로 ə와 œ를 합쳐 견줌. 누르면 둘을 나눠 보여 줌 */
+      var n = (pc["ə"] || 0) + (pc["œ"] || 0), cur = total ? n / total * 100 : 0, tg = (statT.p["ə"] || 0) + (statT.p["œ"] || 0);
+      var tr = el("tr", "stat-merge"), th = el("td", "ph");
+      th.appendChild(btn((statOpenEoe ? "▾ " : "▸ ") + "ə + œ", statOpenEoe ? "ə와 œ 나눠 보기 닫기" : "ə와 œ 나눠 보기", function () { statOpenEoe = !statOpenEoe; renderStats(); }, "stat-toggle"));
+      tr.appendChild(th); tr.appendChild(el("td", "num", String(n))); tr.appendChild(el("td", "num", pct(cur) + "%"));
+      var bc = barCell(cur, tg, mx); bc.className = "opt"; tr.appendChild(bc);
+      tr.appendChild(el("td", "num", (Math.round(tg * 100) / 100) + ""));
+      tr.appendChild(gapCell(cur, tg));
+      t2.appendChild(tr);
+      if (statOpenEoe) { row("ə", true); row("œ", true); }
     });
     var w = el("div", "stat-wrap"); w.appendChild(t2); return w;
   }
   var cons = keys.filter(function (k) { return !isV(k); }), vows = keys.filter(isV);
+  var iE = vows.indexOf("œ"); vows = vows.filter(function (k) { return k !== "œ" && k !== "ə"; }); vows.splice(iE >= 0 ? Math.min(iE, vows.length) : vows.length, 0, MERGED_EOE);
   var p = $("statPhon"); p.innerHTML = "";
   var cols = el("div", "stat-cols"); cols.appendChild(phonTable(cons, "자음")); cols.appendChild(phonTable(vows, "모음"));
   p.appendChild(cols);
