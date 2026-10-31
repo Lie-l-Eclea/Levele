@@ -289,6 +289,8 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 .m-acts { display: flex; gap: 6px; flex-wrap: wrap; }
 .m-acts button { min-height: 36px; font-size: 0.82rem; }
 .m-in.bad { border-color: var(--err); background: color-mix(in srgb, var(--err) 8%, var(--bg)); }
+.m-homo { color: var(--err); font-size: 0.8rem; line-height: 1.4; margin-top: 4px; }
+.m-near { color: var(--muted); font-size: 0.72rem; line-height: 1.35; margin-top: 2px; }
 .m-issue { color: var(--err); font-size: 0.8rem; line-height: 1.4; margin-top: 4px; }
 .m-in { width: 100%; font-family: var(--font-lang); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
 .pair-pool { position: sticky; bottom: 0; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 12px 12px 0 0;
@@ -2638,6 +2640,19 @@ function formIssues(v, org) {
   return out;
 }
 function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
+/* 직접 입력한 발음이 단어장과 같은지(같은 발음) 또는 한 음소만 다른지(유사음) 찾음. 단어장 발음은 convOne이 입력별로 저장해 두므로 키를 누를 때마다 가볍게 돌릴 수 있음 */
+function soundMatches(ipa) {
+  var key = homoKey(ipa), sg = ipaSegs((ipa || "").replace(/[ˈˌ‿\s]/g, "")), homo = [], near = [];
+  if (!key || lex.status !== "ready") return { homo: homo, near: near };
+  lex.words.forEach(function (w) {
+    if (!w.input) return;
+    var o = convOne(w.input), k = homoKey(o.ipa); if (!k) return;
+    var lab = o.spell + " (" + firstMean(w.mean || w.head) + ")";
+    if (k === key) homo.push(lab);
+    else { var s2 = ipaSegs((o.ipa || "").replace(/[ˈˌ‿\s]/g, "")); if (nearOne(sg, s2)) near.push(lab); }
+  });
+  return { homo: homo, near: near };
+}
 function manualConv(v) {
   v = (v || "").trim(); if (!v) return null;
   try { var o = convert(v); return { spell: o.main.trim(), form: o.script.trim(), ipa: o.ipa.trim().replace(/‿/g, ""), ko: o.ko.trim() }; } catch (e) { return null; }
@@ -2714,6 +2729,7 @@ function renderPair() {
     inp.setAttribute("aria-label", it.mean + "의 형태 (변환기 입력)"); inp.autocomplete = "off"; inp.spellcheck = false; inp.dataset.id = it.id;
     inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off");
     var prev = el("div", "w-line m-prev"), issue = el("div", "m-issue"); issue.hidden = true;
+    var homoEl = el("div", "m-homo"), nearEl = el("div", "m-near"); homoEl.hidden = nearEl.hidden = true;
     function upd() {
       it.manual = inp.value; prev.innerHTML = "";
       var iss = formIssues(inp.value, $("gOrigin").value);
@@ -2723,10 +2739,16 @@ function renderPair() {
       var has = !blankForm(inp.value);
       if (has) { var o = manualConv(inp.value); if (o) { prev.appendChild(el("span", "sp", showSpell(o))); prev.appendChild(el("span", "ip", "[" + o.ipa + "]")); prev.appendChild(el("span", "ko", o.ko)); } }
       prev.hidden = !has;
+      homoEl.hidden = nearEl.hidden = true;
+      if (has) {
+        var oo = manualConv(inp.value), sm = oo ? soundMatches(oo.ipa) : null;
+        if (sm && sm.homo.length) { homoEl.textContent = "같은 발음: " + sm.homo.slice(0, 3).join(", ") + (sm.homo.length > 3 ? " 외 " + (sm.homo.length - 3) + "개" : ""); homoEl.hidden = false; }
+        if (sm && sm.near.length) { nearEl.textContent = "비슷한 발음: " + sm.near.slice(0, 4).join(", ") + (sm.near.length > 4 ? " 외 " + (sm.near.length - 4) + "개" : ""); nearEl.hidden = false; }
+      }
       card.classList.toggle("done", has); updAdd();
     }
     inp.addEventListener("input", upd);
-    body.appendChild(inp); body.appendChild(prev); body.appendChild(issue); upd();
+    body.appendChild(inp); body.appendChild(prev); body.appendChild(issue); body.appendChild(homoEl); body.appendChild(nearEl); upd();
     if (it.word) {
       var w = it.word;
       var meta = w.native ? "원형 " + w.native : w.meaning ? w.meaning : "";
