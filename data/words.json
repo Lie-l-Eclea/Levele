@@ -3844,9 +3844,9 @@
   "id": "w402"
  },
  {
-  "head": "pomer",
+  "head": "pomel",
   "mean": "치료하다",
-  "input": "%pomer",
+  "input": "%pomel",
   "note": "",
   "tags": [
    "F 기원"
@@ -3899,9 +3899,9 @@
   "id": "wmvw9cmsj2npu"
  },
  {
-  "head": "lukubre",
+  "head": "lukuble",
   "mean": "성냥",
-  "input": "%lukubre",
+  "input": "%lukuble",
   "note": "",
   "tags": [
    "F 기원"
@@ -3987,9 +3987,9 @@
   "id": "wmvw9h1fbrw6p"
  },
  {
-  "head": "jura",
+  "head": "jula",
   "mean": "흔들거리다",
-  "input": "%jura",
+  "input": "%jula",
   "note": "",
   "tags": [
    "F 기원"
@@ -4029,17 +4029,6 @@
   ],
   "n": 419,
   "id": "wmvwa7eehvw92"
- },
- {
-  "head": "plait",
-  "mean": "그녀",
-  "input": "%plait",
-  "note": "",
-  "tags": [
-   "F 기원"
-  ],
-  "n": 420,
-  "id": "wmvwa7ejlt4cv"
  },
  {
   "head": "dilkəmi",
