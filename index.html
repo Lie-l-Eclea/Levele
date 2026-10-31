@@ -127,7 +127,7 @@ details > summary:hover::before { background: var(--accent-soft); }
 .lex-form { display: grid; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 .fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .field { display: grid; gap: 4px; min-width: 0; }
-.field label { font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+.field label, .field .flabel { font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
 .field input { width: 100%; }
 .field input.lang { font-family: var(--font-lang); font-size: 1.05rem; }
 .preview { font-family: var(--font-lang); font-size: 1.05rem; display: flex; flex-wrap: wrap; gap: 4px 16px; }
@@ -273,7 +273,9 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 
 .o-brief { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 0.78rem; }
 .o-chip { display: inline-flex; gap: 5px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 3px; white-space: nowrap; }
-.o-chip.on { border-color: var(--fg); font-weight: 700; }
+.o-btn { background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.o-chip.on { border-color: var(--fg); font-weight: 700; box-shadow: inset 0 0 0 1px var(--fg); }
+span.o-chip { opacity: .75; }
 .o-chip .o-n { color: var(--muted); }
 .o-chip.lo .o-g { color: #c0392b; font-weight: 700; }
 .o-chip.hi .o-g { color: #b9770e; font-weight: 700; }
@@ -411,15 +413,15 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
       <details class="gen-cond" id="gCond" open>
       <summary><b>생성 조건</b><span class="cond-sum" id="gCondSum"></span></summary>
       <div class="gen-bar">
-        <div class="field"><label for="gOrigin">기원</label>
-          <select id="gOrigin">
+        <div class="field"><span class="flabel" id="gOriginLbl">기원</span>
+          <select id="gOrigin" hidden aria-hidden="true" tabindex="-1">
             <option value="a">에클라이아어 고유어</option>
             <option value="e">에클레아어 신어 (합성)</option>
             <option value="b">에냥어 차용</option>
             <option value="bp">에냥어 사람·민족 이름 (N-…-n)</option>
             <option value="f">포브르어 차용</option>
-          </select></div>
-        <div class="o-brief" id="gOriginBrief" aria-live="polite"></div>
+          </select>
+          <div class="o-brief" id="gOriginBrief" role="radiogroup" aria-labelledby="gOriginLbl"></div></div>
         <div class="field"><label for="gSyl">원형 음절 수</label>
           <select id="gSyl"><option value="0">상관없음</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
         <div class="field"><label for="gDomain">뜻 분야</label>
@@ -2035,7 +2037,7 @@ function shortPhonemes() {
   return out;
 }
 var ORIGIN_SHORT = { a: "계승어", f: "포브르", b: "에냥", e: "신어", l: "학술" };
-var ORIGIN_BAND = 0.05;   /* 목표 비율의 ±5%(상대값)를 충족 범위로 봄 */
+var ORIGIN_BAND = 0.05, ORIGIN_BAND_MIN = 0.5;   /* 충족 범위: 목표 ±5%(상대값)와 ±0.5%p 중 넓은 쪽 */
 function sgn(x) { return (x > 0 ? "+" : x < 0 ? "−" : "±") + pct2(Math.abs(x)); }
 function pct2(x) { return (Math.round(x * 100) / 100).toFixed(2); }
 function originGaps() {
@@ -2044,7 +2046,7 @@ function originGaps() {
   var tSum = Object.keys(statT.o).reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
   return ["a", "f", "b", "e", "l"].map(function (k) {
     var tg = statT.o[k] / tSum * 100, t = tg / 100, cur = T ? cnt[k] / T * 100 : 0;
-    var lo = tg * (1 - ORIGIN_BAND), hi = tg * (1 + ORIGIN_BAND), eps = 1e-9;
+    var hw = Math.max(ORIGIN_BAND_MIN, tg * ORIGIN_BAND), lo = Math.max(0, tg - hw), hi = tg + hw, eps = 1e-9;
     var state = cur < lo - eps ? "lo" : cur > hi + eps ? "hi" : "ok";
     var need = state === "lo" && t < 1 ? Math.max(1, Math.ceil((t * T - cnt[k]) / (1 - t))) : 0;
     var over = state === "hi" && t < 1 ? Math.max(1, Math.ceil((cnt[k] - t * T) / (1 - t))) : 0;
@@ -2052,16 +2054,28 @@ function originGaps() {
   });
 }
 function gapText(g) { return g.state === "lo" ? "부족 +" + g.need : g.state === "hi" ? "과다 " + sgn(g.diff) + "%p" : "충족"; }
+function selectOrigin(v) { var s = $("gOrigin"); if (s.value === v) return; s.value = v; s.dispatchEvent(new Event("change", { bubbles: true })); }
 function renderOriginBrief() {
   var box = $("gOriginBrief"); if (!box || lex.status !== "ready") return;
-  var sel = $("gOrigin").value; if (sel === "bp") sel = "b";
+  var cur0 = $("gOrigin").value;
   box.innerHTML = "";
-  originGaps().forEach(function (g) {
-    var c = el("span", "o-chip " + g.state + (g.k === sel ? " on" : ""));
-    c.appendChild(el("span", "o-n", ORIGIN_SHORT[g.k]));
+  var gl = originGaps(), by = {}; gl.forEach(function (g) { by[g.k] = g; });
+  [["a", "a"], ["f", "f"], ["b", "b"], ["e", "e"], ["l", ""], ["bp", ""]].forEach(function (pr) {
+    var k = pr[0], g = by[k === "bp" ? "b" : k], on = cur0 === k;
+    if (k === "bp") {
+      var cb = el("button", "o-chip o-btn ok" + (on ? " on" : ""));
+      cb.type = "button"; cb.setAttribute("role", "radio"); cb.setAttribute("aria-checked", on ? "true" : "false");
+      cb.appendChild(el("span", "o-n", "에냥 사람·민족 이름"));
+      cb.title = "에냥어 사람·민족 이름 (N-…-n)을 생성합니다. 어휘 비율에는 세지 않습니다";
+      cb.addEventListener("click", function () { selectOrigin("bp"); });
+      box.appendChild(cb); return;
+    }
+    var c = el(k === "l" ? "span" : "button", "o-chip " + g.state + (on ? " on" : "") + (k === "l" ? "" : " o-btn"));
+    if (k !== "l") { c.type = "button"; c.setAttribute("role", "radio"); c.setAttribute("aria-checked", on ? "true" : "false"); c.addEventListener("click", function () { selectOrigin(k); }); }
+    c.appendChild(el("span", "o-n", ORIGIN_SHORT[k]));
     c.appendChild(el("span", "o-v", pct2(g.cur) + "%"));
     c.appendChild(el("span", "o-g", gapText(g)));
-    c.title = ORIGIN_LABEL[g.k] + ": " + g.n + "개, 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (목표 대비 " + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%";
+    c.title = ORIGIN_LABEL[k] + ": " + g.n + "개, 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (목표 대비 " + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%" + (k === "l" ? ". 학술 차용은 변환기에서 & 로 직접 입력하므로 생성 대상이 아닙니다" : "");
     box.appendChild(c);
   });
 }
