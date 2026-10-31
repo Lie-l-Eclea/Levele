@@ -257,8 +257,8 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .pool-main { display: flex; flex-direction: column; gap: 6px; min-height: 0; min-width: 0; }
 .pool-main .pool-chips { flex: 1 1 auto; }
 .pool-main .pool-head { flex: none; }
-.pool-tools { display: flex; gap: 6px; margin-left: auto; flex: none; }
-.pool-tools button { min-height: 36px; padding: 0 10px; font-size: 0.82rem; line-height: 1.2; white-space: nowrap; }
+.pool-tools { display: flex; gap: 4px; margin-left: auto; flex: none; }
+.pool-tools button { min-height: 36px; padding: 0 7px; font-size: 0.78rem; line-height: 1.2; white-space: nowrap; }
 .pool-tools .t-full { display: none; }
 .pair { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 .pair-means { display: grid; gap: 8px; min-width: 0; }
@@ -293,12 +293,15 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 .w-pick { border: 0; background: transparent; display: grid; text-align: left; padding: 4px 8px; min-height: 44px; color: var(--fg); min-width: 0; }
 .w-pick:hover { color: var(--fg); }
 .w-chip button.icon { border: 0; border-left: 1px solid var(--line); border-radius: 0 8px 8px 0; background: transparent; min-width: 38px; }
-.pool-foot { display: flex; justify-content: flex-end; }
+.pool-foot { display: flex; justify-content: flex-end; gap: 6px; }
 .m-empty { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
 .m-empty button { min-height: 36px; }
-button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
+button.pool-fold { white-space: nowrap; border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
 .pair-pool.fold .pool-main, #gPair.typing .pool-main { display: none; }
 .pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
+.pool-foot button.foot-sec { flex: 0 0 auto; padding: 0 10px; font-size: 0.82rem; white-space: nowrap; }
+.pool-foot button.primary { min-width: 0; }
+.pool-foot .t-full { display: none; }
 @media (max-width: 819px) {
   /* 좁은 화면: 후보 칸을 화면 가장자리까지 넓혀 양옆 빈 공간을 없앰 (몸통 여백 + 패널 안쪽 여백 17px만큼 바깥으로) */
   .pair-pool { margin-left: calc(-1 * (max(16px, env(safe-area-inset-left, 0px)) + 17px)); margin-right: calc(-1 * (max(16px, env(safe-area-inset-right, 0px)) + 17px)); border-left: 0; border-right: 0; border-radius: 12px 12px 0 0; padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
@@ -307,9 +310,10 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
   .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .pair-pool { top: 12px; bottom: auto; border-radius: 12px; max-height: calc(100vh - 24px); box-shadow: none; }
   #gPair.typing .pool-main { display: flex; }
-  .pool-tools .t-full { display: inline; }
-  .pool-tools .t-short { display: none; }
-  .pool-tools button { min-height: 38px; font-size: 0.88rem; }
+  .pool-tools .t-full, .pool-foot .t-full { display: inline; }
+  .pool-tools .t-short, .pool-foot .t-short { display: none; }
+  .pool-tools button { min-height: 38px; padding: 0 10px; font-size: 0.88rem; }
+  .pool-tools { gap: 6px; }
 }
 .gen-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
@@ -2500,7 +2504,7 @@ function pickMeanings(n, exclTexts) {
 var pair = null, pairSeq = 0;
 function startPair(means, words) {
   pair = { items: means.map(function (m) { return { id: ++pairSeq, mean: m.text, dom: m.dom, f: m.f, core: m.core, word: null, manual: "", manualOn: false }; }),
-    pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null };
+    pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null, hist: [] };
   if (pair.items.length) pair.sel = { t: "m", id: pair.items[0].id };
   $("gPair").hidden = false;
   renderPair();
@@ -2522,6 +2526,30 @@ function linkPair(itemId, wordId) {
   for (var k = 1; k <= pair.items.length; k++) { var c = pair.items[(idx + k) % pair.items.length]; if (!c.word && !c.manual) { next = c; break; } }
   pair.sel = next ? { t: "m", id: next.id } : null;
 }
+/* 되돌리기: 이음·해제·다시 뽑기 같은 조작 직전의 뜻 카드와 후보 상태를 쌓아 둠 */
+function pushHist() {
+  if (!pair) return;
+  pair.hist.push({ items: pair.items.map(function (it) { return Object.assign({}, it); }), pool: pair.pool.slice(), sel: pair.sel ? { t: pair.sel.t, id: pair.sel.id } : null });
+  if (pair.hist.length > 30) pair.hist.shift();
+}
+function undoPair() {
+  if (!pair || !pair.hist.length) return;
+  var h = pair.hist.pop();
+  pair.items = h.items; pair.pool = h.pool; pair.sel = h.sel;
+  pair.pool.forEach(function (w) { w.loading = false; });
+  $("gStatus").textContent = "이전 상태로 되돌렸습니다.";
+  renderPair();
+}
+function unlinkAll() {
+  if (!pair || !pair.items.some(function (it) { return it.word; })) return;
+  pushHist();
+  var back = [];
+  pair.items.forEach(function (it) { if (it.word) { back.push(it.word); it.word = null; } });
+  pair.pool = back.concat(pair.pool);
+  pair.sel = pair.items.length ? { t: "m", id: pair.items[0].id } : null;
+  $("gStatus").textContent = back.length + "개의 이음을 풀었습니다. 직접 입력한 형태는 그대로입니다.";
+  renderPair();
+}
 function unlink(it) { if (it.word) { pair.pool.unshift(it.word); it.word = null; } }
 function manualConv(v) {
   v = (v || "").trim(); if (!v) return null;
@@ -2535,19 +2563,28 @@ function renderPair() {
   if (!pair) return;
   var tools = el("div", "pool-tools");
   function tbtn(full, short, title, fn) { var x = btn("", title, fn); x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); return x; }
-  tools.appendChild(tbtn("순서대로 잇기", "잇기", "남은 뜻과 단어를 위에서부터 차례로 잇습니다", function () {
-    pair.items.forEach(function (it) { if (!it.word && !it.manual.trim() && pair.pool.length) { it.word = pair.pool.shift(); it.manualOn = false; } });
+  tools.appendChild(tbtn("전부 잇기", "전부 잇기", "비어 있는 뜻마다 단어 후보를 위에서부터 차례로 모두 잇습니다 (발음 거르기가 켜져 있으면 보이는 후보만)", function () {
+    var cands = pair.pool.filter(function (w) { return candHit(w.ipa); });
+    var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
+    if (!cands.length || !free.length) { $("gStatus").textContent = !free.length ? "비어 있는 뜻이 없습니다." : "이을 수 있는 후보가 없습니다."; return; }
+    pushHist();
+    var used = [];
+    free.forEach(function (it) { if (cands.length) { var w = cands.shift(); it.word = w; it.manualOn = false; used.push(w); } });
+    pair.pool = pair.pool.filter(function (w) { return used.indexOf(w) < 0; });
     pair.sel = null; renderPair();
   }));
   tools.appendChild(tbtn("남은 뜻 다시", "뜻 다시", "단어가 이어지지 않은 뜻을 모두 새로 뽑습니다", function () {
     var keep = pair.items.map(function (it) { return it.mean; });
     var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
+    if (!free.length) { $("gStatus").textContent = "비어 있는 뜻이 없습니다."; return; }
+    pushHist();
     var fresh = pickMeanings(free.length, keep);
     free.forEach(function (it, i) { if (fresh[i]) { it.mean = fresh[i].text; it.dom = fresh[i].dom; it.f = fresh[i].f; it.core = fresh[i].core; } });
     renderPair();
   }));
   tools.appendChild(tbtn("남은 단어 다시", "단어 다시", "이어지지 않은 단어 후보를 모두 새로 만듭니다", function () {
     var n = pair.pool.length; if (!n) return;
+    pushHist();
     var keepW = pair.items.filter(function (it) { return it.word; }).map(function (it) { return it.word; }).concat(pair.pool);
     $("gStatus").textContent = "단어를 다시 만드는 중…";
     findWords(n, keepW, { dead: false }, function (res, msg) {
@@ -2563,7 +2600,7 @@ function renderPair() {
     var card = el("div", "m-card" + (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? " sel" : "") + (it.word || it.manual.trim() ? " done" : ""));
     var top = el("div", "m-top");
     var pick = btn("", "이 뜻 고르기", function () {
-      if (pair.sel && pair.sel.t === "w") { linkPair(it.id, pair.sel.id); renderPair(); return; }
+      if (pair.sel && pair.sel.t === "w") { pushHist(); linkPair(it.id, pair.sel.id); renderPair(); return; }
       pair.sel = (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id) ? null : { t: "m", id: it.id }; renderPair();
     }, "m-pick");
     pick.appendChild(el("span", "m-mean", it.mean));
@@ -2573,10 +2610,11 @@ function renderPair() {
       var keep = pair.items.map(function (x) { return x.mean; });
       var f = pickMeanings(1, keep)[0];
       if (!f) { $("gStatus").textContent = "이 분야에 남은 뜻이 없습니다."; return; }
+      pushHist();
       it.mean = f.text; it.dom = f.dom; it.f = f.f; it.core = f.core; renderPair();
     }, "icon"));
     top.appendChild(btn("✕", "이 뜻 빼기", function () {
-      unlink(it); pair.items.splice(pair.items.indexOf(it), 1);
+      pushHist(); unlink(it); pair.items.splice(pair.items.indexOf(it), 1);
       if (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id) pair.sel = null;
       renderPair();
     }, "icon"));
@@ -2592,8 +2630,8 @@ function renderPair() {
       body.appendChild(el("small", "src", w.input + (w.native ? " · 원형 " + w.native : w.meaning ? " · " + w.meaning : "")));
       if (w.homo) body.appendChild(el("small", "warn", "같은 발음: " + w.homo.slice(0, 3).join(", ")));
       var acts = el("div", "m-acts");
-      acts.appendChild(btn("풀기", "이 단어를 후보로 되돌리기", function () { unlink(it); pair.sel = { t: "m", id: it.id }; renderPair(); }));
-      acts.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { unlink(it); it.manualOn = true; renderPair(); focusManual(it.id); }));
+      acts.appendChild(btn("풀기", "이 단어를 후보로 되돌리기", function () { pushHist(); unlink(it); pair.sel = { t: "m", id: it.id }; renderPair(); }));
+      acts.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { pushHist(); unlink(it); it.manualOn = true; renderPair(); focusManual(it.id); }));
       body.appendChild(acts);
     } else if (it.manualOn || it.manual) {
       var inp = el("input", "lang m-in"); inp.type = "text"; inp.value = it.manual; inp.placeholder = "변환기 입력 (예: %pala, @rate)";
@@ -2608,12 +2646,12 @@ function renderPair() {
       inp.addEventListener("input", upd);
       body.appendChild(inp); body.appendChild(prev); upd();
       var acts2 = el("div", "m-acts");
-      acts2.appendChild(btn("입력 취소", "직접 입력을 지우기", function () { it.manual = ""; it.manualOn = false; renderPair(); }));
+      acts2.appendChild(btn("입력 취소", "직접 입력을 지우기", function () { pushHist(); it.manual = ""; it.manualOn = false; renderPair(); }));
       body.appendChild(acts2);
     } else {
       body.className = "m-word m-empty";
       body.appendChild(el("span", "hint", pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? "단어 후보를 누르면 이어집니다" : "눌러서 고른 뒤 단어 후보를 누르세요"));
-      body.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { it.manualOn = true; renderPair(); focusManual(it.id); }));
+      body.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { pushHist(); it.manualOn = true; renderPair(); focusManual(it.id); }));
     }
     card.appendChild(body);
     mcol.appendChild(card);
@@ -2632,7 +2670,7 @@ function renderPair() {
     chip._ipa = w.ipa;
     var p = btn("", selItem ? selItem.mean + "에 잇기" : "이 단어 고르기", function () {
       if (w.loading) return;
-      if (pair.sel && pair.sel.t === "m") { linkPair(pair.sel.id, w.id); renderPair(); return; }
+      if (pair.sel && pair.sel.t === "m") { pushHist(); linkPair(pair.sel.id, w.id); renderPair(); return; }
       pair.sel = (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id) ? null : { t: "w", id: w.id }; renderPair();
     }, "w-pick");
     p.appendChild(el("span", "sp", w.spell));
@@ -2640,6 +2678,7 @@ function renderPair() {
     chip.appendChild(p);
     chip.appendChild(btn("↻", "이 단어만 다시 만들기", function () {
       if (w.loading) return;
+      pushHist();
       w.loading = true; renderPair();
       findWords(1, pairExcl(), { dead: false }, function (res) {
         var i = findPool(w.id); if (i < 0) return;
@@ -2656,6 +2695,9 @@ function renderPair() {
   if (candQ) { var pf = el("div", "pool-head"); pf.appendChild(el("span", "pool-filter", "발음 거르는 중: " + candQ.how)); pf.appendChild(btn("해제", "발음 거르기 해제", function () { setCandQuery(null); }, "pool-fold")); pmain.insertBefore(pf, chips); }
   pcol.appendChild(pmain);
   var foot = el("div", "pool-foot");
+  function fbtn(id, full, short, title, fn, off) { var x = btn("", title, fn, "foot-sec"); x.id = id; x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); x.disabled = off; return x; }
+  foot.appendChild(fbtn("gUndo", "↶ 되돌리기", "↶ 되돌리기", "마지막 조작 이전 상태로 되돌립니다 (잇기·해제·다시 뽑기 등, 여러 번 가능)", undoPair, !pair.hist.length));
+  foot.appendChild(fbtn("gUnlinkAll", "잇기 전부 해제", "잇기 해제", "이은 단어를 모두 후보로 되돌립니다 (직접 입력한 형태는 그대로)", unlinkAll, !pair.items.some(function (it) { return it.word; })));
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
   foot.appendChild(add);
@@ -2688,6 +2730,7 @@ function addPairs() {
   Promise.all(jobs).then(function () {
     pair.items = pair.items.filter(function (it) { return ready.indexOf(it) < 0; });
     pair.sel = pair.items.length ? { t: "m", id: pair.items[0].id } : null;
+    pair.hist = []; /* 단어장에 들어간 것은 되돌릴 수 없으므로 기록을 비움 */
     $("gStatus").textContent = ready.length + "개를 단어장에 추가했습니다.";
     renderPair();
   }, function () { $("gStatus").textContent = "단어장에 추가하지 못했습니다."; });
