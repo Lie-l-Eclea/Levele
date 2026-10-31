@@ -338,6 +338,9 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
 .ipa-keys button { font-family: var(--font-lang); font-size: 1rem; min-width: 2.2em; padding: 3px 6px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); cursor: pointer; }
 .ipa-keys button:hover { border-color: var(--muted); }
 .ipa-pad .hint { margin: 4px 0 0; }
+.gen-view { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gen-view::before { content: "표기"; font-size: 0.85rem; color: var(--muted); margin-right: 2px; }
+.gen-view .chip { min-height: 34px; }
 .gen-counts { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .gen-counts::before { content: "생성"; font-size: 0.85rem; color: var(--muted); margin-right: 2px; }
 .gen-counts button { min-width: 3.6em; }
@@ -413,6 +416,9 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
       </div>
       </details>
       <div class="gen-bar">
+        <span class="gen-view" id="gView" role="group" aria-label="표기 보기">
+          <button type="button" class="chip" data-m="main" title="프랑스어식 기본 표기">기본 표기</button><button type="button" class="chip" data-m="script" title="고유 문자를 옮겨 적은 문자형">문자형</button>
+        </span>
         <span class="gen-counts" id="gRun" role="group" aria-label="생성 개수">
           <button type="button" class="primary" data-n="1">1개</button><button type="button" class="primary" data-n="3">3개</button><button type="button" class="primary" data-n="10">10개</button><button type="button" class="primary" data-n="30">30개</button><button type="button" class="primary" data-n="100">100개</button><button type="button" class="primary" data-n="300">300개</button>
         </span>
@@ -2435,7 +2441,7 @@ function findWords(want, excl, token, onDone, onProgress) {
       if (near) continue;
     }
     seen[c.input] = true; seen["s:" + sp.toLowerCase()] = true;
-    c.spell = sp; c.ipa = ipa; c.ko = out.ko.trim(); c.homo = homoOf || null;
+    c.spell = sp; c.form = out.script.trim(); c.ipa = ipa; c.ko = out.ko.trim(); c.homo = homoOf || null;
     res.push(c);
   }
   var msg;
@@ -2468,7 +2474,7 @@ function renderGenList(res) {
     var row = document.createElement("div"); row.className = "gen-row";
     var src = document.createElement("span"); src.className = "src"; src.textContent = c.input;
     if (c.native || c.meaning) { var sm = document.createElement("small"); sm.textContent = c.meaning ? c.meaning : "원형 " + c.native; src.appendChild(sm); }
-    var sp2 = document.createElement("span"); sp2.className = "sp"; sp2.textContent = c.spell;
+    var sp2 = document.createElement("span"); sp2.className = "sp"; sp2.textContent = showSpell(c);
     if (c.homo) { var hb = document.createElement("span"); hb.className = "badge"; hb.textContent = "같은 발음"; hb.title = c.homo.join("\n"); sp2.appendChild(hb); var hs = document.createElement("small"); hs.className = "ko-sm"; hs.textContent = c.homo.slice(0, 3).join(", "); sp2.appendChild(hs); }
     var ip = document.createElement("span"); ip.className = "ip"; ip.textContent = "[" + c.ipa + "]";
     var ko = document.createElement("span"); ko.className = "ko"; ko.textContent = c.ko;
@@ -2486,7 +2492,7 @@ function renderGenList(res) {
     });
     acts.appendChild(b1); acts.appendChild(b2);
     row.appendChild(src); row.appendChild(sp2); row.appendChild(ip); row.appendChild(ko); row.appendChild(acts); frag.appendChild(row);
-    row._ipa = c.ipa;
+    row._ipa = c.ipa; row._c = c; row._spt = sp2.firstChild;
   });
   list.appendChild(frag);
   applyCandFilter();
@@ -2525,9 +2531,17 @@ function pickMeanings(n, exclTexts) {
   for (var i = cand.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cand[i]; cand[i] = cand[j]; cand[j] = t; }
   return cand.slice(0, n);
 }
+/* 표기 보기: 기본 표기(프랑스어식) 또는 문자형 */
+var STORE_SPELL = "eklea-gen-spell-v1", spellMode = load(STORE_SPELL) === "script" ? "script" : "main";
+function showSpell(o) { return spellMode === "script" ? (o.form || o.spell) : o.spell; }
 var pair = null, pairSeq = 0;
+/* 고른 기원·비음형에 맞는 입력 기호를 미리 넣어 둠 (기호만 있는 입력은 빈 것으로 봄) */
+function autoPrefix() { var o = $("gOrigin").value, nas = $("gNasal").value; if (o === "f") return "%"; if ((o === "a" || o === "b") && nas === "nasal") return "@"; return ""; }
+function blankForm(v) { return !(v || "").replace(/[@%&\s]/g, ""); }
+function hasForm(it) { return !blankForm(it.manual); }
 function startPair(means, words) {
-  pair = { items: means.map(function (m) { return { id: ++pairSeq, mean: m.text, dom: m.dom, f: m.f, core: m.core, word: null, manual: "", manualOn: false }; }),
+  var pfx = autoPrefix();
+  pair = { prefix: pfx, items: means.map(function (m) { return { id: ++pairSeq, mean: m.text, dom: m.dom, f: m.f, core: m.core, word: null, manual: pfx }; }),
     pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null, hist: [], redo: [] };
   if (pair.items.length) pair.sel = { t: "m", id: pair.items[0].id };
   $("gPair").hidden = false;
@@ -2544,10 +2558,10 @@ function linkPair(itemId, wordId) {
   var it = findItem(itemId), wi = findPool(wordId);
   if (!it || wi < 0) return;
   if (it.word) pair.pool.push(it.word);
-  it.word = pair.pool.splice(wi, 1)[0]; it.manualOn = false; it.manual = "";
+  it.word = pair.pool.splice(wi, 1)[0]; it.manual = it.word.input;
   /* 다음 빈 뜻으로 선택을 옮겨, 단어만 차례로 누르면 이어지게 함 */
   var idx = pair.items.indexOf(it), next = null;
-  for (var k = 1; k <= pair.items.length; k++) { var c = pair.items[(idx + k) % pair.items.length]; if (!c.word && !c.manual) { next = c; break; } }
+  for (var k = 1; k <= pair.items.length; k++) { var c = pair.items[(idx + k) % pair.items.length]; if (!c.word && !hasForm(c)) { next = c; break; } }
   pair.sel = next ? { t: "m", id: next.id } : null;
 }
 /* 되돌리기: 이음·해제·다시 뽑기 같은 조작 직전의 뜻 카드와 후보 상태를 쌓아 둠 */
@@ -2577,20 +2591,20 @@ function unlinkAll() {
   if (!pair || !pair.items.some(function (it) { return it.word; })) return;
   pushHist();
   var back = [];
-  pair.items.forEach(function (it) { if (it.word) { back.push(it.word); it.word = null; } });
+  pair.items.forEach(function (it) { if (it.word) { back.push(it.word); if ((it.manual || "").trim() === it.word.input) it.manual = pair.prefix; it.word = null; } });
   pair.pool = back.concat(pair.pool);
   pair.sel = pair.items.length ? { t: "m", id: pair.items[0].id } : null;
   $("gStatus").textContent = back.length + "개의 이음을 풀었습니다. 직접 입력한 형태는 그대로입니다.";
   renderPair();
 }
-function unlink(it) { if (it.word) { pair.pool.unshift(it.word); it.word = null; } }
+function unlink(it) { if (it.word) { pair.pool.unshift(it.word); if ((it.manual || "").trim() === it.word.input) it.manual = pair.prefix; it.word = null; } }
 function manualConv(v) {
   v = (v || "").trim(); if (!v) return null;
-  try { var o = convert(v); return { spell: o.main.trim(), ipa: o.ipa.trim().replace(/‿/g, ""), ko: o.ko.trim() }; } catch (e) { return null; }
+  try { var o = convert(v); return { spell: o.main.trim(), form: o.script.trim(), ipa: o.ipa.trim().replace(/‿/g, ""), ko: o.ko.trim() }; } catch (e) { return null; }
 }
 function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function btn(text, title, fn, cls) { var b = el("button", cls || "", text); b.type = "button"; if (title) { b.title = title; b.setAttribute("aria-label", title); } b.addEventListener("click", fn); return b; }
-function readyCount() { return pair.items.filter(function (it) { return it.word || it.manual.trim(); }).length; }
+function readyCount() { return pair.items.filter(hasForm).length; }
 function renderPair() {
   var box = $("gPair"); box.innerHTML = ""; box.classList.remove("typing");
   if (!pair) return;
@@ -2598,17 +2612,17 @@ function renderPair() {
   function tbtn(full, short, title, fn) { var x = btn("", title, fn); x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); return x; }
   tools.appendChild(tbtn("전부 잇기", "전부 잇기", "비어 있는 뜻마다 단어 후보를 위에서부터 차례로 모두 잇습니다 (발음 거르기가 켜져 있으면 보이는 후보만)", function () {
     var cands = pair.pool.filter(function (w) { return candHit(w.ipa); });
-    var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
+    var free = pair.items.filter(function (it) { return !it.word && !hasForm(it); });
     if (!cands.length || !free.length) { $("gStatus").textContent = !free.length ? "비어 있는 뜻이 없습니다." : "이을 수 있는 후보가 없습니다."; return; }
     pushHist();
     var used = [];
-    free.forEach(function (it) { if (cands.length) { var w = cands.shift(); it.word = w; it.manualOn = false; used.push(w); } });
+    free.forEach(function (it) { if (cands.length) { var w = cands.shift(); it.word = w; it.manual = w.input; used.push(w); } });
     pair.pool = pair.pool.filter(function (w) { return used.indexOf(w) < 0; });
     pair.sel = null; renderPair();
   }));
   tools.appendChild(tbtn("남은 뜻 다시", "뜻 다시", "단어가 이어지지 않은 뜻을 모두 새로 뽑습니다", function () {
     var keep = pair.items.map(function (it) { return it.mean; });
-    var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
+    var free = pair.items.filter(function (it) { return !it.word && !hasForm(it); });
     if (!free.length) { $("gStatus").textContent = "비어 있는 뜻이 없습니다."; return; }
     pushHist();
     var fresh = pickMeanings(free.length, keep);
@@ -2633,7 +2647,7 @@ function renderPair() {
   var mcol = el("div", "pair-means");
   if (!pair.items.length) mcol.appendChild(el("p", "hint", "남은 뜻이 없습니다. 분야를 바꾸거나 다시 생성해 보세요."));
   pair.items.forEach(function (it) {
-    var card = el("div", "m-card" + (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? " sel" : "") + (it.word || it.manual.trim() ? " done" : ""));
+    var card = el("div", "m-card" + (pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? " sel" : "") + (hasForm(it) ? " done" : ""));
     var top = el("div", "m-top");
     var pick = btn("", "이 뜻 고르기", function () {
       if (pair.sel && pair.sel.t === "w") { pushHist(); linkPair(it.id, pair.sel.id); renderPair(); return; }
@@ -2656,39 +2670,30 @@ function renderPair() {
     }, "icon"));
     card.appendChild(top);
     var body = el("div", "m-word");
+    var inp = el("input", "lang m-in"); inp.type = "text"; inp.value = it.manual || ""; inp.placeholder = "형태 입력 (예: " + (pair.prefix || "") + "pala)";
+    inp.setAttribute("aria-label", it.mean + "의 형태 (변환기 입력)"); inp.autocomplete = "off"; inp.spellcheck = false; inp.dataset.id = it.id;
+    inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off");
+    var prev = el("div", "w-line m-prev");
+    function upd() {
+      it.manual = inp.value; prev.innerHTML = "";
+      var has = !blankForm(inp.value);
+      if (has) { var o = manualConv(inp.value); if (o) { prev.appendChild(el("span", "sp", showSpell(o))); prev.appendChild(el("span", "ip", "[" + o.ipa + "]")); prev.appendChild(el("span", "ko", o.ko)); } }
+      prev.hidden = !has;
+      card.classList.toggle("done", has); updAdd();
+    }
+    inp.addEventListener("input", upd);
+    body.appendChild(inp); body.appendChild(prev); upd();
     if (it.word) {
       var w = it.word;
-      var line = el("div", "w-line");
-      line.appendChild(el("span", "sp", w.spell));
-      line.appendChild(el("span", "ip", "[" + w.ipa + "]"));
-      line.appendChild(el("span", "ko", w.ko));
-      body.appendChild(line);
-      body.appendChild(el("small", "src", w.input + (w.native ? " · 원형 " + w.native : w.meaning ? " · " + w.meaning : "")));
+      var meta = w.native ? "원형 " + w.native : w.meaning ? w.meaning : "";
+      if (meta) body.appendChild(el("small", "src", meta));
       if (w.homo) body.appendChild(el("small", "warn", "같은 발음: " + w.homo.slice(0, 3).join(", ")));
-      var acts = el("div", "m-acts");
-      acts.appendChild(btn("풀기", "이 단어를 후보로 되돌리기", function () { pushHist(); unlink(it); pair.sel = { t: "m", id: it.id }; renderPair(); }));
-      acts.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { pushHist(); unlink(it); it.manualOn = true; renderPair(); focusManual(it.id); }));
-      body.appendChild(acts);
-    } else if (it.manualOn || it.manual) {
-      var inp = el("input", "lang m-in"); inp.type = "text"; inp.value = it.manual; inp.placeholder = "변환기 입력 (예: %pala, @rate)";
-      inp.setAttribute("aria-label", it.mean + "의 형태 직접 입력"); inp.autocomplete = "off"; inp.spellcheck = false; inp.dataset.id = it.id;
-      var prev = el("div", "w-line m-prev");
-      function upd() {
-        it.manual = inp.value; prev.innerHTML = "";
-        var o = manualConv(inp.value);
-        if (o) { prev.appendChild(el("span", "sp", o.spell)); prev.appendChild(el("span", "ip", "[" + o.ipa + "]")); prev.appendChild(el("span", "ko", o.ko)); }
-        card.classList.toggle("done", !!inp.value.trim()); updAdd();
-      }
-      inp.addEventListener("input", upd);
-      body.appendChild(inp); body.appendChild(prev); upd();
-      var acts2 = el("div", "m-acts");
-      acts2.appendChild(btn("입력 취소", "직접 입력을 지우기", function () { pushHist(); it.manual = ""; it.manualOn = false; renderPair(); }));
-      body.appendChild(acts2);
-    } else {
-      body.className = "m-word m-empty";
-      body.appendChild(el("span", "hint", pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? "단어 후보를 누르면 이어집니다" : "눌러서 고른 뒤 단어 후보를 누르세요"));
-      body.appendChild(btn("직접 입력", "형태를 직접 입력하기", function () { pushHist(); it.manualOn = true; renderPair(); focusManual(it.id); }));
     }
+    var acts = el("div", "m-acts");
+    if (it.word) acts.appendChild(btn("풀기", "이 단어를 후보로 되돌리기 (손으로 고친 글은 남습니다)", function () { pushHist(); unlink(it); pair.sel = { t: "m", id: it.id }; renderPair(); }));
+    else if (hasForm(it)) acts.appendChild(btn("지우기", "입력을 비우기", function () { pushHist(); it.manual = pair.prefix; renderPair(); }));
+    else body.appendChild(el("small", "hint", pair.sel && pair.sel.t === "m" && pair.sel.id === it.id ? "단어 후보를 누르면 이어집니다" : "후보를 이어 주거나 바로 입력하세요"));
+    if (acts.childNodes.length) body.appendChild(acts);
     card.appendChild(body);
     mcol.appendChild(card);
   });
@@ -2709,7 +2714,7 @@ function renderPair() {
       if (pair.sel && pair.sel.t === "m") { pushHist(); linkPair(pair.sel.id, w.id); renderPair(); return; }
       pair.sel = (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id) ? null : { t: "w", id: w.id }; renderPair();
     }, "w-pick");
-    p.appendChild(el("span", "sp", w.spell));
+    p.appendChild(el("span", "sp", showSpell(w)));
     p.appendChild(el("small", "", "[" + w.ipa + "] " + w.ko));
     chip.appendChild(p);
     chips.appendChild(chip);
@@ -2743,19 +2748,18 @@ function updAdd() {
   b.appendChild(el("span", "add-short", n ? n + "개 추가" : "이은 단어 없음"));
   b.disabled = !n;
 }
-function focusManual(id) { var i = $("gPair").querySelector('input.m-in[data-id="' + id + '"]'); if (i) i.focus(); }
 function addPairs() {
   if (!lex.col || !pair) return;
-  var ready = pair.items.filter(function (it) { return it.word || it.manual.trim(); });
+  var ready = pair.items.filter(hasForm);
   if (!ready.length) return;
   var maxN = lex.words.reduce(function (m, w) { return Math.max(m, w.n || 0); }, 0);
   var jobs = ready.map(function (it, i) {
-    var inp = it.word ? it.word.input : it.manual.trim(), tags = [];
+    var inp = it.manual.trim(), same = !!(it.word && inp === it.word.input), tags = [];
     if (/^@|[\-|·~]@/.test(inp)) tags.push(FOSSIL);
-    var org = it.word ? it.word.origin : (/^%/.test(inp) ? "f" : "");
+    var org = same ? it.word.origin : (/^%/.test(inp) ? "f" : "");
     if (org === "f" || /^%/.test(inp)) tags.push("F 기원");
     if (org === "b" || org === "bp") tags.push("B 기원");
-    var note = it.word && it.word.native ? "원형 " + it.word.native : it.word && it.word.meaning ? "구성: " + it.word.meaning : "";
+    var note = same && it.word.native ? "원형 " + it.word.native : same && it.word.meaning ? "구성: " + it.word.meaning : "";
     var data = { head: inp.replace(/^[@%&]+/, ""), mean: it.mean, input: inp, note: note, tags: tags, n: maxN + 1 + i };
     return lex.col.doc().set(data);
   });
@@ -2809,6 +2813,16 @@ function insertAtCaret(el, s) {
   function syncBy() { var ipa = $("gStartBy").value === "ipa"; $("gIpaPad").hidden = !ipa; $("gStartNote").hidden = $("gStartBy").value === "root"; $("gStart").classList.toggle("ipa", ipa); }
   $("gStartBy").addEventListener("change", syncBy); syncBy();
 })();
+function refreshSpell() {
+  Array.prototype.forEach.call($("gView").querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === spellMode ? "true" : "false"); });
+  Array.prototype.forEach.call(document.querySelectorAll("#gList .gen-row"), function (r) { if (r._c && r._spt) r._spt.nodeValue = showSpell(r._c); });
+  if (pair && !$("gPair").hidden) renderPair();
+}
+$("gView").addEventListener("click", function (e) {
+  var b = e.target.closest("button[data-m]"); if (!b || b.dataset.m === spellMode) return;
+  spellMode = b.dataset.m; save(STORE_SPELL, spellMode); refreshSpell();
+});
+refreshSpell();
 $("gRun").addEventListener("click", function (e) { var b = e.target.closest("button[data-n]"); if (b) runGen(+b.dataset.n); });
 genHint();
 
