@@ -299,7 +299,7 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 button.pool-fold { white-space: nowrap; border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
 .pair-pool.fold .pool-main, #gPair.typing .pool-main { display: none; }
 .pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
-.pool-foot button.foot-sec { flex: 0 0 auto; padding: 0 10px; font-size: 0.82rem; white-space: nowrap; }
+.pool-foot button.foot-sec { flex: 0 0 auto; min-width: 44px; padding: 0 10px; font-size: 0.82rem; white-space: nowrap; }
 .pool-foot button.primary { min-width: 0; }
 .pool-foot .t-full { display: none; }
 @media (max-width: 819px) {
@@ -2504,7 +2504,7 @@ function pickMeanings(n, exclTexts) {
 var pair = null, pairSeq = 0;
 function startPair(means, words) {
   pair = { items: means.map(function (m) { return { id: ++pairSeq, mean: m.text, dom: m.dom, f: m.f, core: m.core, word: null, manual: "", manualOn: false }; }),
-    pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null, hist: [] };
+    pool: words.map(function (w) { w.id = ++pairSeq; return w; }), sel: null, hist: [], redo: [] };
   if (pair.items.length) pair.sel = { t: "m", id: pair.items[0].id };
   $("gPair").hidden = false;
   renderPair();
@@ -2527,17 +2527,26 @@ function linkPair(itemId, wordId) {
   pair.sel = next ? { t: "m", id: next.id } : null;
 }
 /* 되돌리기: 이음·해제·다시 뽑기 같은 조작 직전의 뜻 카드와 후보 상태를 쌓아 둠 */
+function snapPair() { return { items: pair.items.map(function (it) { return Object.assign({}, it); }), pool: pair.pool.slice(), sel: pair.sel ? { t: pair.sel.t, id: pair.sel.id } : null }; }
+function restorePair(h) {
+  pair.items = h.items; pair.pool = h.pool; pair.sel = h.sel;
+  pair.pool.forEach(function (w) { w.loading = false; });
+}
 function pushHist() {
   if (!pair) return;
-  pair.hist.push({ items: pair.items.map(function (it) { return Object.assign({}, it); }), pool: pair.pool.slice(), sel: pair.sel ? { t: pair.sel.t, id: pair.sel.id } : null });
+  pair.hist.push(snapPair()); pair.redo = []; /* 새 조작을 하면 다시 하기 기록은 사라짐 */
   if (pair.hist.length > 30) pair.hist.shift();
 }
 function undoPair() {
   if (!pair || !pair.hist.length) return;
-  var h = pair.hist.pop();
-  pair.items = h.items; pair.pool = h.pool; pair.sel = h.sel;
-  pair.pool.forEach(function (w) { w.loading = false; });
+  pair.redo.push(snapPair()); restorePair(pair.hist.pop());
   $("gStatus").textContent = "이전 상태로 되돌렸습니다.";
+  renderPair();
+}
+function redoPair() {
+  if (!pair || !pair.redo.length) return;
+  pair.hist.push(snapPair()); restorePair(pair.redo.pop());
+  $("gStatus").textContent = "되돌린 조작을 다시 적용했습니다.";
   renderPair();
 }
 function unlinkAll() {
@@ -2696,8 +2705,9 @@ function renderPair() {
   pcol.appendChild(pmain);
   var foot = el("div", "pool-foot");
   function fbtn(id, full, short, title, fn, off) { var x = btn("", title, fn, "foot-sec"); x.id = id; x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); x.disabled = off; return x; }
-  foot.appendChild(fbtn("gUndo", "↶ 되돌리기", "↶ 되돌리기", "마지막 조작 이전 상태로 되돌립니다 (잇기·해제·다시 뽑기 등, 여러 번 가능)", undoPair, !pair.hist.length));
-  foot.appendChild(fbtn("gUnlinkAll", "잇기 전부 해제", "잇기 해제", "이은 단어를 모두 후보로 되돌립니다 (직접 입력한 형태는 그대로)", unlinkAll, !pair.items.some(function (it) { return it.word; })));
+  foot.appendChild(fbtn("gUndo", "↶", "↶", "되돌리기: 마지막 조작 이전 상태로 돌립니다 (잇기·해제·다시 뽑기 등, 여러 번 가능)", undoPair, !pair.hist.length));
+  foot.appendChild(fbtn("gRedo", "↷", "↷", "다시 하기: 되돌린 조작을 다시 적용합니다", redoPair, !pair.redo.length));
+  foot.appendChild(fbtn("gUnlinkAll", "잇기 해제", "잇기 해제", "이은 단어를 모두 후보로 되돌립니다 (직접 입력한 형태는 그대로)", unlinkAll, !pair.items.some(function (it) { return it.word; })));
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
   foot.appendChild(add);
@@ -2730,7 +2740,7 @@ function addPairs() {
   Promise.all(jobs).then(function () {
     pair.items = pair.items.filter(function (it) { return ready.indexOf(it) < 0; });
     pair.sel = pair.items.length ? { t: "m", id: pair.items[0].id } : null;
-    pair.hist = []; /* 단어장에 들어간 것은 되돌릴 수 없으므로 기록을 비움 */
+    pair.hist = []; pair.redo = []; /* 단어장에 들어간 것은 되돌릴 수 없으므로 기록을 비움 */
     $("gStatus").textContent = ready.length + "개를 단어장에 추가했습니다.";
     renderPair();
   }, function () { $("gStatus").textContent = "단어장에 추가하지 못했습니다."; });
