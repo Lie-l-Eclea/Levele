@@ -254,13 +254,12 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 /* 뜻과 단어 짝짓기: 좁은 화면에서는 단어 후보가 화면 아래에 붙어 따라오고, 넓은 화면에서는 오른쪽 열에 붙음 */
 #gPair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 #viewGen .panel { grid-template-columns: minmax(0, 1fr); }
-.pool-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; min-height: 0; min-width: 0; }
 .pool-main { display: flex; flex-direction: column; gap: 6px; min-height: 0; min-width: 0; }
 .pool-main .pool-chips { flex: 1 1 auto; }
 .pool-main .pool-head { flex: none; }
-.pool-tools { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overscroll-behavior: contain; }
-.pool-tools button { width: 60px; min-height: 44px; padding: 2px 3px; font-size: 0.72rem; line-height: 1.25; }
-.pool-tools button span { display: block; }
+.pool-tools { display: flex; gap: 6px; margin-left: auto; flex: none; }
+.pool-tools button { min-height: 36px; padding: 0 10px; font-size: 0.82rem; line-height: 1.2; white-space: nowrap; }
+.pool-tools .t-full { display: none; }
 .pair { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 .pair-means { display: grid; gap: 8px; min-width: 0; }
 .m-card { border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px 8px 10px; display: grid; gap: 4px; background: var(--surface); min-width: 0; }
@@ -286,8 +285,7 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 .pair-pool { position: sticky; bottom: 0; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 12px 12px 0 0;
   box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.12); padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
   display: grid; gap: 6px; max-height: 40vh; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
-.pool-head { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: var(--muted); min-width: 0; }
-.pool-sel { color: var(--accent); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.pool-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); min-width: 0; }
 .pool-chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-y: auto; min-height: 0; align-content: flex-start; overscroll-behavior: contain; }
 .w-chip { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); max-width: 100%; }
 .w-chip.sel { border-color: var(--accent); background: var(--accent-soft); }
@@ -299,7 +297,7 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 .m-empty { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
 .m-empty button { min-height: 36px; }
 button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
-.pair-pool.fold .pool-body, #gPair.typing .pool-body { display: none; }
+.pair-pool.fold .pool-main, #gPair.typing .pool-main { display: none; }
 .pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
 @media (max-width: 819px) {
   /* 좁은 화면: 후보 칸을 화면 가장자리까지 넓혀 양옆 빈 공간을 없앰 (몸통 여백 + 패널 안쪽 여백 17px만큼 바깥으로) */
@@ -308,11 +306,10 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
 @media (min-width: 820px) {
   .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .pair-pool { top: 12px; bottom: auto; border-radius: 12px; max-height: calc(100vh - 24px); box-shadow: none; }
-  #gPair.typing .pool-body { display: grid; }
-  .pool-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .pool-tools { flex-direction: row; flex-wrap: wrap; overflow: visible; }
-  .pool-tools button { width: auto; min-height: 38px; padding: 0 10px; font-size: 0.88rem; line-height: 1.2; }
-  .pool-tools button span { display: inline; }
+  #gPair.typing .pool-main { display: flex; }
+  .pool-tools .t-full { display: inline; }
+  .pool-tools .t-short { display: none; }
+  .pool-tools button { min-height: 38px; font-size: 0.88rem; }
 }
 .gen-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
@@ -2537,19 +2534,19 @@ function renderPair() {
   var box = $("gPair"); box.innerHTML = ""; box.classList.remove("typing");
   if (!pair) return;
   var tools = el("div", "pool-tools");
-  function tbtn(a, b, title, fn) { var x = btn("", title, fn); x.appendChild(el("span", "", a)); x.appendChild(document.createTextNode(" ")); x.appendChild(el("span", "", b)); return x; }
-  tools.appendChild(tbtn("순서대로", "잇기", "남은 뜻과 단어를 위에서부터 차례로 잇습니다", function () {
+  function tbtn(full, short, title, fn) { var x = btn("", title, fn); x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); return x; }
+  tools.appendChild(tbtn("순서대로 잇기", "잇기", "남은 뜻과 단어를 위에서부터 차례로 잇습니다", function () {
     pair.items.forEach(function (it) { if (!it.word && !it.manual.trim() && pair.pool.length) { it.word = pair.pool.shift(); it.manualOn = false; } });
     pair.sel = null; renderPair();
   }));
-  tools.appendChild(tbtn("남은 뜻", "다시", "단어가 이어지지 않은 뜻을 모두 새로 뽑습니다", function () {
+  tools.appendChild(tbtn("남은 뜻 다시", "뜻 다시", "단어가 이어지지 않은 뜻을 모두 새로 뽑습니다", function () {
     var keep = pair.items.map(function (it) { return it.mean; });
     var free = pair.items.filter(function (it) { return !it.word && !it.manual.trim(); });
     var fresh = pickMeanings(free.length, keep);
     free.forEach(function (it, i) { if (fresh[i]) { it.mean = fresh[i].text; it.dom = fresh[i].dom; it.f = fresh[i].f; it.core = fresh[i].core; } });
     renderPair();
   }));
-  tools.appendChild(tbtn("남은 단어", "다시", "이어지지 않은 단어 후보를 모두 새로 만듭니다", function () {
+  tools.appendChild(tbtn("남은 단어 다시", "단어 다시", "이어지지 않은 단어 후보를 모두 새로 만듭니다", function () {
     var n = pair.pool.length; if (!n) return;
     var keepW = pair.items.filter(function (it) { return it.word; }).map(function (it) { return it.word; }).concat(pair.pool);
     $("gStatus").textContent = "단어를 다시 만드는 중…";
@@ -2627,7 +2624,7 @@ function renderPair() {
   var ph = el("div", "pool-head");
   var selItem = pair.sel && pair.sel.t === "m" ? findItem(pair.sel.id) : null;
   ph.appendChild(btn((pair.fold ? "▴ " : "▾ ") + "단어 후보 " + pair.pool.length + "개", pair.fold ? "후보 펼치기" : "후보 접기", function () { var b = $("gPair"); if (b.classList.contains("typing")) { b.classList.remove("typing"); pair.fold = false; } else pair.fold = !pair.fold; renderPair(); }, "pool-fold"));
-  ph.appendChild(el("span", "pool-sel", selItem ? "→ " + selItem.mean : (pair.sel && pair.sel.t === "w" ? "뜻을 누르면 이어집니다" : "")));
+  ph.appendChild(tools);
   pcol.appendChild(ph);
   var chips = el("div", "pool-chips");
   pair.pool.forEach(function (w) {
@@ -2654,10 +2651,10 @@ function renderPair() {
     chips.appendChild(chip);
   });
   if (!pair.pool.length) chips.appendChild(el("span", "hint", "남은 후보가 없습니다. 뜻에 직접 입력하거나 \"남은 단어 다시\"로 새로 만드세요."));
-  var pbody = el("div", "pool-body"), pmain = el("div", "pool-main");
+  var pmain = el("div", "pool-main");
   pmain.appendChild(chips);
   if (candQ) { var pf = el("div", "pool-head"); pf.appendChild(el("span", "pool-filter", "발음 거르는 중: " + candQ.how)); pf.appendChild(btn("해제", "발음 거르기 해제", function () { setCandQuery(null); }, "pool-fold")); pmain.insertBefore(pf, chips); }
-  pbody.appendChild(tools); pbody.appendChild(pmain); pcol.appendChild(pbody);
+  pcol.appendChild(pmain);
   var foot = el("div", "pool-foot");
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
