@@ -258,6 +258,7 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .pool-main .pool-chips { flex: 1 1 auto; }
 .pool-main .pool-head { flex: none; }
 .pool-tools { display: flex; gap: 4px; margin-left: auto; flex: none; }
+.pool-tools button.menu-btn { padding: 0; min-width: 36px; }
 .pool-tools button { min-height: 36px; padding: 0 7px; font-size: 0.74rem; line-height: 1.2; white-space: nowrap; }
 .pool-tools .t-full { display: none; }
 .pair { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
@@ -316,6 +317,17 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
   .pool-tools button { min-height: 38px; padding: 0 10px; font-size: 0.82rem; }
   .pool-tools { gap: 6px; }
 }
+.gen-cond { border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+.gen-cond > summary { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; min-height: 40px; padding: 8px 0; color: var(--fg); font-size: 0.95rem; }
+.gen-cond > summary .cond-sum { color: var(--muted); font-size: 0.78rem; }
+.gen-cond[open] > summary { margin-bottom: 6px; }
+.gen-cond[open] > summary .cond-sum { display: none; }
+.gen-cond > .gen-bar + .gen-bar { margin-top: 10px; }
+.menu-scrim { position: fixed; inset: 0; z-index: 100; background: rgba(0, 0, 0, 0.55); }
+.menu-panel { position: fixed; z-index: 101; min-width: 170px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35); padding: 6px; display: grid; gap: 4px; }
+.menu-panel[hidden], .menu-scrim[hidden] { display: none; }
+.menu-panel button { min-height: 46px; text-align: left; padding: 0 14px; font-size: 0.95rem; }
+button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 1; }
 .gen-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
 .gen-bar .field { min-width: 150px; flex: 0 1 auto; }
 .gen-bar select, .gen-bar input { font-family: var(--font-ui); font-size: 0.92rem; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); padding: 6px 10px; }
@@ -346,7 +358,7 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
-<div class="wrap">
+<div class="wrap" id="wrapRoot">
   <header class="hero">
     <p class="kicker">에클레아어 변환기</p>
     <h1>Lévèle l'Éclêa<span class="ko">에클라이아어 형태를 문자형, 기본 표기, 발음으로 바꿉니다</span></h1>
@@ -366,6 +378,8 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
 
   <section id="viewGen" hidden>
     <div class="panel">
+      <details class="gen-cond" id="gCond" open>
+      <summary><b>생성 조건</b><span class="cond-sum" id="gCondSum"></span></summary>
       <div class="gen-bar">
         <div class="field"><label for="gOrigin">기원</label>
           <select id="gOrigin">
@@ -396,6 +410,9 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
         <label class="check"><input type="checkbox" id="gHard" checked> 발음하기 어려운 형태 제외</label>
         <label class="check"><input type="checkbox" id="gMeanOn" checked> 아직 없는 뜻도 함께 생성</label>
         <label class="check"><input type="checkbox" id="gFit" checked> 고른 기원이 제안 출처인 분야의 뜻만</label>
+      </div>
+      </details>
+      <div class="gen-bar">
         <span class="gen-counts" id="gRun" role="group" aria-label="생성 개수">
           <button type="button" class="primary" data-n="1">1개</button><button type="button" class="primary" data-n="3">3개</button><button type="button" class="primary" data-n="10">10개</button><button type="button" class="primary" data-n="30">30개</button><button type="button" class="primary" data-n="100">100개</button><button type="button" class="primary" data-n="300">300개</button>
         </span>
@@ -610,6 +627,12 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
   </div>
 </div>
 
+  <div id="menuScrim" class="menu-scrim" hidden></div>
+  <div id="menuPanel" class="menu-panel" role="dialog" aria-modal="true" aria-label="바로가기" hidden>
+    <button type="button" data-go="top">↑ 맨 위로</button>
+    <button type="button" data-go="cond">생성 조건</button>
+    <button type="button" data-go="find">발음 검색</button>
+  </div>
 <script>
 (function () {
 "use strict";
@@ -2602,6 +2625,9 @@ function renderPair() {
       pair.pool = res; $("gStatus").textContent = msg; renderPair();
     }, function (p) { $("gStatus").textContent = p; });
   }));
+  var menuBtn = btn("☰", "바로가기 메뉴 (맨 위로, 생성 조건, 발음 검색)", function () { openMenu(menuBtn); }, "menu-btn");
+  menuBtn.setAttribute("aria-haspopup", "dialog");
+  tools.appendChild(menuBtn);
 
   var wrap = el("div", "pair");
   var mcol = el("div", "pair-means");
@@ -2858,19 +2884,62 @@ function renderShort() {
   });
 }
 
-/* ---------- 맨 위로 ---------- */
+/* ---------- 맨 위로 (어휘집 화면) ---------- */
 function placeToTop() {
-  var b = $("toTop"), v = !$("viewLex").hidden || !$("viewGen").hidden;
-  b.hidden = !(v && window.scrollY > 500);
-  if (b.hidden) return;
-  var bottom = 16, pool = document.querySelector("#gPair:not([hidden]) .pair-pool");
-  /* 좁은 화면에서는 단어 후보 칸이 아래에 붙으므로 그 위로 올림 */
-  if (pool && !$("viewGen").hidden && window.innerWidth < 820) { var r = pool.getBoundingClientRect(); if (r.top < window.innerHeight) bottom = Math.max(16, window.innerHeight - r.top + 12); }
-  b.style.bottom = "calc(" + bottom + "px + env(safe-area-inset-bottom, 0px))";
+  var b = $("toTop");
+  b.hidden = !(!$("viewLex").hidden && window.scrollY > 500);
 }
 window.addEventListener("scroll", placeToTop, { passive: true });
 window.addEventListener("resize", placeToTop);
 $("toTop").addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+
+/* ---------- 단어 후보 칸의 바로가기 메뉴 ---------- */
+/* 메뉴가 열려 있는 동안에는 나머지 화면을 어둡게 하고 inert로 막아, 어두운 곳을 눌러도 메뉴만 닫힘 */
+var menuAnchor = null;
+function menuBlocked(on) {
+  ["wrapRoot", "toTop"].forEach(function (id) { var e = $(id); if (e) { if (on) e.setAttribute("inert", ""); else e.removeAttribute("inert"); } });
+}
+function openMenu(anchor) {
+  var panel = $("menuPanel"), scrim = $("menuScrim");
+  menuAnchor = anchor;
+  scrim.hidden = false; panel.hidden = false; menuBlocked(true);
+  panel.style.top = panel.style.bottom = "auto";
+  var r = anchor.getBoundingClientRect(), h = panel.offsetHeight, w = panel.offsetWidth;
+  panel.style.left = Math.max(10, Math.min(window.innerWidth - w - 10, r.right - w)) + "px";
+  if (r.top > h + 16) panel.style.top = Math.round(r.top - h - 8) + "px"; else panel.style.top = Math.round(r.bottom + 8) + "px";
+  panel.querySelector("button").focus({ preventScroll: true });
+}
+function closeMenu() {
+  if ($("menuPanel").hidden) return;
+  $("menuPanel").hidden = true; $("menuScrim").hidden = true; menuBlocked(false);
+  var a = menuAnchor && menuAnchor.isConnected ? menuAnchor : document.querySelector(".pool-tools .menu-btn");
+  if (a) a.focus({ preventScroll: true });
+}
+$("menuScrim").addEventListener("click", closeMenu);
+["wheel", "touchmove"].forEach(function (t) { $("menuScrim").addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("menuPanel").hidden) { e.preventDefault(); closeMenu(); } });
+$("menuPanel").addEventListener("click", function (e) {
+  var b = e.target.closest("button[data-go]"); if (!b) return;
+  var go = b.dataset.go;
+  closeMenu();
+  if (go === "top") window.scrollTo({ top: 0, behavior: "smooth" });
+  else if (go === "cond") { $("gCond").open = true; save(STORE_COND, "1"); $("gCond").scrollIntoView({ behavior: "smooth", block: "start" }); }
+  else if (go === "find" && !$("gFind").hidden) { $("gFind").scrollIntoView({ behavior: "smooth", block: "start" }); $("gFindQ").focus({ preventScroll: true }); }
+});
+
+/* ---------- 생성 조건 접기 ---------- */
+var STORE_COND = "eklea-gen-cond-open-v1";
+(function () {
+  var d = $("gCond");
+  if (load(STORE_COND) === "0") d.open = false;
+  d.addEventListener("toggle", function () { save(STORE_COND, d.open ? "1" : "0"); });
+  function sum() {
+    var o = $("gOrigin"), sy = $("gSyl");
+    $("gCondSum").textContent = o.options[o.selectedIndex].text + " · 음절 " + sy.options[sy.selectedIndex].text + " · " + $("gNasal").options[$("gNasal").selectedIndex].text + ($("gMeanOn").checked ? " · 뜻 함께" : "");
+  }
+  ["gOrigin", "gSyl", "gNasal", "gMeanOn"].forEach(function (id) { $(id).addEventListener("change", sum); });
+  sum();
+})();
 
 function showView(v) {
   $("viewConv").hidden = v !== "conv";
