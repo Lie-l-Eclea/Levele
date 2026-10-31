@@ -420,6 +420,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
         <label class="check"><input type="checkbox" id="gHard" checked> 발음하기 어려운 형태 제외</label>
         <label class="check"><input type="checkbox" id="gMeanOn" checked> 아직 없는 뜻도 함께 생성</label>
         <label class="check"><input type="checkbox" id="gFit" checked> 고른 기원으로 예상되는 뜻만</label>
+        <label class="check"><input type="checkbox" id="gCore"> 기초 100 뜻만 (에클라이아어 계승어 전용)</label>
       </div>
       </details>
       <div class="gen-bar">
@@ -2533,8 +2534,8 @@ function pickMeanings(n, exclTexts) {
   var dom = $("gDomain").value, used = usedMeanTest(), ex = {};
   exclTexts.forEach(function (t) { ex[t] = true; });
   var org = $("gOrigin").value; if (org === "bp") org = "b";
-  var fit = $("gFit").checked;
-  var cand = MEAN_LIST.filter(function (m) { return (!dom || String(m.f) === dom) && (!fit || originsOf(m).indexOf(org) >= 0) && !ex[m.text] && !used(m.text); });
+  var core = $("gCore").checked, fit = $("gFit").checked && !core;
+  var cand = MEAN_LIST.filter(function (m) { return (!core || m.core) && (!dom || String(m.f) === dom) && (!fit || originsOf(m).indexOf(org) >= 0) && !ex[m.text] && !used(m.text); });
   for (var i = cand.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cand[i]; cand[i] = cand[j]; cand[j] = t; }
   return cand.slice(0, n);
 }
