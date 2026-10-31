@@ -409,7 +409,9 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
         <p class="hint">목표 비율은 고칠 수 있고 이 기기에 저장됩니다. "목표까지"는 그 어원 단어만 더할 때 목표 비율에 닿으려면 필요한 수입니다.</p>
         <div id="statOrigin"></div>
         <h3 class="stat-h">음소별 (발음 기준)</h3>
-        <p class="hint">기준치는 프랑스어 어휘 자료 Lexique 3.82를 사용 빈도로 가중해 센 실제 문장 속 음소 비율이며, 고칠 수 있습니다. 여기서는 단어장의 단어마다 한 번씩 세므로, 자주 쓰는 기능어가 많은 프랑스어 문장과는 차이가 나는 것이 정상입니다.</p>
+        <div class="stat-tools"><label for="statRef">프랑스어 기준</label>
+          <select id="statRef"><option value="tok">실제 문장 (사용 빈도로 가중)</option><option value="type">사전 낱말 (가중 없음)</option></select></div>
+        <p class="hint">기준치는 프랑스어 어휘 자료 Lexique 3.82(낱말 약 14만 개)에서 센 음소 비율이며 고칠 수 있습니다. "실제 문장"은 사용 빈도로 가중한 값이라 le·de 같은 기능어가 크게 반영되고, "사전 낱말"은 낱말마다 한 번씩 센 값이라 활용형과 긴 파생어가 크게 반영됩니다. 에클레아어 쪽은 단어장의 단어마다 한 번씩 셉니다.</p>
         <div id="statPhon"></div>
       </details>
 
@@ -1776,11 +1778,13 @@ var ORIGIN_LABEL = { a: "에클라이아어 계승어", f: "포브르어 차용"
 /* 프랑스어 음소 비율(%): Lexique 3.82의 낱말 약 14만 개를 영화 자막 빈도와 책 빈도로 각각 가중해 센 값의 평균(data/french-phonemes.tsv).
    에클레아어에서 합쳐진 중모음은 합친 값(e+ɛ, o+ɔ, ø+œ). Lexique는 le·de·je의 모음을 ø/œ로 적으므로 œ가 높게 나옴 */
 var PHON_TARGET0 = { "p": 3.77, "b": 1.24, "t": 5.24, "d": 4.38, "k": 3.21, "g": 0.57, "f": 1.39, "v": 2.7, "s": 5.48, "z": 0.78, "ʃ": 0.65, "ʒ": 1.56, "m": 3.28, "n": 2.69, "ɲ": 0.12, "l": 6.32, "ʁ": 7.94, "j": 1.69, "w": 1.22, "ɥ": 0.52, "a": 8.34, "e": 11.12, "i": 5.0, "o": 3.21, "u": 2.32, "y": 2.3, "œ": 4.79, "ə": 1.49, "ɑ̃": 3.18, "ɔ̃": 1.93, "ɛ̃": 1.04, "œ̃": 0.53 };
+/* 같은 자료를 빈도로 가중하지 않고 낱말마다 한 번씩 센 값(사전 기준) */
+var PHON_TYPE0 = { "p": 3.3, "b": 2.04, "t": 6.17, "d": 3.05, "k": 4.24, "g": 1.28, "f": 1.83, "v": 1.56, "s": 5.26, "z": 1.68, "ʃ": 0.92, "ʒ": 1.13, "m": 2.9, "n": 2.71, "ɲ": 0.23, "l": 4.35, "ʁ": 10.32, "j": 2.58, "w": 0.58, "ɥ": 0.32, "a": 7.91, "e": 11.72, "i": 6.78, "o": 4.56, "u": 1.27, "y": 1.92, "œ": 0.92, "ə": 2.31, "ɑ̃": 3.21, "ɔ̃": 1.85, "ɛ̃": 1.06, "œ̃": 0.01 };
 var statT = (function () {
-  try { var o = JSON.parse(load(STORE_STAT) || "null"); if (o && o.o && o.p) return o; } catch (e) {}
+  try { var o = JSON.parse(load(STORE_STAT) || "null"); if (o && o.o && o.p) { if (!o.pt) o.pt = Object.assign({}, PHON_TYPE0); return o; } } catch (e) {}
   /* 이전 판(v1)에 저장한 어원 목표는 살리고, 음소 기준치만 새 값으로 */
-  try { var v1 = JSON.parse(load("eklea-stat-targets-v1") || "null"); if (v1 && v1.o) return { o: v1.o, p: Object.assign({}, PHON_TARGET0) }; } catch (e) {}
-  return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) };
+  try { var v1 = JSON.parse(load("eklea-stat-targets-v1") || "null"); if (v1 && v1.o) return { o: v1.o, p: Object.assign({}, PHON_TARGET0), pt: Object.assign({}, PHON_TYPE0) }; } catch (e) {}
+  return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0), pt: Object.assign({}, PHON_TYPE0) };
 })();
 var MERGED_EOE = "ə+œ", statOpenEoe = false;
 function saveStatT() { save(STORE_STAT, JSON.stringify(statT)); }
@@ -1838,12 +1842,13 @@ function renderStats() {
   if (Math.abs(tSum - 100) > 0.05) o.appendChild(el("p", "hint", "목표 비율의 합이 " + (Math.round(tSum * 10) / 10) + "입니다. 합이 100이 아니면 각 값을 합으로 나눈 비율로 계산합니다."));
 
   /* 음소: 단어장 형태는 이미 변환해 둔 값(convOne 캐시)을 쓰므로 추가 변환이 거의 없음 */
+  var REF = $("statRef").value === "type" ? statT.pt : statT.p;
   var pc = {}, total = 0;
   ws.forEach(function (w) { ipaSegs(convOne(w.input).ipa).forEach(function (sg) {
     sg = sg.replace(/ː/g, ""); if (!sg || /[ˈˌ‿,.'\-]/.test(sg)) return;
     var m = { "ɛ": "e", "ɔ": "o", "ø": "œ" }; if (m[sg]) sg = m[sg];
     pc[sg] = (pc[sg] || 0) + 1; total++; }); });
-  var keys = Object.keys(statT.p).slice();
+  var keys = Object.keys(REF).slice();
   Object.keys(pc).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
   var isV = function (k) { return /[aeiouyəœøɛɔɑ]/.test(k); };
   function phonTable(list, title) {
@@ -1851,24 +1856,24 @@ function renderStats() {
     [title, "수", "현재", "", "기준 %", "차이"].forEach(function (h, i) { h2.appendChild(el("th", i === 3 ? "opt" : "", h)); });
     t2.appendChild(h2);
     var mx = Math.max.apply(null, list.map(function (k) {
-      if (k === MERGED_EOE) return Math.max(((pc["ə"] || 0) + (pc["œ"] || 0)) / (total || 1) * 100, (statT.p["ə"] || 0) + (statT.p["œ"] || 0));
-      return Math.max((pc[k] || 0) / (total || 1) * 100, statT.p[k] || 0); }).concat([1]));
+      if (k === MERGED_EOE) return Math.max(((pc["ə"] || 0) + (pc["œ"] || 0)) / (total || 1) * 100, (REF["ə"] || 0) + (REF["œ"] || 0));
+      return Math.max((pc[k] || 0) / (total || 1) * 100, REF[k] || 0); }).concat([1]));
     function gapCell(cur, tg) {
       var d = cur - tg, ratio = tg ? cur / tg : (cur ? 9 : 1);
       return el("td", "num stat-gap" + (ratio < 0.5 || ratio > 2 ? " lo" : ""), (d >= 0 ? "+" : "") + pct(d));
     }
     function row(k, sub) {
-      var tr = el("tr", sub ? "stat-sub" : ""), cur = total ? (pc[k] || 0) / total * 100 : 0, tg = statT.p[k] || 0;
+      var tr = el("tr", sub ? "stat-sub" : ""), cur = total ? (pc[k] || 0) / total * 100 : 0, tg = REF[k] || 0;
       tr.appendChild(el("td", "ph", (sub ? "└ " : "") + k)); tr.appendChild(el("td", "num", String(pc[k] || 0))); tr.appendChild(el("td", "num", pct(cur) + "%"));
       var bc = barCell(cur, tg, mx); bc.className = "opt"; tr.appendChild(bc);
-      var ti = el("td", "num"); ti.appendChild(numInput(tg, function (v) { statT.p[k] = v; }, k + " 기준 비율")); tr.appendChild(ti);
+      var ti = el("td", "num"); ti.appendChild(numInput(tg, function (v) { REF[k] = v; }, k + " 기준 비율")); tr.appendChild(ti);
       tr.appendChild(gapCell(cur, tg));
       t2.appendChild(tr);
     }
     list.forEach(function (k) {
       if (k !== MERGED_EOE) { row(k); return; }
       /* 프랑스어 자료는 무음 e를 낱말에 따라 ə(samedi)나 ø(le, de, je)로 적으므로 ə와 œ를 합쳐 견줌. 누르면 둘을 나눠 보여 줌 */
-      var n = (pc["ə"] || 0) + (pc["œ"] || 0), cur = total ? n / total * 100 : 0, tg = (statT.p["ə"] || 0) + (statT.p["œ"] || 0);
+      var n = (pc["ə"] || 0) + (pc["œ"] || 0), cur = total ? n / total * 100 : 0, tg = (REF["ə"] || 0) + (REF["œ"] || 0);
       var tr = el("tr", "stat-merge"), th = el("td", "ph");
       th.appendChild(btn((statOpenEoe ? "▾ " : "▸ ") + "ə + œ", statOpenEoe ? "ə와 œ 나눠 보기 닫기" : "ə와 œ 나눠 보기", function () { statOpenEoe = !statOpenEoe; renderStats(); }, "stat-toggle"));
       tr.appendChild(th); tr.appendChild(el("td", "num", String(n))); tr.appendChild(el("td", "num", pct(cur) + "%"));
@@ -1889,10 +1894,12 @@ function renderStats() {
 }
 $("statBox").addEventListener("toggle", renderStats);
 $("statPlain").addEventListener("change", renderStats);
+$("statRef").addEventListener("change", function () { try { localStorage.setItem("eklea-stat-ref", this.value); } catch (e) {} renderStats(); });
+(function () { try { var v = localStorage.getItem("eklea-stat-ref"); if (v === "type" || v === "tok") $("statRef").value = v; } catch (e) {} })();
 /* 단어장이 바뀌어 다시 그릴 때 통계도 함께 갱신 (열려 있을 때만 계산) */
 var renderLexBase = renderLex;
 renderLex = function () { renderLexBase(); renderStats(); };
-$("statReset").addEventListener("click", function () { statT = { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) }; saveStatT(); renderStats(); });
+$("statReset").addEventListener("click", function () { statT = { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0), pt: Object.assign({}, PHON_TYPE0) }; saveStatT(); renderStats(); });
 
 /* ---------- 규칙 변경 비교 ---------- */
 var STORE_MARK = "eklea-converter-mark-v1";
