@@ -406,7 +406,7 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
         <p class="hint">목표 비율은 고칠 수 있고 이 기기에 저장됩니다. "목표까지"는 그 어원 단어만 더할 때 목표 비율에 닿으려면 필요한 수입니다.</p>
         <div id="statOrigin"></div>
         <h3 class="stat-h">음소별 (발음 기준)</h3>
-        <p class="hint">기준치는 프랑스어 음소 빈도의 대략값이며 고칠 수 있습니다. 프랑스어 수치는 실제 문장에서 센 빈도이고 여기서는 단어장의 단어마다 한 번씩 세므로, 방향을 보는 용도로 쓰세요.</p>
+        <p class="hint">기준치는 프랑스어 어휘 자료 Lexique 3.82를 사용 빈도로 가중해 센 실제 문장 속 음소 비율이며, 고칠 수 있습니다. 여기서는 단어장의 단어마다 한 번씩 세므로, 자주 쓰는 기능어가 많은 프랑스어 문장과는 차이가 나는 것이 정상입니다.</p>
         <div id="statPhon"></div>
       </details>
 
@@ -1766,14 +1766,19 @@ $("lexChips").addEventListener("click", function (e) {
 
 
 /* ---------- 어원·음소 통계 ---------- */
-var STORE_STAT = "eklea-stat-targets-v1";
+var STORE_STAT = "eklea-stat-targets-v2";
 /* 어원 목표(%): 포브르어 30~40% 목표의 가운데값, 에냥어는 기층 어휘로 소수, 근대 어휘(신어·학술 차용)는 합쳐 약 10%, 나머지는 계승어 */
 var ORIGIN_TARGET0 = { a: 50, f: 35, b: 5, e: 7, l: 3 };
 var ORIGIN_LABEL = { a: "에클라이아어 계승어", f: "포브르어 차용", b: "에냥어 차용", e: "에클레아어 신어 (합성)", l: "학술 차용 (&)" };
-/* 프랑스어 음소 빈도 대략값(%). 에클레아어에서 합쳐진 중모음은 합친 값(e+ɛ, o+ɔ, ø+œ) */
-var PHON_TARGET0 = { p: 3.5, b: 1, t: 6, d: 4, k: 5, g: 0.4, f: 1.3, v: 2, s: 5, z: 1.3, "ʃ": 0.6, "ʒ": 1, m: 3, n: 2.5, "ɲ": 0.05, l: 5.5, "ʁ": 7, j: 1.5, w: 1, "ɥ": 0.3,
-  a: 7.5, e: 7.5, i: 4.5, o: 2.8, u: 2.3, y: 1.8, "œ": 0.8, "ə": 1, "ɑ̃": 2.5, "ɔ̃": 1.5, "ɛ̃": 1, "œ̃": 0.1 };
-var statT = (function () { try { var o = JSON.parse(load(STORE_STAT) || "null"); if (o && o.o && o.p) return o; } catch (e) {} return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) }; })();
+/* 프랑스어 음소 비율(%): Lexique 3.82의 낱말 약 14만 개를 영화 자막 빈도와 책 빈도로 각각 가중해 센 값의 평균(data/french-phonemes.tsv).
+   에클레아어에서 합쳐진 중모음은 합친 값(e+ɛ, o+ɔ, ø+œ). Lexique는 le·de·je의 모음을 ø/œ로 적으므로 œ가 높게 나옴 */
+var PHON_TARGET0 = { "p": 3.77, "b": 1.24, "t": 5.24, "d": 4.38, "k": 3.21, "g": 0.57, "f": 1.39, "v": 2.7, "s": 5.48, "z": 0.78, "ʃ": 0.65, "ʒ": 1.56, "m": 3.28, "n": 2.69, "ɲ": 0.12, "l": 6.32, "ʁ": 7.94, "j": 1.69, "w": 1.22, "ɥ": 0.52, "a": 8.34, "e": 11.12, "i": 5.0, "o": 3.21, "u": 2.32, "y": 2.3, "œ": 4.79, "ə": 1.49, "ɑ̃": 3.18, "ɔ̃": 1.93, "ɛ̃": 1.04, "œ̃": 0.53 };
+var statT = (function () {
+  try { var o = JSON.parse(load(STORE_STAT) || "null"); if (o && o.o && o.p) return o; } catch (e) {}
+  /* 이전 판(v1)에 저장한 어원 목표는 살리고, 음소 기준치만 새 값으로 */
+  try { var v1 = JSON.parse(load("eklea-stat-targets-v1") || "null"); if (v1 && v1.o) return { o: v1.o, p: Object.assign({}, PHON_TARGET0) }; } catch (e) {}
+  return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) };
+})();
 function saveStatT() { save(STORE_STAT, JSON.stringify(statT)); }
 function originOfWord(w) {
   var inp = w.input || "", tg = tagsOf(w);
