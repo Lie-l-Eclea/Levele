@@ -3099,7 +3099,7 @@ compileAll(); renderErrors(); renderOutput();
 renderLex();
 startLex();
 /* ---- GitHub 동기화 ---- */
-var GH = { owner: "Lie-l-Eclea", repo: "Levele", path: "data/words.json", branch: "main" };
+var GH = { owner: "Lie-l-Eclea", repo: "eutche", path: "words.json", branch: "main" };
 var GH_TOKEN_KEY = "eklea-gh-token-v1", GH_BASE_KEY = "eklea-gh-base-v1";
 var gh = { running: false, dirty: false, timer: null, applying: false, last: "", msg: "", kind: "" };
 function ghToken() { return (load(GH_TOKEN_KEY) || "").trim(); }
