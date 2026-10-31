@@ -273,6 +273,7 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 
 .o-brief { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 0.78rem; }
 .o-chip { display: inline-flex; gap: 5px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 3px; white-space: nowrap; }
+.o-plan { flex: 1 0 100%; color: var(--muted); font-size: 0.75rem; }
 .o-btn { background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .o-chip.on { border-color: var(--fg); font-weight: 700; box-shadow: inset 0 0 0 1px var(--fg); }
 span.o-chip { opacity: .75; }
@@ -2043,25 +2044,32 @@ function pct2(x) { return (Math.round(x * 100) / 100).toFixed(2); }
 function originGaps() {
   var ws = statWords(), T = ws.length, cnt = { a: 0, f: 0, b: 0, e: 0, l: 0 };
   ws.forEach(function (w) { cnt[originOfWord(w)]++; });
-  var tSum = Object.keys(statT.o).reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
-  return ["a", "f", "b", "e", "l"].map(function (k) {
+  var keys = ["a", "f", "b", "e", "l"];
+  var tSum = keys.reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
+  /* 단어를 더하기만 해서 모든 기원이 목표 비율에 닿는 가장 작은 전체 수 T* 와, 기원별 추가 수(합이 T*-T) */
+  var fin = T;
+  keys.forEach(function (k) { var t = statT.o[k] / tSum; if (t > 0) fin = Math.max(fin, Math.ceil(cnt[k] / t - 1e-9)); });
+  var fl = {}, used = 0;
+  keys.forEach(function (k) { var x = statT.o[k] / tSum * fin; fl[k] = Math.floor(x + 1e-9); used += fl[k]; });
+  keys.slice().sort(function (p, q) { var rp = statT.o[p] / tSum * fin - fl[p], rq = statT.o[q] / tSum * fin - fl[q]; return rq - rp; })
+    .forEach(function (k) { if (used < fin) { fl[k]++; used++; } });
+  return keys.map(function (k) {
     var tg = statT.o[k] / tSum * 100, t = tg / 100, cur = T ? cnt[k] / T * 100 : 0;
     var hw = Math.max(ORIGIN_BAND_MIN, tg * ORIGIN_BAND), lo = Math.max(0, tg - hw), hi = tg + hw, eps = 1e-9;
     var state = cur < lo - eps ? "lo" : cur > hi + eps ? "hi" : "ok";
-    var need = state === "lo" && t < 1 ? Math.max(1, Math.ceil((t * T - cnt[k]) / (1 - t))) : 0;
-    var over = state === "hi" && t < 1 ? Math.max(1, Math.ceil((cnt[k] - t * T) / (1 - t))) : 0;
     var tn = Math.round(t * T);
-    return { k: k, n: cnt[k], tn: tn, dn: cnt[k] - tn, cur: cur, tg: tg, lo: lo, hi: hi, state: state, need: need, over: over, diff: cur - tg };
+    return { k: k, n: cnt[k], tn: tn, dn: cnt[k] - tn, cur: cur, tg: tg, lo: lo, hi: hi, state: state, add: Math.max(0, fl[k] - cnt[k]), fin: fin, T: T, ftn: fl[k], diff: cur - tg };
   });
 }
 function sgnN(n) { return n > 0 ? "+" + n : n < 0 ? "−" + (-n) : "±0"; }
-function gapText(g) { return (g.state === "lo" ? "부족 " : g.state === "hi" ? "과다 " : "충족 ") + sgnN(g.dn); }
+function gapText(g) { return (g.state === "lo" ? "부족" : g.state === "hi" ? "과다" : "충족") + " · 추가 " + g.add; }
 function selectOrigin(v) { var s = $("gOrigin"); if (s.value === v) return; s.value = v; s.dispatchEvent(new Event("change", { bubbles: true })); }
 function renderOriginBrief() {
   var box = $("gOriginBrief"); if (!box || lex.status !== "ready") return;
   var cur0 = $("gOrigin").value;
   box.innerHTML = "";
   var gl = originGaps(), by = {}; gl.forEach(function (g) { by[g.k] = g; });
+  var pl = el("div", "o-plan", "목표 비율에 맞추려면 전체 " + gl[0].fin + "개(지금 " + gl[0].T + "개, 추가 " + (gl[0].fin - gl[0].T) + "개)"); pl.title = "단어를 더하기만 해서 모든 기원이 목표 비율에 닿는 가장 작은 전체 수입니다. 칩의 추가 수를 모두 더하면 이 값이 됩니다"; box.appendChild(pl);
   [["a", "a"], ["f", "f"], ["b", "b"], ["e", "e"], ["l", ""], ["bp", ""]].forEach(function (pr) {
     var k = pr[0], g = by[k === "bp" ? "b" : k], on = cur0 === k;
     if (k === "bp") {
@@ -2077,7 +2085,7 @@ function renderOriginBrief() {
     c.appendChild(el("span", "o-n", ORIGIN_SHORT[k]));
     c.appendChild(el("span", "o-v", pct2(g.cur) + "%"));
     c.appendChild(el("span", "o-g", gapText(g)));
-    c.title = ORIGIN_LABEL[k] + ": " + g.n + "개 / 목표 " + g.tn + "개 (" + sgnN(g.dn) + "), 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (" + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%" + (k === "l" ? ". 학술 차용은 변환기에서 & 로 직접 입력하므로 생성 대상이 아닙니다" : "");
+    c.title = ORIGIN_LABEL[k] + ": " + g.n + "개, 현재 " + pct2(g.cur) + "% (현재 전체 " + g.T + "개 기준 목표 " + g.tn + "개, " + sgnN(g.dn) + "). 목표 비율에 맞추려면 전체 " + g.fin + "개가 되도록 " + g.add + "개를 더해 " + g.ftn + "개로. 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (" + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%" + (k === "l" ? ". 학술 차용은 변환기에서 & 로 직접 입력하므로 생성 대상이 아닙니다" : "");
     box.appendChild(c);
   });
 }
@@ -2099,7 +2107,7 @@ function renderStats() {
     var bc = barCell(cur, tg, 100); bc.className = "opt"; tr.appendChild(bc);
     var ti = el("td", "num"); ti.appendChild(numInput(statT.o[k], function (v) { statT.o[k] = v; }, ORIGIN_LABEL[k] + " 목표 비율")); tr.appendChild(ti);
     var gg = gaps[k];
-    tr.appendChild(el("td", "num stat-gap" + (gg.state !== "ok" ? " " + gg.state : ""), gapText(gg) + " (목표 " + gg.tn + ")"));
+    tr.appendChild(el("td", "num stat-gap" + (gg.state !== "ok" ? " " + gg.state : ""), gapText(gg) + " (목표 " + gg.ftn + "개)"));
     tbl.appendChild(tr);
   });
   var foot = el("tr"); foot.appendChild(el("td", "", "합계")); foot.appendChild(el("td", "num", String(T))); foot.appendChild(el("td", "num", "100%"));
