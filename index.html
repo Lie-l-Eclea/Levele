@@ -3222,7 +3222,20 @@ function buildGhBar() {
 ["viewLex", "viewGen"].forEach(function (id) { var p = document.querySelector("#" + id + " .panel"); if (p) p.insertBefore(buildGhBar(), p.firstChild); });
 ghSet("", ghToken() ? "연결됨. 변경하면 자동으로 저장합니다" : "토큰을 넣으면 자동 저장됩니다 (이 브라우저에만 보관)");
 
-if (ghToken() && ghBase()) ghSync(true, true);
+function ghPublicPull() {
+  var url = "https://raw.githubusercontent.com/" + GH.owner + "/" + GH.repo + "/" + GH.branch + "/" + GH.path + "?t=" + Date.now();
+  return fetch(url, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (rem) {
+    if (!Array.isArray(rem)) return;
+    var base = ghBase(), local = lex.words.slice();
+    var untouched = ghStable(local) === ghStable(SEED_WORDS);
+    if (!base && !untouched) { ghSet(gh.kind, gh.msg); return; }
+    var merged = (!base && untouched) ? rem.slice() : ghMerge(base ? base.words : null, local, rem);
+    merged.sort(function (x, y) { return (x.n || 0) - (y.n || 0); });
+    save(GH_BASE_KEY, JSON.stringify({ sha: base ? base.sha : "", words: merged }));
+    if (ghStable(merged) !== ghStable(local)) { gh.applying = true; lex.words = merged; lexRefresh(); gh.applying = false; ghSet("ok", ghTime() + " GitHub의 최신 단어장을 불러왔습니다 (" + merged.length + "개)"); }
+  }).catch(function () {});
+}
+if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull();
 
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
