@@ -2524,13 +2524,18 @@ function usedMeanTest() {
     var toks = m.split(/[,，/+·;]/).map(function (x) { return x.trim(); }).filter(Boolean);
     return { all: w.mean || "", toks: toks };
   });
-  return function (t) {
+  function one(t) {
     var k = meanKey(t);
     return entries.some(function (e) {
       if (e.toks.indexOf(k.key) < 0) return false;
       if (!k.hint) return true;
       return e.all.indexOf(k.hint) >= 0 || e.toks.length === 1 && e.all.trim() === k.key;
     });
+  }
+  /* 하다·만들다처럼 ·로 묶인 합친 뜻은 구성 낱말이 모두 단어장에 있을 때 있는 것으로 봄 */
+  return function chk(t) {
+    if (t.indexOf("(") < 0 && t.indexOf("·") > 0) return t.split("·").every(function (p) { return chk(p.trim()); });
+    return one(t);
   };
 }
 function pickMeanings(n, exclTexts) {
