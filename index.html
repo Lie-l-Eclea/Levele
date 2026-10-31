@@ -236,6 +236,8 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .find-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .find-row input { flex: 1 1 160px; min-width: 0; font-family: var(--font-lang); font-size: 16px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
 .find-row button { min-height: 38px; }
+.find-mode { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.find-mode .chip { min-height: 34px; }
 .find-keys { display: flex; flex-wrap: wrap; gap: 4px; }
 .find-keys button { font-family: var(--font-lang); min-width: 36px; min-height: 34px; padding: 2px 6px; font-size: 1rem; }
 .find-short { display: grid; gap: 4px; }
@@ -389,6 +391,12 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
           <input id="gFindQ" class="lang ipa" autocomplete="off" spellcheck="false" placeholder="발음 (예: f, ɔ̃, mb)" aria-label="후보 발음 검색">
           <button type="button" id="gFindClear">지우기</button>
           <span class="status" id="gFindCount"></span>
+        </div>
+        <div class="find-mode" id="gFindMode" role="group" aria-label="두 음소 이상일 때 찾는 방식" hidden>
+          <span class="hint">두 음소 이상:</span>
+          <button type="button" class="chip" data-mode="seq" aria-pressed="true" title="입력한 순서 그대로 붙어서 나오는 후보">이어서 (연쇄)</button>
+          <button type="button" class="chip" data-mode="all" aria-pressed="false" title="순서와 자리에 상관없이 모두 들어 있는 후보">모두 포함</button>
+          <button type="button" class="chip" data-mode="any" aria-pressed="false" title="하나라도 들어 있는 후보">하나라도</button>
         </div>
         <div class="find-keys" id="gFindKeys" role="group" aria-label="발음 기호 넣기"></div>
         <div class="find-short"><span class="hint">단어장에 부족한 발음 (모자란 순, 프랑스어 기준 대비)</span><div class="chips" id="gShort"></div></div>
@@ -2636,7 +2644,7 @@ function renderPair() {
   });
   if (!pair.pool.length) chips.appendChild(el("span", "hint", "남은 후보가 없습니다. 뜻에 직접 입력하거나 \"남은 단어 다시\"로 새로 만드세요."));
   pcol.appendChild(chips);
-  if (candQ) { var pf = el("div", "pool-head"); pf.appendChild(el("span", "pool-filter", "발음 " + candQ.label + " 포함만 보는 중")); pf.appendChild(btn("해제", "발음 거르기 해제", function () { setCandQuery(null); }, "pool-fold")); pcol.insertBefore(pf, chips); }
+  if (candQ) { var pf = el("div", "pool-head"); pf.appendChild(el("span", "pool-filter", "발음 " + candDesc() + " 포함만 보는 중")); pf.appendChild(btn("해제", "발음 거르기 해제", function () { setCandQuery(null); }, "pool-fold")); pcol.insertBefore(pf, chips); }
   var foot = el("div", "pool-foot");
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
@@ -2721,16 +2729,40 @@ genHint();
 
 
 /* ---------- 후보 안에서 발음 찾기 ---------- */
-var candQ = null; /* { label, alts: [[음소…], …] } */
+var candQ = null; /* { label, alts: [[음소…], …], segs?: [음소…] (직접 입력, 두 음소 이상이면 candMode 적용) } */
+var candMode = "seq"; /* seq 이어서, all 모두 포함, any 하나라도 */
+var MODE_NAME = { seq: "이어서", all: "모두", any: "하나라도" };
 function segMatch(segs, alt) {
   for (var i = 0; i + alt.length <= segs.length; i++) { var ok = true; for (var j = 0; j < alt.length; j++) if (segs[i + j] !== alt[j]) { ok = false; break; } if (ok) return true; }
   return false;
 }
-function candHit(ipa) { if (!candQ) return true; var sg = phonSegs(ipa || ""); return candQ.alts.some(function (a) { return segMatch(sg, a); }); }
+function segCount(sg) { var m = {}; sg.forEach(function (x) { m[x] = (m[x] || 0) + 1; }); return m; }
+function candHit(ipa) {
+  if (!candQ) return true;
+  var sg = phonSegs(ipa || "");
+  if (candQ.segs && candQ.segs.length > 1 && candMode !== "seq") {
+    if (candMode === "any") return candQ.segs.some(function (x) { return sg.indexOf(x) >= 0; });
+    var need = segCount(candQ.segs), have = segCount(sg);
+    return Object.keys(need).every(function (k) { return (have[k] || 0) >= need[k]; });
+  }
+  return candQ.alts.some(function (a) { return segMatch(sg, a); });
+}
+function candDesc() {
+  if (!candQ) return "";
+  return candQ.segs && candQ.segs.length > 1 ? candQ.label + " (" + MODE_NAME[candMode] + ")" : candQ.label;
+}
+function syncCandMode() {
+  var multi = !!(candQ && candQ.segs && candQ.segs.length > 1);
+  $("gFindMode").hidden = !multi;
+  Array.prototype.forEach.call($("gFindMode").querySelectorAll("button[data-mode]"), function (b) { b.setAttribute("aria-pressed", b.dataset.mode === candMode ? "true" : "false"); });
+}
 function applyCandFilter() {
   var rows = Array.prototype.slice.call(document.querySelectorAll("#gList .gen-row, #gPair .w-chip")), shown = 0;
   rows.forEach(function (r) { var hit = candHit(r._ipa); r.classList.toggle("miss", !hit); if (hit) shown++; });
   $("gFindCount").textContent = candQ ? "후보 " + rows.length + "개 중 " + shown + "개" : "";
+  syncCandMode();
+  var fold = document.querySelector("#gPair .pool-head .pool-fold");
+  if (fold && pair) fold.firstChild.nodeValue = (pair.fold ? "▴ " : "▾ ") + "단어 후보 " + (candQ ? shown + " / " + rows.length : rows.length) + "개";
 }
 function setCandQuery(q, fromChip) {
   candQ = q;
@@ -2744,11 +2776,17 @@ $("gFindQ").addEventListener("input", function () {
   if (nb + na !== el2.value) { el2.value = nb + na; el2.selectionStart = el2.selectionEnd = nb.length; }
   var v = el2.value.trim();
   Array.prototype.forEach.call(document.querySelectorAll("#gShort .chip"), function (c) { c.setAttribute("aria-pressed", "false"); });
-  candQ = v ? { label: v, alts: [phonSegs(v)] } : null;
+  var sg = v ? phonSegs(v) : [];
+  candQ = v && sg.length ? { label: v, alts: [sg], segs: sg } : null;
   if (pair && !$("gPair").hidden) { renderPair(); } else applyCandFilter();
   el2.focus();
 });
 $("gFindClear").addEventListener("click", function () { setCandQuery(null); });
+$("gFindMode").addEventListener("click", function (e) {
+  var b = e.target.closest("button[data-mode]"); if (!b) return;
+  candMode = b.dataset.mode;
+  if (pair && !$("gPair").hidden) renderPair(); else applyCandFilter();
+});
 (function () {
   var pad = $("gFindKeys");
   IPA_KEYS.forEach(function (k) { var b = document.createElement("button"); b.type = "button"; b.textContent = k; b.dataset.k = k; b.title = k + " 넣기"; pad.appendChild(b); });
