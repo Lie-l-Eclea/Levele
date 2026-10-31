@@ -258,7 +258,7 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .pool-main .pool-chips { flex: 1 1 auto; }
 .pool-main .pool-head { flex: none; }
 .pool-tools { display: flex; gap: 4px; margin-left: auto; flex: none; }
-.pool-tools button { min-height: 36px; padding: 0 7px; font-size: 0.78rem; line-height: 1.2; white-space: nowrap; }
+.pool-tools button { min-height: 36px; padding: 0 7px; font-size: 0.74rem; line-height: 1.2; white-space: nowrap; }
 .pool-tools .t-full { display: none; }
 .pair { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 .pair-means { display: grid; gap: 8px; min-width: 0; }
@@ -268,40 +268,41 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .m-top { display: flex; gap: 4px; align-items: center; }
 .m-pick { flex: 1; min-width: 0; text-align: left; border: 0; background: transparent; padding: 6px 2px; min-height: 44px; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; color: var(--fg); }
 .m-pick:hover { color: var(--fg); }
-.m-mean { font-weight: 700; font-size: 1.02rem; overflow-wrap: anywhere; }
+.m-mean { font-weight: 700; font-size: 0.94rem; overflow-wrap: anywhere; }
 .m-pick small.core { color: var(--accent); font-weight: 700; }
-.m-pick small, .w-pick small { color: var(--muted); font-size: 0.78rem; font-family: var(--font-ui); }
+.m-pick small, .w-pick small { color: var(--muted); font-size: 0.72rem; font-family: var(--font-ui); }
 button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem; line-height: 1; }
 .m-word { display: grid; gap: 4px; min-width: 0; }
 .w-line { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; min-width: 0; }
-.w-line .sp, .w-pick .sp { font-family: var(--font-lang); font-size: 1.12rem; overflow-wrap: anywhere; }
+.w-line .sp, .w-pick .sp { font-family: var(--font-lang); font-size: 1.02rem; overflow-wrap: anywhere; }
 .w-line .ip { font-family: var(--font-lang); color: var(--accent); overflow-wrap: anywhere; }
-.w-line .ko { font-size: 0.9rem; }
-.m-word .src { font-family: var(--font-lang); color: var(--muted); font-size: 0.82rem; overflow-wrap: anywhere; }
+.w-line .ko { font-size: 0.84rem; }
+.m-word .src { font-family: var(--font-lang); color: var(--muted); font-size: 0.76rem; overflow-wrap: anywhere; }
 .m-word .warn { color: var(--err); font-size: 0.8rem; }
 .m-acts { display: flex; gap: 6px; flex-wrap: wrap; }
-.m-acts button { min-height: 36px; }
+.m-acts button { min-height: 36px; font-size: 0.82rem; }
 .m-in { width: 100%; font-family: var(--font-lang); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
 .pair-pool { position: sticky; bottom: 0; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 12px 12px 0 0;
   box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.12); padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
   display: grid; gap: 6px; max-height: 40vh; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
-.pool-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); min-width: 0; }
+.pool-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted); min-width: 0; }
 .pool-chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-y: auto; min-height: 0; align-content: flex-start; overscroll-behavior: contain; }
 .w-chip { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); max-width: 100%; }
 .w-chip.sel { border-color: var(--accent); background: var(--accent-soft); }
 .w-chip.loading { opacity: 0.45; }
 .w-pick { border: 0; background: transparent; display: grid; text-align: left; padding: 4px 8px; min-height: 44px; color: var(--fg); min-width: 0; }
 .w-pick:hover { color: var(--fg); }
-.w-chip button.icon { border: 0; border-left: 1px solid var(--line); border-radius: 0 8px 8px 0; background: transparent; min-width: 38px; }
 .pool-foot { display: flex; justify-content: flex-end; gap: 6px; }
 .m-empty { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
-.m-empty button { min-height: 36px; }
-button.pool-fold { white-space: nowrap; border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
+.m-empty button { min-height: 36px; font-size: 0.82rem; }
+button.pool-fold { white-space: nowrap; border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.78rem; }
 .pair-pool.fold .pool-main, #gPair.typing .pool-main { display: none; }
 .pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
-.pool-foot button.foot-sec { flex: 0 0 auto; min-width: 44px; padding: 0 10px; font-size: 0.82rem; white-space: nowrap; }
+.pool-foot button.foot-sec { flex: 0 0 auto; min-width: 44px; padding: 0 9px; font-size: 0.78rem; white-space: nowrap; }
 .pool-foot button.primary { min-width: 0; }
 .pool-foot .t-full { display: none; }
+.pool-foot .add-short { display: none; }
+@media (max-width: 399px) { .pool-foot .add-full { display: none; } .pool-foot .add-short { display: inline; } }
 @media (max-width: 819px) {
   /* 좁은 화면: 후보 칸을 화면 가장자리까지 넓혀 양옆 빈 공간을 없앰 (몸통 여백 + 패널 안쪽 여백 17px만큼 바깥으로) */
   .pair-pool { margin-left: calc(-1 * (max(16px, env(safe-area-inset-left, 0px)) + 17px)); margin-right: calc(-1 * (max(16px, env(safe-area-inset-right, 0px)) + 17px)); border-left: 0; border-right: 0; border-radius: 12px 12px 0 0; padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
@@ -312,7 +313,7 @@ button.pool-fold { white-space: nowrap; border: 0; background: transparent; padd
   #gPair.typing .pool-main { display: flex; }
   .pool-tools .t-full, .pool-foot .t-full { display: inline; }
   .pool-tools .t-short, .pool-foot .t-short { display: none; }
-  .pool-tools button { min-height: 38px; padding: 0 10px; font-size: 0.88rem; }
+  .pool-tools button { min-height: 38px; padding: 0 10px; font-size: 0.82rem; }
   .pool-tools { gap: 6px; }
 }
 .gen-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
@@ -2685,17 +2686,6 @@ function renderPair() {
     p.appendChild(el("span", "sp", w.spell));
     p.appendChild(el("small", "", "[" + w.ipa + "] " + w.ko));
     chip.appendChild(p);
-    chip.appendChild(btn("↻", "이 단어만 다시 만들기", function () {
-      if (w.loading) return;
-      pushHist();
-      w.loading = true; renderPair();
-      findWords(1, pairExcl(), { dead: false }, function (res) {
-        var i = findPool(w.id); if (i < 0) return;
-        if (res[0]) { res[0].id = ++pairSeq; pair.pool[i] = res[0]; if (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id) pair.sel = null; }
-        else { w.loading = false; $("gStatus").textContent = "조건에 맞는 새 단어를 찾지 못했습니다."; }
-        renderPair();
-      });
-    }, "icon"));
     chips.appendChild(chip);
   });
   if (!pair.pool.length) chips.appendChild(el("span", "hint", "남은 후보가 없습니다. 뜻에 직접 입력하거나 \"남은 단어 다시\"로 새로 만드세요."));
@@ -2707,7 +2697,7 @@ function renderPair() {
   function fbtn(id, full, short, title, fn, off) { var x = btn("", title, fn, "foot-sec"); x.id = id; x.appendChild(el("span", "t-full", full)); x.appendChild(el("span", "t-short", short)); x.disabled = off; return x; }
   foot.appendChild(fbtn("gUndo", "↶", "↶", "되돌리기: 마지막 조작 이전 상태로 돌립니다 (잇기·해제·다시 뽑기 등, 여러 번 가능)", undoPair, !pair.hist.length));
   foot.appendChild(fbtn("gRedo", "↷", "↷", "다시 하기: 되돌린 조작을 다시 적용합니다", redoPair, !pair.redo.length));
-  foot.appendChild(fbtn("gUnlinkAll", "잇기 해제", "잇기 해제", "이은 단어를 모두 후보로 되돌립니다 (직접 입력한 형태는 그대로)", unlinkAll, !pair.items.some(function (it) { return it.word; })));
+  foot.appendChild(fbtn("gUnlinkAll", "잇기 전부 해제", "잇기 전부 해제", "이은 단어를 모두 후보로 되돌립니다 (직접 입력한 형태는 그대로)", unlinkAll, !pair.items.some(function (it) { return it.word; })));
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
   foot.appendChild(add);
@@ -2720,7 +2710,13 @@ function renderPair() {
 /* 좁은 화면에서 직접 입력하는 동안에는 후보 칸을 접어 입력란이 가려지지 않게 함.
    입력란을 벗어날 때 바로 펼치면 버튼이 움직여 누른 자리가 어긋나므로, 다른 조작(다시 그리기)이나 후보 머리를 누를 때 펼침 */
 $("gPair").addEventListener("focusin", function (e) { if (e.target.classList && e.target.classList.contains("m-in")) this.classList.add("typing"); });
-function updAdd() { var b = $("gAddPairs"); if (!b) return; var n = readyCount(); b.textContent = n ? n + "개 단어장에 추가" : "이은 단어가 없습니다"; b.disabled = !n; }
+function updAdd() {
+  var b = $("gAddPairs"); if (!b) return; var n = readyCount();
+  b.textContent = "";
+  b.appendChild(el("span", "add-full", n ? n + "개 단어장에 추가" : "이은 단어가 없습니다"));
+  b.appendChild(el("span", "add-short", n ? n + "개 추가" : "이은 단어 없음"));
+  b.disabled = !n;
+}
 function focusManual(id) { var i = $("gPair").querySelector('input.m-in[data-id="' + id + '"]'); if (i) i.focus(); }
 function addPairs() {
   if (!lex.col || !pair) return;
