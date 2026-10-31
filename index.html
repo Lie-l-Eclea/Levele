@@ -39,7 +39,7 @@ body {
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 20px 40px;
 }
-.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 header { display: grid; gap: 4px; }
 h1 { font-family: var(--font-lang); font-weight: 700; font-size: 1.9rem; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
 .sub { color: var(--muted); margin: 0; font-size: 0.92rem; }
@@ -240,7 +240,8 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .find-help b { font-family: var(--font-lang); color: var(--fg); }
 .find-keys { display: flex; flex-wrap: wrap; gap: 4px; }
 .find-keys button { font-family: var(--font-lang); min-width: 36px; min-height: 34px; padding: 2px 6px; font-size: 1rem; }
-.find-short { display: grid; gap: 4px; }
+.find-short { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.gen-find { grid-template-columns: minmax(0, 1fr); }
 #gShort { display: flex; gap: 6px; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
 #gShort .chip { white-space: nowrap; font-family: var(--font-ui); }
 #gShort .chip b { font-family: var(--font-lang); font-size: 1.02rem; margin-right: 4px; }
@@ -251,7 +252,8 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 @media (max-width: 560px) { .to-top .tt-txt { display: none; } .to-top { width: 44px; padding: 0; font-size: 1.1rem; } }
 
 /* 뜻과 단어 짝짓기: 좁은 화면에서는 단어 후보가 화면 아래에 붙어 따라오고, 넓은 화면에서는 오른쪽 열에 붙음 */
-#gPair { display: grid; gap: 10px; }
+#gPair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+#viewGen .panel { grid-template-columns: minmax(0, 1fr); }
 .pool-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; min-height: 0; min-width: 0; }
 .pool-main { display: flex; flex-direction: column; gap: 6px; min-height: 0; min-width: 0; }
 .pool-main .pool-chips { flex: 1 1 auto; }
@@ -299,6 +301,10 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-height: 32px; color: var(--muted); font-size: 0.82rem; }
 .pair-pool.fold .pool-body, #gPair.typing .pool-body { display: none; }
 .pool-foot button { min-height: 44px; flex: 1 1 auto; max-width: 360px; }
+@media (max-width: 819px) {
+  /* 좁은 화면: 후보 칸을 화면 가장자리까지 넓혀 양옆 빈 공간을 없앰 (몸통 여백 + 패널 안쪽 여백 17px만큼 바깥으로) */
+  .pair-pool { margin-left: calc(-1 * (max(16px, env(safe-area-inset-left, 0px)) + 17px)); margin-right: calc(-1 * (max(16px, env(safe-area-inset-right, 0px)) + 17px)); border-left: 0; border-right: 0; border-radius: 12px 12px 0 0; padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+}
 @media (min-width: 820px) {
   .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .pair-pool { top: 12px; bottom: auto; border-radius: 12px; max-height: calc(100vh - 24px); box-shadow: none; }
