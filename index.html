@@ -206,6 +206,26 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .view-tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 .out.main { font-size: 1.5rem; }
 .badge.fossil { background: var(--dusk); color: var(--surface); }
+.stat-box { min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--surface); }
+.stat-box > summary { cursor: pointer; font-weight: 700; padding: 6px 0; min-height: 32px; }
+.stat-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 4px 0 6px; }
+.stat-h { font-size: 0.85rem; margin: 10px 0 2px; color: var(--muted); }
+.stat-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.stat-table th { text-align: left; font-weight: 500; color: var(--muted); font-size: 0.78rem; padding: 4px 4px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.stat-table td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.stat-table td.num { text-align: right; white-space: nowrap; }
+.stat-table td.ph { font-family: var(--font-lang); font-size: 1.05rem; }
+.stat-table input { width: 4.2em; font-size: 16px; padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); text-align: right; }
+.stat-bar { position: relative; height: 10px; background: var(--bg); border-radius: 5px; min-width: 60px; }
+.stat-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 5px; }
+.stat-bar b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--err); }
+.stat-gap { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.stat-gap.lo { color: var(--err); }
+.stat-wrap { overflow-x: auto; max-width: 100%; min-width: 0; }
+.stat-cols > * { min-width: 0; }
+.stat-cols { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 820px) { .stat-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 560px) { .stat-table .opt { display: none; } }
 .gen-head[hidden], #gPair[hidden] { display: none; }
 /* 뜻과 단어 짝짓기: 좁은 화면에서는 단어 후보가 화면 아래에 붙어 따라오고, 넓은 화면에서는 오른쪽 열에 붙음 */
 #gPair { display: grid; gap: 10px; }
@@ -376,6 +396,19 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
         <button type="button" id="mergeNo">단어는 가져오지 않기</button>
       </div>
       <p class="status" id="lexStatus"></p>
+      <details class="stat-box" id="statBox">
+        <summary>어원·음소 통계</summary>
+        <div class="stat-tools">
+          <label class="check"><input type="checkbox" id="statPlain" checked> 일반 어휘만 (지명·민족명·정당 제외)</label>
+          <button type="button" id="statReset">목표치 기본값으로</button>
+        </div>
+        <h3 class="stat-h">어원별</h3>
+        <p class="hint">목표 비율은 고칠 수 있고 이 기기에 저장됩니다. "목표까지"는 그 어원 단어만 더할 때 목표 비율에 닿으려면 필요한 수입니다.</p>
+        <div id="statOrigin"></div>
+        <h3 class="stat-h">음소별 (발음 기준)</h3>
+        <p class="hint">기준치는 프랑스어 음소 빈도의 대략값이며 고칠 수 있습니다. 프랑스어 수치는 실제 문장에서 센 빈도이고 여기서는 단어장의 단어마다 한 번씩 세므로, 방향을 보는 용도로 쓰세요.</p>
+        <div id="statPhon"></div>
+      </details>
 
       <form class="lex-form" id="lexForm" hidden>
         <div class="fields">
@@ -1730,6 +1763,108 @@ $("lexChips").addEventListener("click", function (e) {
   Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (x) { x.setAttribute("aria-pressed", x === c ? "true" : "false"); });
   renderLex();
 });
+
+
+/* ---------- 어원·음소 통계 ---------- */
+var STORE_STAT = "eklea-stat-targets-v1";
+/* 어원 목표(%): 포브르어 30~40% 목표의 가운데값, 에냥어는 기층 어휘로 소수, 근대 어휘(신어·학술 차용)는 합쳐 약 10%, 나머지는 계승어 */
+var ORIGIN_TARGET0 = { a: 50, f: 35, b: 5, e: 7, l: 3 };
+var ORIGIN_LABEL = { a: "에클라이아어 계승어", f: "포브르어 차용", b: "에냥어 차용", e: "에클레아어 신어 (합성)", l: "학술 차용 (&)" };
+/* 프랑스어 음소 빈도 대략값(%). 에클레아어에서 합쳐진 중모음은 합친 값(e+ɛ, o+ɔ, ø+œ) */
+var PHON_TARGET0 = { p: 3.5, b: 1, t: 6, d: 4, k: 5, g: 0.4, f: 1.3, v: 2, s: 5, z: 1.3, "ʃ": 0.6, "ʒ": 1, m: 3, n: 2.5, "ɲ": 0.05, l: 5.5, "ʁ": 7, j: 1.5, w: 1, "ɥ": 0.3,
+  a: 7.5, e: 7.5, i: 4.5, o: 2.8, u: 2.3, y: 1.8, "œ": 0.8, "ə": 1, "ɑ̃": 2.5, "ɔ̃": 1.5, "ɛ̃": 1, "œ̃": 0.1 };
+var statT = (function () { try { var o = JSON.parse(load(STORE_STAT) || "null"); if (o && o.o && o.p) return o; } catch (e) {} return { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) }; })();
+function saveStatT() { save(STORE_STAT, JSON.stringify(statT)); }
+function originOfWord(w) {
+  var inp = w.input || "", tg = tagsOf(w);
+  if (/%/.test(inp) || tg.indexOf("F 기원") >= 0) return "f";
+  if (tg.indexOf("B 기원") >= 0) return "b";
+  if (/^[@]?&/.test(inp) || tg.indexOf("학술 차용어") >= 0) return "l";
+  if (/·/.test(inp) || tg.indexOf("후대 합성어") >= 0) return "e";
+  return "a";
+}
+function statWords() {
+  var plain = $("statPlain").checked;
+  return lex.words.filter(function (w) {
+    if (!(w.input || "").trim()) return false;
+    if (!plain) return true;
+    var tg = tagsOf(w).join(" ");
+    return !/지명|민족명|정당/.test(tg);
+  });
+}
+function pct(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+function barCell(cur, tgt, max) {
+  var td = el("td"), bar = el("div", "stat-bar"), i = el("i"), b = el("b");
+  i.style.width = Math.min(100, cur / max * 100) + "%"; b.style.left = Math.min(100, tgt / max * 100) + "%";
+  bar.appendChild(i); bar.appendChild(b); td.appendChild(bar); return td;
+}
+function numInput(val, onset, label) {
+  var inp = document.createElement("input"); inp.type = "number"; inp.step = "0.1"; inp.min = "0"; inp.inputMode = "decimal"; inp.value = val; inp.setAttribute("aria-label", label);
+  inp.addEventListener("change", function () { var v = parseFloat(inp.value); if (!isNaN(v) && v >= 0) { onset(v); saveStatT(); renderStats(); } });
+  return inp;
+}
+function renderStats() {
+  var box = $("statBox"); if (!box || !box.open || lex.status !== "ready") return;
+  var ws = statWords(), T = ws.length, cnt = { a: 0, f: 0, b: 0, e: 0, l: 0 };
+  ws.forEach(function (w) { cnt[originOfWord(w)]++; });
+  var tSum = Object.keys(statT.o).reduce(function (s, k) { return s + statT.o[k]; }, 0) || 1;
+  var tbl = el("table", "stat-table"), hd = el("tr");
+  ["어원", "단어", "현재", "", "목표 %", "목표까지"].forEach(function (h, i) { var th = el("th", i === 3 ? "opt" : "", h); hd.appendChild(th); });
+  tbl.appendChild(hd);
+  ["a", "f", "b", "e", "l"].forEach(function (k) {
+    var tr = el("tr"), cur = T ? cnt[k] / T * 100 : 0, tg = statT.o[k] / tSum * 100;
+    tr.appendChild(el("td", "", ORIGIN_LABEL[k]));
+    tr.appendChild(el("td", "num", String(cnt[k])));
+    tr.appendChild(el("td", "num", pct(cur) + "%"));
+    var bc = barCell(cur, tg, 100); bc.className = "opt"; tr.appendChild(bc);
+    var ti = el("td", "num"); ti.appendChild(numInput(statT.o[k], function (v) { statT.o[k] = v; }, ORIGIN_LABEL[k] + " 목표 비율")); tr.appendChild(ti);
+    var t = tg / 100, need = t < 1 ? Math.ceil((t * T - cnt[k]) / (1 - t)) : 0;
+    tr.appendChild(el("td", "num stat-gap" + (need > 0 ? " lo" : ""), need > 0 ? "+" + need : "충족"));
+    tbl.appendChild(tr);
+  });
+  var foot = el("tr"); foot.appendChild(el("td", "", "합계")); foot.appendChild(el("td", "num", String(T))); foot.appendChild(el("td", "num", "100%"));
+  foot.appendChild(el("td", "opt", "")); foot.appendChild(el("td", "num", String(Math.round(tSum * 10) / 10))); foot.appendChild(el("td", "", ""));
+  tbl.appendChild(foot);
+  var o = $("statOrigin"); o.innerHTML = ""; var w1 = el("div", "stat-wrap"); w1.appendChild(tbl); o.appendChild(w1);
+  if (Math.abs(tSum - 100) > 0.05) o.appendChild(el("p", "hint", "목표 비율의 합이 " + (Math.round(tSum * 10) / 10) + "입니다. 합이 100이 아니면 각 값을 합으로 나눈 비율로 계산합니다."));
+
+  /* 음소: 단어장 형태는 이미 변환해 둔 값(convOne 캐시)을 쓰므로 추가 변환이 거의 없음 */
+  var pc = {}, total = 0;
+  ws.forEach(function (w) { ipaSegs(convOne(w.input).ipa).forEach(function (sg) {
+    sg = sg.replace(/ː/g, ""); if (!sg || /[ˈˌ‿,.'\-]/.test(sg)) return;
+    var m = { "ɛ": "e", "ɔ": "o", "ø": "œ" }; if (m[sg]) sg = m[sg];
+    pc[sg] = (pc[sg] || 0) + 1; total++; }); });
+  var keys = Object.keys(statT.p).slice();
+  Object.keys(pc).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+  var isV = function (k) { return /[aeiouyəœøɛɔɑ]/.test(k); };
+  function phonTable(list, title) {
+    var t2 = el("table", "stat-table"), h2 = el("tr");
+    [title, "수", "현재", "", "기준 %", "차이"].forEach(function (h, i) { h2.appendChild(el("th", i === 3 ? "opt" : "", h)); });
+    t2.appendChild(h2);
+    var mx = Math.max.apply(null, list.map(function (k) { return Math.max((pc[k] || 0) / (total || 1) * 100, statT.p[k] || 0); }).concat([1]));
+    list.forEach(function (k) {
+      var tr = el("tr"), cur = total ? (pc[k] || 0) / total * 100 : 0, tg = statT.p[k] || 0;
+      tr.appendChild(el("td", "ph", k)); tr.appendChild(el("td", "num", String(pc[k] || 0))); tr.appendChild(el("td", "num", pct(cur) + "%"));
+      var bc = barCell(cur, tg, mx); bc.className = "opt"; tr.appendChild(bc);
+      var ti = el("td", "num"); ti.appendChild(numInput(tg, function (v) { statT.p[k] = v; }, k + " 기준 비율")); tr.appendChild(ti);
+      var d = cur - tg, ratio = tg ? cur / tg : (cur ? 9 : 1);
+      tr.appendChild(el("td", "num stat-gap" + (ratio < 0.5 || ratio > 2 ? " lo" : ""), (d >= 0 ? "+" : "") + pct(d)));
+      t2.appendChild(tr);
+    });
+    var w = el("div", "stat-wrap"); w.appendChild(t2); return w;
+  }
+  var cons = keys.filter(function (k) { return !isV(k); }), vows = keys.filter(isV);
+  var p = $("statPhon"); p.innerHTML = "";
+  var cols = el("div", "stat-cols"); cols.appendChild(phonTable(cons, "자음")); cols.appendChild(phonTable(vows, "모음"));
+  p.appendChild(cols);
+  p.appendChild(el("p", "hint", "음소 " + total + "개 (단어 " + T + "개). 빨간 차이는 기준의 절반 미만이거나 두 배 초과."));
+}
+$("statBox").addEventListener("toggle", renderStats);
+$("statPlain").addEventListener("change", renderStats);
+/* 단어장이 바뀌어 다시 그릴 때 통계도 함께 갱신 (열려 있을 때만 계산) */
+var renderLexBase = renderLex;
+renderLex = function () { renderLexBase(); renderStats(); };
+$("statReset").addEventListener("click", function () { statT = { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0) }; saveStatT(); renderStats(); });
 
 /* ---------- 규칙 변경 비교 ---------- */
 var STORE_MARK = "eklea-converter-mark-v1";
