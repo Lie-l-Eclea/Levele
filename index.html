@@ -100,7 +100,12 @@ button.primary:hover { color: var(--surface); filter: brightness(1.08); }
 .trace li { font-size: 0.85rem; overflow-wrap: anywhere; }
 .trace code { font-family: var(--font-code); font-size: 0.82rem; color: var(--muted); }
 .trace .res { font-family: var(--font-lang); font-size: 1rem; }
-details summary { cursor: pointer; font-size: 0.88rem; color: var(--muted); }
+details summary { cursor: pointer; font-size: 0.88rem; color: var(--muted); list-style: none; }
+details summary::-webkit-details-marker { display: none; }
+/* 접고 펼 수 있는 머리 표시: 닫힘 ▸, 열림 ▾ */
+details > summary::before { content: "▸"; display: inline-block; box-sizing: border-box; width: 1.35em; height: 1.35em; margin-right: 6px; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 0.85em; line-height: 1.2em; text-align: center; vertical-align: 0.05em; flex: none; }
+details[open] > summary::before { content: "▾"; background: var(--accent-soft); }
+details > summary:hover::before { background: var(--accent-soft); }
 .help { font-size: 0.85rem; display: grid; gap: 6px; padding-top: 6px; }
 .help code { font-family: var(--font-code); font-size: 0.82rem; background: var(--bg); padding: 1px 4px; border-radius: 4px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.82rem; color: var(--muted); }
