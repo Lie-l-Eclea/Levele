@@ -229,7 +229,25 @@ button.stat-toggle { border: 0; background: transparent; padding: 2px 0; font-fa
 .stat-cols { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 820px) { .stat-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (max-width: 560px) { .stat-table .opt { display: none; } }
-.gen-head[hidden], #gPair[hidden] { display: none; }
+.gen-head[hidden], #gPair[hidden], .gen-find[hidden] { display: none; }
+.gen-find { display: grid; gap: 6px; padding: 10px 12px; border: 1px dashed var(--accent); border-radius: 10px; background: var(--accent-soft); min-width: 0; }
+.find-head { display: grid; gap: 2px; }
+.find-head strong { font-size: 0.92rem; }
+.find-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.find-row input { flex: 1 1 160px; min-width: 0; font-family: var(--font-lang); font-size: 16px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
+.find-row button { min-height: 38px; }
+.find-keys { display: flex; flex-wrap: wrap; gap: 4px; }
+.find-keys button { font-family: var(--font-lang); min-width: 36px; min-height: 34px; padding: 2px 6px; font-size: 1rem; }
+.find-short { display: grid; gap: 4px; }
+#gShort { display: flex; gap: 6px; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+#gShort .chip { white-space: nowrap; font-family: var(--font-ui); }
+#gShort .chip b { font-family: var(--font-lang); font-size: 1.02rem; margin-right: 4px; }
+.gen-row.miss, .w-chip.miss { display: none; }
+.pool-filter { color: var(--accent); font-weight: 700; }
+.to-top { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 20; border-radius: 999px; padding: 10px 14px; min-height: 44px; background: var(--surface); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); font-size: 0.85rem; }
+.to-top[hidden] { display: none; }
+@media (max-width: 560px) { .to-top .tt-txt { display: none; } .to-top { width: 44px; padding: 0; font-size: 1.1rem; } }
+
 /* 뜻과 단어 짝짓기: 좁은 화면에서는 단어 후보가 화면 아래에 붙어 따라오고, 넓은 화면에서는 오른쪽 열에 붙음 */
 #gPair { display: grid; gap: 10px; }
 .pair-tools { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -365,11 +383,23 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
       </div>
       <p class="hint" id="gHint"></p>
       <p class="status" id="gStatus"></p>
+      <div class="gen-find" id="gFind" hidden>
+        <div class="find-head"><strong>후보 안에서 찾기</strong><span class="hint">위의 "시작 글자"는 새로 만들 때의 조건이고, 여기서는 이미 나온 후보만 발음으로 거릅니다.</span></div>
+        <div class="find-row">
+          <input id="gFindQ" class="lang ipa" autocomplete="off" spellcheck="false" placeholder="발음 (예: f, ɔ̃, mb)" aria-label="후보 발음 검색">
+          <button type="button" id="gFindClear">지우기</button>
+          <span class="status" id="gFindCount"></span>
+        </div>
+        <div class="find-keys" id="gFindKeys" role="group" aria-label="발음 기호 넣기"></div>
+        <div class="find-short"><span class="hint">단어장에 부족한 발음 (모자란 순, 프랑스어 기준 대비)</span><div class="chips" id="gShort"></div></div>
+      </div>
       <div class="gen-head label" id="gHeadRow"><span>원형</span><span>에클레아어</span><span>발음</span><span>한글</span><span></span></div>
       <div id="gList"></div>
       <div id="gPair" hidden></div>
     </div>
   </section>
+
+  <button type="button" id="toTop" class="to-top" hidden aria-label="맨 위로">↑<span class="tt-txt"> 맨 위로</span></button>
 
   <section id="viewLex" hidden>
     <div class="panel">
@@ -1902,6 +1932,30 @@ function numInput(val, onset, label) {
   inp.addEventListener("change", function () { var v = parseFloat(inp.value); if (!isNaN(v) && v >= 0) { onset(v); saveStatT(); renderStats(); } });
   return inp;
 }
+/* 단어장 발음의 음소 수. 에클레아어에서 합쳐진 중모음은 합쳐서 셈 */
+var PH_MERGE = { "ɛ": "e", "ɔ": "o", "ø": "œ" };
+function normSeg(sg) { sg = sg.replace(/ː/g, ""); return PH_MERGE[sg] || sg; }
+function phonSegs(ipa) { return ipaSegs(ipa).map(normSeg).filter(function (sg) { return sg && !/[ˈˌ‿,.'\-]/.test(sg); }); }
+function lexPhonShares(ws) {
+  var pc = {}, total = 0;
+  ws.forEach(function (w) { phonSegs(convOne(w.input).ipa).forEach(function (sg) { pc[sg] = (pc[sg] || 0) + 1; total++; }); });
+  return { pc: pc, total: total };
+}
+/* 단어장에 부족한 음소: 고른 프랑스어 기준보다 적은 것을 모자란 정도(%p) 순으로. ə와 œ는 합쳐서 봄 */
+function shortPhonemes() {
+  var REF = ($("statRef") && $("statRef").value === "type") ? statT.pt : statT.p;
+  var ws = lex.words.filter(function (w) { return (w.input || "").trim() && !/지명|민족명|정당/.test(tagsOf(w).join(" ")); });
+  var sh = lexPhonShares(ws), out = [];
+  Object.keys(REF).forEach(function (k) {
+    if (k === "ə" || k === "œ") return;
+    var cur = sh.total ? (sh.pc[k] || 0) / sh.total * 100 : 0, d = (REF[k] || 0) - cur;
+    if (d > 0.05) out.push({ k: k, alts: [[k]], d: d, cur: cur, ref: REF[k] });
+  });
+  var ce = sh.total ? ((sh.pc["ə"] || 0) + (sh.pc["œ"] || 0)) / sh.total * 100 : 0, re = (REF["ə"] || 0) + (REF["œ"] || 0);
+  if (re - ce > 0.05) out.push({ k: "ə/œ", alts: [["ə"], ["œ"]], d: re - ce, cur: ce, ref: re });
+  out.sort(function (a, b) { return b.d - a.d; });
+  return out;
+}
 function renderStats() {
   var box = $("statBox"); if (!box || !box.open || lex.status !== "ready") return;
   var ws = statWords(), T = ws.length, cnt = { a: 0, f: 0, b: 0, e: 0, l: 0 };
@@ -1929,11 +1983,7 @@ function renderStats() {
 
   /* 음소: 단어장 형태는 이미 변환해 둔 값(convOne 캐시)을 쓰므로 추가 변환이 거의 없음 */
   var REF = $("statRef").value === "type" ? statT.pt : statT.p;
-  var pc = {}, total = 0;
-  ws.forEach(function (w) { ipaSegs(convOne(w.input).ipa).forEach(function (sg) {
-    sg = sg.replace(/ː/g, ""); if (!sg || /[ˈˌ‿,.'\-]/.test(sg)) return;
-    var m = { "ɛ": "e", "ɔ": "o", "ø": "œ" }; if (m[sg]) sg = m[sg];
-    pc[sg] = (pc[sg] || 0) + 1; total++; }); });
+  var sh = lexPhonShares(ws), pc = sh.pc, total = sh.total;
   var keys = Object.keys(REF).slice();
   Object.keys(pc).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
   var isV = function (k) { return /[aeiouyəœøɛɔɑ]/.test(k); };
@@ -1984,7 +2034,7 @@ $("statRef").addEventListener("change", function () { try { localStorage.setItem
 (function () { try { var v = localStorage.getItem("eklea-stat-ref"); if (v === "type" || v === "tok") $("statRef").value = v; } catch (e) {} })();
 /* 단어장이 바뀌어 다시 그릴 때 통계도 함께 갱신 (열려 있을 때만 계산) */
 var renderLexBase = renderLex;
-renderLex = function () { renderLexBase(); renderStats(); };
+renderLex = function () { renderLexBase(); renderStats(); if (!$("gFind").hidden) renderShort(); };
 $("statReset").addEventListener("click", function () { statT = { o: Object.assign({}, ORIGIN_TARGET0), p: Object.assign({}, PHON_TARGET0), pt: Object.assign({}, PHON_TYPE0) }; saveStatT(); renderStats(); });
 
 /* ---------- 규칙 변경 비교 ---------- */
@@ -2356,6 +2406,7 @@ function runGen(want) {
   want = want || 20;
   genToken.dead = true; var token = genToken = { dead: false };
   var st = $("gStatus"), list = $("gList"), meanOn = $("gMeanOn").checked;
+  $("gFind").hidden = false; renderShort();
   list.innerHTML = ""; $("gPair").hidden = true; $("gHeadRow").hidden = meanOn;
   if (meanOn) { pair = null; }
   findWords(want, [], token, function (res, msg) {
@@ -2391,8 +2442,10 @@ function renderGenList(res) {
     });
     acts.appendChild(b1); acts.appendChild(b2);
     row.appendChild(src); row.appendChild(sp2); row.appendChild(ip); row.appendChild(ko); row.appendChild(acts); frag.appendChild(row);
+    row._ipa = c.ipa;
   });
   list.appendChild(frag);
+  applyCandFilter();
 }
 
 /* ---------- 뜻 생성과 짝짓기 ---------- */
@@ -2560,6 +2613,7 @@ function renderPair() {
   var chips = el("div", "pool-chips");
   pair.pool.forEach(function (w) {
     var chip = el("div", "w-chip" + (pair.sel && pair.sel.t === "w" && pair.sel.id === w.id ? " sel" : "") + (w.loading ? " loading" : ""));
+    chip._ipa = w.ipa;
     var p = btn("", selItem ? selItem.mean + "에 잇기" : "이 단어 고르기", function () {
       if (w.loading) return;
       if (pair.sel && pair.sel.t === "m") { linkPair(pair.sel.id, w.id); renderPair(); return; }
@@ -2582,6 +2636,7 @@ function renderPair() {
   });
   if (!pair.pool.length) chips.appendChild(el("span", "hint", "남은 후보가 없습니다. 뜻에 직접 입력하거나 \"남은 단어 다시\"로 새로 만드세요."));
   pcol.appendChild(chips);
+  if (candQ) { var pf = el("div", "pool-head"); pf.appendChild(el("span", "pool-filter", "발음 " + candQ.label + " 포함만 보는 중")); pf.appendChild(btn("해제", "발음 거르기 해제", function () { setCandQuery(null); }, "pool-fold")); pcol.insertBefore(pf, chips); }
   var foot = el("div", "pool-foot");
   var add = btn("", "이어진 뜻과 단어를 단어장에 추가", addPairs, "primary");
   add.id = "gAddPairs";
@@ -2590,6 +2645,7 @@ function renderPair() {
   wrap.appendChild(pcol);
   box.appendChild(wrap);
   updAdd();
+  applyCandFilter();
 }
 /* 좁은 화면에서 직접 입력하는 동안에는 후보 칸을 접어 입력란이 가려지지 않게 함.
    입력란을 벗어날 때 바로 펼치면 버튼이 움직여 누른 자리가 어긋나므로, 다른 조작(다시 그리기)이나 후보 머리를 누를 때 펼침 */
@@ -2663,6 +2719,75 @@ function insertAtCaret(el, s) {
 $("gRun").addEventListener("click", function (e) { var b = e.target.closest("button[data-n]"); if (b) runGen(+b.dataset.n); });
 genHint();
 
+
+/* ---------- 후보 안에서 발음 찾기 ---------- */
+var candQ = null; /* { label, alts: [[음소…], …] } */
+function segMatch(segs, alt) {
+  for (var i = 0; i + alt.length <= segs.length; i++) { var ok = true; for (var j = 0; j < alt.length; j++) if (segs[i + j] !== alt[j]) { ok = false; break; } if (ok) return true; }
+  return false;
+}
+function candHit(ipa) { if (!candQ) return true; var sg = phonSegs(ipa || ""); return candQ.alts.some(function (a) { return segMatch(sg, a); }); }
+function applyCandFilter() {
+  var rows = Array.prototype.slice.call(document.querySelectorAll("#gList .gen-row, #gPair .w-chip")), shown = 0;
+  rows.forEach(function (r) { var hit = candHit(r._ipa); r.classList.toggle("miss", !hit); if (hit) shown++; });
+  $("gFindCount").textContent = candQ ? "후보 " + rows.length + "개 중 " + shown + "개" : "";
+}
+function setCandQuery(q, fromChip) {
+  candQ = q;
+  if (!fromChip) Array.prototype.forEach.call(document.querySelectorAll("#gShort .chip"), function (c) { c.setAttribute("aria-pressed", "false"); });
+  if (!q) $("gFindQ").value = "";
+  if (pair && !$("gPair").hidden) renderPair(); else applyCandFilter();
+}
+function sampaIpa(s) { return s.replace(/[RSZAEO92J@]/g, function (c) { return SAMPA[c]; }).replace(/([aeiouyɑɛɔœøə])~/g, "$1\u0303"); }
+$("gFindQ").addEventListener("input", function () {
+  var el2 = this, pos = el2.selectionStart == null ? el2.value.length : el2.selectionStart, nb = sampaIpa(el2.value.slice(0, pos)), na = sampaIpa(el2.value.slice(pos));
+  if (nb + na !== el2.value) { el2.value = nb + na; el2.selectionStart = el2.selectionEnd = nb.length; }
+  var v = el2.value.trim();
+  Array.prototype.forEach.call(document.querySelectorAll("#gShort .chip"), function (c) { c.setAttribute("aria-pressed", "false"); });
+  candQ = v ? { label: v, alts: [phonSegs(v)] } : null;
+  if (pair && !$("gPair").hidden) { renderPair(); } else applyCandFilter();
+  el2.focus();
+});
+$("gFindClear").addEventListener("click", function () { setCandQuery(null); });
+(function () {
+  var pad = $("gFindKeys");
+  IPA_KEYS.forEach(function (k) { var b = document.createElement("button"); b.type = "button"; b.textContent = k; b.dataset.k = k; b.title = k + " 넣기"; pad.appendChild(b); });
+  pad.addEventListener("mousedown", function (e) { if (e.target.closest("button")) e.preventDefault(); });
+  pad.addEventListener("click", function (e) { var b = e.target.closest("button[data-k]"); if (!b) return; var q = $("gFindQ"); insertAtCaret(q, b.dataset.k); q.dispatchEvent(new Event("input")); });
+})();
+function renderShort() {
+  var box = $("gShort"); box.innerHTML = "";
+  if (lex.status !== "ready") return;
+  var list = shortPhonemes();
+  if (!list.length) { box.appendChild(el("span", "hint", "기준보다 적은 발음이 없습니다.")); return; }
+  list.forEach(function (it) {
+    var c = btn("", it.k + " 포함 후보만 보기 (단어장 " + pct(it.cur) + "%, 기준 " + pct(it.ref) + "%)", function () {
+      var on = c.getAttribute("aria-pressed") === "true";
+      Array.prototype.forEach.call(box.querySelectorAll(".chip"), function (x) { x.setAttribute("aria-pressed", "false"); });
+      if (on) { setCandQuery(null); return; }
+      c.setAttribute("aria-pressed", "true"); $("gFindQ").value = "";
+      setCandQuery({ label: it.k, alts: it.alts }, true);
+    }, "chip");
+    c.setAttribute("aria-pressed", candQ && candQ.label === it.k ? "true" : "false");
+    c.appendChild(el("b", "", it.k)); c.appendChild(document.createTextNode("−" + pct(it.d) + "%p"));
+    box.appendChild(c);
+  });
+}
+
+/* ---------- 맨 위로 ---------- */
+function placeToTop() {
+  var b = $("toTop"), v = !$("viewLex").hidden || !$("viewGen").hidden;
+  b.hidden = !(v && window.scrollY > 500);
+  if (b.hidden) return;
+  var bottom = 16, pool = document.querySelector("#gPair:not([hidden]) .pair-pool");
+  /* 좁은 화면에서는 단어 후보 칸이 아래에 붙으므로 그 위로 올림 */
+  if (pool && !$("viewGen").hidden && window.innerWidth < 820) { var r = pool.getBoundingClientRect(); if (r.top < window.innerHeight) bottom = Math.max(16, window.innerHeight - r.top + 12); }
+  b.style.bottom = "calc(" + bottom + "px + env(safe-area-inset-bottom, 0px))";
+}
+window.addEventListener("scroll", placeToTop, { passive: true });
+window.addEventListener("resize", placeToTop);
+$("toTop").addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+
 function showView(v) {
   $("viewConv").hidden = v !== "conv";
   $("viewLex").hidden = v !== "lex";
@@ -2671,6 +2796,7 @@ function showView(v) {
     t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false");
   });
   save(STORE_VIEW, v);
+  if (typeof placeToTop === "function") placeToTop();
 }
 $("views").addEventListener("click", function (e) {
   var t = e.target.closest(".view-tab"); if (t) showView(t.getAttribute("data-view"));
