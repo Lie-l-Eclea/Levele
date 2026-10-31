@@ -1,3595 +1,4660 @@
 [
  {
   "head": "li-",
-  "input": "li-",
   "mean": "확대접사",
-  "n": 1,
+  "input": "li-",
   "note": "",
+  "n": 1,
+  "tags": [],
   "id": "w001"
  },
  {
   "head": "elos-",
-  "input": "elos-",
   "mean": "축소접사",
-  "n": 2,
+  "input": "elos-",
   "note": "이전 형태 telo-",
+  "n": 2,
+  "tags": [],
   "id": "w002"
  },
  {
   "head": "ete",
-  "input": "ete",
   "mean": "장소",
-  "n": 3,
+  "input": "ete",
   "note": "",
+  "n": 3,
+  "tags": [],
   "id": "w003"
  },
  {
   "head": "va",
-  "input": "va",
   "mean": "사람, 인간",
-  "n": 4,
+  "input": "va",
   "note": "",
+  "n": 4,
+  "tags": [],
   "id": "w004"
  },
  {
   "head": "ve",
-  "input": "ve",
   "mean": "산 (눈 덮인)",
-  "n": 5,
+  "input": "ve",
   "note": "",
+  "n": 5,
+  "tags": [],
   "id": "w005"
  },
  {
   "head": "lok",
-  "input": "lok",
   "mean": "도시",
-  "n": 6,
+  "input": "lok",
   "note": "",
+  "n": 6,
+  "tags": [],
   "id": "w006"
  },
  {
   "head": "topa",
-  "input": "topa",
   "mean": "고을",
-  "n": 7,
+  "input": "topa",
   "note": "",
+  "n": 7,
+  "tags": [],
   "id": "w007"
  },
  {
   "head": "aklaia",
-  "input": "aklaia",
   "mean": "강 이름, 그 강의 신",
-  "n": 8,
+  "input": "aklaia",
   "note": "akla~ia: B 강 이름 kla + ia(신). 어두 kl이 허용되지 않아 a- 첨가(이전: klaia). 고유명이라 ia와 달리 비음형 화석이 되지 않음. Eklaia는 a- 첨가 이전에 e-kla~ia로 굳은 도시명",
   "tags": [],
+  "n": 8,
   "id": "w008"
  },
  {
   "head": "e-",
-  "input": "e-",
   "mean": "장소, 주변",
-  "n": 9,
+  "input": "e-",
   "note": "",
+  "n": 9,
+  "tags": [],
   "id": "w009"
  },
  {
   "head": "eklaia",
-  "input": "eklaia",
   "mean": "도시명",
-  "n": 10,
+  "input": "eklaia",
   "note": "",
+  "n": 10,
+  "tags": [],
   "id": "w010"
  },
  {
   "head": "kaspar",
-  "input": "@kaspar",
   "mean": "가져가다, 없애다, 지우다",
-  "n": 11,
+  "input": "@kaspar",
   "note": "이전 형태 aste. @astu(바꾸다)와 같은 Ânde [ɑ̃d]가 되어 교체. Âmbar [ˈɑ̃baʁ]",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 11,
   "id": "w011"
  },
  {
   "head": "epla",
-  "input": "epla",
   "mean": "생명",
-  "n": 12,
+  "input": "epla",
   "note": "",
+  "n": 12,
+  "tags": [],
   "id": "w012"
  },
  {
   "head": "eplaste",
-  "input": "eplaste",
   "mean": "도시명",
-  "n": 13,
+  "input": "eplaste",
   "note": "",
+  "n": 13,
+  "tags": [],
   "id": "w013"
  },
  {
-  "head": "ace~ka",
-  "input": "@ace~ka",
-  "mean": "박쥐와 비슷한 생물",
-  "n": 14,
-  "note": "에클라이아어 단계 합성어. ace(윙윙거리다)+ka(나는 것) '윙윙대는 날것'. 이전 뜻 파리. 이전 형태 cea",
+  "head": "race~ka",
+  "mean": "라냥, 날아다니는 젖먹이 동물",
+  "input": "@race~ka",
+  "note": "race(윙윙거리다)+ka(나는 것)",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 14,
   "id": "w014"
  },
  {
   "head": "ve-",
-  "input": "ve-",
   "mean": "존칭접두사",
-  "n": 15,
+  "input": "ve-",
   "note": "",
+  "n": 15,
+  "tags": [],
   "id": "w015"
  },
  {
   "head": "acia",
-  "input": "acia",
   "mean": "날씨의 신",
-  "n": 16,
+  "input": "acia",
   "note": "",
   "tags": [],
+  "n": 16,
   "id": "w016"
  },
  {
   "head": "kale",
-  "input": "@kale",
   "mean": "까마귀",
-  "n": 17,
+  "input": "@kale",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 17,
   "id": "w017"
  },
  {
   "head": "ci",
-  "input": "ci",
   "mean": "지키다",
-  "n": 18,
+  "input": "ci",
   "note": "",
+  "n": 18,
+  "tags": [],
   "id": "w018"
  },
  {
   "head": "ail",
-  "input": "ail",
   "mean": "0",
-  "n": 19,
+  "input": "ail",
   "note": "",
+  "n": 19,
+  "tags": [],
   "id": "w019"
  },
  {
   "head": "le",
-  "input": "le",
   "mean": "1",
-  "n": 20,
+  "input": "le",
   "note": "",
+  "n": 20,
+  "tags": [],
   "id": "w020"
  },
  {
   "head": "sua",
-  "input": "sua",
   "mean": "2",
-  "n": 21,
+  "input": "sua",
   "note": "",
+  "n": 21,
+  "tags": [],
   "id": "w021"
  },
  {
   "head": "ci",
-  "input": "ci",
   "mean": "3",
-  "n": 22,
+  "input": "ci",
   "note": "",
+  "n": 22,
+  "tags": [],
   "id": "w022"
  },
  {
   "head": "vu",
-  "input": "vu",
   "mean": "4",
-  "n": 23,
+  "input": "vu",
   "note": "",
+  "n": 23,
+  "tags": [],
   "id": "w023"
  },
  {
   "head": "ie",
-  "input": "ie",
   "mean": "5",
-  "n": 24,
+  "input": "ie",
   "note": "",
+  "n": 24,
+  "tags": [],
   "id": "w024"
  },
  {
   "head": "leti",
-  "input": "leti",
   "mean": "6",
-  "n": 25,
+  "input": "leti",
   "note": "",
+  "n": 25,
+  "tags": [],
   "id": "w025"
  },
  {
   "head": "sati",
-  "input": "sati",
   "mean": "7",
-  "n": 26,
+  "input": "sati",
   "note": "",
+  "n": 26,
+  "tags": [],
   "id": "w026"
  },
  {
   "head": "eiti",
-  "input": "eiti",
   "mean": "8",
-  "n": 27,
+  "input": "eiti",
   "note": "",
+  "n": 27,
+  "tags": [],
   "id": "w027"
  },
  {
   "head": "kati",
-  "input": "kati",
   "mean": "9",
-  "n": 28,
+  "input": "kati",
   "note": "",
+  "n": 28,
+  "tags": [],
   "id": "w028"
  },
  {
   "head": "letia-vu",
-  "input": "letia|vu",
   "mean": "10",
-  "n": 29,
+  "input": "letia|vu",
   "note": "",
+  "n": 29,
+  "tags": [],
   "id": "w029"
  },
  {
   "head": "letia-ie",
-  "input": "letia|ie",
   "mean": "11",
-  "n": 30,
+  "input": "letia|ie",
   "note": "",
+  "n": 30,
+  "tags": [],
   "id": "w030"
  },
  {
   "head": "sati",
-  "input": "sati",
   "mean": "12",
-  "n": 31,
+  "input": "sati",
   "note": "",
+  "n": 31,
+  "tags": [],
   "id": "w031"
  },
  {
   "head": "satia-le",
-  "input": "satia|le",
   "mean": "13",
-  "n": 32,
+  "input": "satia|le",
   "note": "",
+  "n": 32,
+  "tags": [],
   "id": "w032"
  },
  {
   "head": "satia-sua",
-  "input": "satia|sua",
   "mean": "14",
-  "n": 33,
+  "input": "satia|sua",
   "note": "",
+  "n": 33,
+  "tags": [],
   "id": "w033"
  },
  {
   "head": "satia-ci",
-  "input": "satia|ci",
   "mean": "15",
-  "n": 34,
+  "input": "satia|ci",
   "note": "",
+  "n": 34,
+  "tags": [],
   "id": "w034"
  },
  {
   "head": "satia-vu",
-  "input": "satia|vu",
   "mean": "16",
-  "n": 35,
+  "input": "satia|vu",
   "note": "",
+  "n": 35,
+  "tags": [],
   "id": "w035"
  },
  {
   "head": "satia-ie",
-  "input": "satia|ie",
   "mean": "17",
-  "n": 36,
+  "input": "satia|ie",
   "note": "",
+  "n": 36,
+  "tags": [],
   "id": "w036"
  },
  {
   "head": "kiltia",
-  "input": "kiltia",
   "mean": "18",
-  "n": 37,
+  "input": "kiltia",
   "note": "",
+  "n": 37,
+  "tags": [],
   "id": "w037"
  },
  {
   "head": "vuti",
-  "input": "vuti",
   "mean": "24",
-  "n": 38,
+  "input": "vuti",
   "note": "",
+  "n": 38,
+  "tags": [],
   "id": "w038"
  },
  {
   "head": "ieti",
-  "input": "ieti",
   "mean": "30",
-  "n": 39,
+  "input": "ieti",
   "note": "",
+  "n": 39,
+  "tags": [],
   "id": "w039"
  },
  {
   "head": "kur",
-  "input": "kur",
   "mean": "36",
-  "n": 40,
+  "input": "kur",
   "note": "",
+  "n": 40,
+  "tags": [],
   "id": "w040"
  },
  {
   "head": "teis",
-  "input": "teis",
   "mean": "216",
-  "n": 41,
+  "input": "teis",
   "note": "",
+  "n": 41,
+  "tags": [],
   "id": "w041"
  },
  {
   "head": "tau",
-  "input": "tau",
   "mean": "1296",
-  "n": 42,
+  "input": "tau",
   "note": "",
+  "n": 42,
+  "tags": [],
   "id": "w042"
  },
  {
   "head": "parsi",
-  "input": "parsi",
   "mean": "7776",
-  "n": 43,
+  "input": "parsi",
   "note": "",
+  "n": 43,
+  "tags": [],
   "id": "w043"
  },
  {
   "head": "atri",
-  "input": "atri",
   "mean": "46656",
-  "n": 44,
+  "input": "atri",
   "note": "",
+  "n": 44,
+  "tags": [],
   "id": "w044"
  },
  {
   "head": "letia-atri",
-  "input": "letia|atri",
   "mean": "279936",
-  "n": 45,
+  "input": "letia|atri",
   "note": "",
+  "n": 45,
+  "tags": [],
   "id": "w045"
  },
  {
   "head": "kuria-atri",
-  "input": "kuria|atri",
   "mean": "1679616",
-  "n": 46,
+  "input": "kuria|atri",
   "note": "",
+  "n": 46,
+  "tags": [],
   "id": "w046"
  },
  {
   "head": "teisia-atri",
-  "input": "teisia|atri",
   "mean": "10077696",
-  "n": 47,
+  "input": "teisia|atri",
   "note": "",
+  "n": 47,
+  "tags": [],
   "id": "w047"
  },
  {
   "head": "tauia-atri",
-  "input": "tauia|atri",
   "mean": "60466176",
-  "n": 48,
+  "input": "tauia|atri",
   "note": "",
+  "n": 48,
+  "tags": [],
   "id": "w048"
  },
  {
   "head": "parsia-atri",
-  "input": "parsia|atri",
   "mean": "362797056",
-  "n": 49,
+  "input": "parsia|atri",
   "note": "",
+  "n": 49,
+  "tags": [],
   "id": "w049"
  },
  {
   "head": "alui",
-  "input": "alui",
   "mean": "2176782336",
-  "n": 50,
+  "input": "alui",
   "note": "",
+  "n": 50,
+  "tags": [],
   "id": "w050"
  },
  {
   "head": "a-kiltia-atri",
-  "input": "a|kiltia|atri",
   "mean": "101559956668416",
-  "n": 51,
+  "input": "a|kiltia|atri",
   "note": "",
+  "n": 51,
+  "tags": [],
   "id": "w051"
  },
  {
   "head": "riel",
-  "input": "riel",
   "mean": "이기다",
-  "n": 52,
+  "input": "riel",
   "note": "",
+  "n": 52,
+  "tags": [],
   "id": "w052"
  },
  {
   "head": "kiata",
-  "input": "@kiata",
   "mean": "박쥐",
-  "n": 53,
+  "input": "@kiata",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 53,
   "id": "w053"
  },
  {
   "head": "rao",
-  "input": "rao",
   "mean": "화",
-  "n": 54,
+  "input": "rao",
   "note": "",
+  "n": 54,
+  "tags": [],
   "id": "w054"
  },
  {
   "head": "ka",
-  "input": "@ka",
   "mean": "나는 것 (날짐승·날벌레를 아우르는 말)",
-  "n": 55,
-  "note": "이전 뜻 '새'. 새는 @cislia. 박쥐와 비슷한 생물 ace~ka의 뒷 요소",
+  "input": "@ka",
+  "note": "이전 뜻 '새'. 새는 @cislia. 파리 ace~ka의 뒷 요소",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 55,
   "id": "w055"
  },
  {
   "head": "elo",
-  "input": "elo",
   "mean": "물",
-  "n": 56,
+  "input": "elo",
   "note": "",
+  "n": 56,
+  "tags": [],
   "id": "w056"
  },
  {
   "head": "oir",
-  "input": "oir",
   "mean": "떼어내다/가르다/자르다/쪽",
-  "n": 57,
+  "input": "oir",
   "note": "",
+  "n": 57,
+  "tags": [],
   "id": "w057"
  },
  {
   "head": "pa-",
-  "input": "pa-",
   "mean": "동사의 명사화",
-  "n": 58,
+  "input": "pa-",
   "note": "",
+  "n": 58,
+  "tags": [],
   "id": "w058"
  },
  {
   "head": "leit",
-  "input": "@leit",
   "mean": "나",
-  "n": 59,
+  "input": "@leit",
   "note": "",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 59,
   "id": "w059"
  },
  {
   "head": "cisi-",
-  "input": "cisi-",
   "mean": "다시",
-  "n": 60,
+  "input": "cisi-",
   "note": "",
+  "n": 60,
+  "tags": [],
   "id": "w060"
  },
  {
   "head": "ope",
-  "input": "ope",
   "mean": "적다",
-  "n": 61,
+  "input": "ope",
   "note": "",
+  "n": 61,
+  "tags": [],
   "id": "w061"
  },
  {
   "head": "cisiepri",
-  "input": "@cisiepri",
   "mean": "떠올리다, 기억하다",
-  "n": 62,
+  "input": "@cisiepri",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 62,
   "id": "w062"
  },
  {
   "head": "La",
-  "input": "la",
   "mean": "단어, 말하다",
-  "n": 63,
+  "input": "la",
   "note": "",
+  "n": 63,
+  "tags": [],
   "id": "w063"
  },
  {
   "head": "Ep(a)-",
-  "input": "epa-",
   "mean": "~하는 능력",
-  "n": 64,
+  "input": "epa-",
   "note": "",
+  "n": 64,
+  "tags": [],
   "id": "w064"
  },
  {
-  "head": "Ny-",
-  "input": "ny-",
+  "head": "ty-",
   "mean": "문장의 명사화",
-  "n": 65,
+  "input": "ty-",
   "note": "",
+  "tags": [],
+  "n": 65,
   "id": "w065"
  },
  {
   "head": "teia",
-  "input": "teia",
   "mean": "물질, 물건, 만물, 흔한 것, 뭇 것, 존재하다, 있다",
-  "n": 66,
+  "input": "teia",
   "note": "",
+  "n": 66,
+  "tags": [],
   "id": "w066"
  },
  {
   "head": "e",
-  "input": "e",
   "mean": "장소",
-  "n": 67,
+  "input": "e",
   "note": "",
+  "n": 67,
+  "tags": [],
   "id": "w067"
  },
  {
   "head": "te",
-  "input": "te",
   "mean": "시간",
-  "n": 68,
+  "input": "te",
   "note": "",
+  "n": 68,
+  "tags": [],
   "id": "w068"
  },
  {
   "head": "estai",
-  "input": "estai",
   "mean": "살다, 거주하다, 거주지, 집",
-  "n": 69,
+  "input": "estai",
   "note": "",
+  "n": 69,
+  "tags": [],
   "id": "w069"
  },
  {
   "head": "areta",
-  "input": "@areta",
   "mean": "일으키다, 유발하다",
-  "n": 70,
+  "input": "@areta",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 70,
   "id": "w070"
  },
  {
   "head": "estaiar",
-  "input": "estaiar",
   "mean": "아늑한, 편안한",
-  "n": 71,
+  "input": "estaiar",
   "note": "",
+  "n": 71,
+  "tags": [],
   "id": "w071"
  },
  {
   "head": "koite",
-  "input": "koite",
   "mean": "작은",
-  "n": 72,
+  "input": "koite",
   "note": "",
+  "n": 72,
+  "tags": [],
   "id": "w072"
  },
  {
   "head": "atia",
-  "input": "atia",
   "mean": "예쁘다",
-  "n": 73,
+  "input": "atia",
   "note": "",
+  "n": 73,
+  "tags": [],
   "id": "w073"
  },
  {
   "head": "ir(e)-, y,",
-  "input": "ire-",
   "mean": "또, 그리고, 와, 과",
-  "n": 74,
+  "input": "ire-",
   "note": "",
+  "n": 74,
+  "tags": [],
   "id": "w074"
  },
  {
   "head": "letua",
-  "input": "letua",
   "mean": "자주",
-  "n": 75,
+  "input": "letua",
   "note": "",
+  "n": 75,
+  "tags": [],
   "id": "w075"
  },
  {
   "head": "askaar",
-  "input": "askaar",
   "mean": "멈추는",
-  "n": 76,
+  "input": "askaar",
   "note": "",
+  "n": 76,
+  "tags": [],
   "id": "w076"
  },
  {
   "head": "tecaka",
-  "input": "tecaka",
   "mean": "아직도",
-  "n": 77,
+  "input": "tecaka",
   "note": "",
+  "n": 77,
+  "tags": [],
   "id": "w077"
  },
  {
   "head": "teko",
-  "input": "teko",
   "mean": "그러나, ~지만, ~인데도, (명사)에도 불구하고",
-  "n": 78,
+  "input": "teko",
   "note": "접어(^ 입력), 모음 앞 tek'. 이전 형태 kace는 에클레아어에서 kac(a)-(에게)와 같은 Caze가 되어 교체",
+  "n": 78,
+  "tags": [],
   "id": "w078"
  },
  {
   "head": "aska",
-  "input": "@aska",
   "mean": "멈추다",
-  "n": 79,
+  "input": "@aska",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 79,
   "id": "w079"
  },
  {
   "head": "le-, l'-",
-  "input": "le-",
   "mean": "~의",
-  "n": 80,
+  "input": "le-",
   "note": "",
+  "n": 80,
+  "tags": [],
   "id": "w080"
  },
  {
   "head": "leit",
-  "input": "@leit",
   "mean": "1인칭 단수",
-  "n": 81,
+  "input": "@leit",
   "note": "",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 81,
   "id": "w081"
  },
  {
   "head": "kas",
-  "input": "kas",
-  "mean": "1인칭 쌍수",
+  "mean": "두 사람",
+  "input": "@kas",
+  "note": "에클라이아어에서는 1인칭 쌍수 자유 대명사",
+  "tags": [
+   "비음형 화석"
+  ],
   "n": 82,
-  "note": "",
   "id": "w082"
  },
  {
   "head": "rak",
-  "input": "rak",
-  "mean": "1인칭 삼수",
+  "mean": "1인칭 복수",
+  "input": "@rak",
+  "note": "에클레아어로 본디 1인칭 삼수",
+  "tags": [
+   "비음형 화석"
+  ],
   "n": 83,
-  "note": "",
   "id": "w083"
  },
  {
   "head": "tar",
+  "mean": "군중",
   "input": "@tar",
-  "mean": "1인칭 복수",
-  "n": 84,
-  "note": "",
+  "note": "본",
   "tags": [
    "비음형 화석",
-   "자유 대명사"
+   "에클라이아어에서는 1인칭 복수 자유 대명사"
   ],
+  "n": 84,
   "id": "w084"
  },
  {
   "head": "opia",
-  "input": "@opia",
   "mean": "2인칭 단수",
-  "n": 85,
+  "input": "@opia",
   "note": "",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 85,
   "id": "w085"
  },
  {
   "head": "tepia",
-  "input": "@tepia",
   "mean": "2인칭 복수",
-  "n": 86,
+  "input": "@tepia",
   "note": "에클레아어에서 자유 대명사는 dagne가 되어 @caso(개)와 동음 → orta-+ogne인 Ort'ogne로 대체됨(y'all·jullie 유형). 인칭 어미는 그대로",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 86,
   "id": "w086"
  },
  {
   "head": "lai",
-  "input": "@lai",
   "mean": "3인칭 단수",
-  "n": 87,
+  "input": "@lai",
   "note": "",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 87,
   "id": "w087"
  },
  {
   "head": "tarkas",
-  "input": "tarkas",
   "mean": "3인칭 쌍수",
-  "n": 88,
+  "input": "tarkas",
   "note": "",
+  "n": 88,
+  "tags": [],
   "id": "w088"
  },
  {
   "head": "tiek",
-  "input": "tiek",
   "mean": "3인칭 삼수",
-  "n": 89,
+  "input": "tiek",
   "note": "",
+  "n": 89,
+  "tags": [],
   "id": "w089"
  },
  {
-  "head": "pate",
-  "input": "@pate",
+  "head": "tiek",
   "mean": "3인칭 복수",
-  "n": 90,
+  "input": "@tiek",
   "note": "",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 90,
   "id": "w090"
  },
  {
   "head": "ikuo",
-  "input": "ikuo",
   "mean": "3인칭, 대화 당사자가 모름",
-  "n": 91,
+  "input": "ikuo",
   "note": "",
+  "n": 91,
+  "tags": [],
   "id": "w091"
  },
  {
   "head": "Cil",
-  "input": "cil",
   "mean": "아무 물건",
-  "n": 92,
+  "input": "cil",
   "note": "",
+  "n": 92,
+  "tags": [],
   "id": "w092"
  },
  {
   "head": "Ter",
-  "input": "ter",
   "mean": "이",
-  "n": 93,
+  "input": "ter",
   "note": "",
+  "n": 93,
+  "tags": [],
   "id": "w093"
  },
  {
   "head": "Pur",
-  "input": "pur",
   "mean": "저",
-  "n": 94,
+  "input": "pur",
   "note": "",
+  "n": 94,
+  "tags": [],
   "id": "w094"
  },
  {
   "head": "Tos",
-  "input": "tos",
   "mean": "그",
-  "n": 95,
+  "input": "tos",
   "note": "",
+  "n": 95,
+  "tags": [],
   "id": "w095"
  },
  {
   "head": "levre",
-  "input": "levre",
   "mean": "보다",
-  "n": 96,
+  "input": "levre",
   "note": "",
+  "n": 96,
+  "tags": [],
   "id": "w096"
  },
  {
   "head": "tas",
-  "input": "tas",
   "mean": "먹다",
-  "n": 97,
+  "input": "tas",
   "note": "",
+  "n": 97,
+  "tags": [],
   "id": "w097"
  },
  {
   "head": "arta",
-  "input": "@arta",
   "mean": "왔다 (오다의 과거형)",
-  "n": 98,
+  "input": "@arta",
   "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 arta",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 98,
   "id": "w098"
  },
  {
   "head": "vese",
-  "input": "vese",
   "mean": "듣다",
-  "n": 99,
+  "input": "vese",
   "note": "",
+  "n": 99,
+  "tags": [],
   "id": "w099"
  },
  {
   "head": "laril",
-  "input": "laril",
   "mean": "걷다",
-  "n": 100,
+  "input": "laril",
   "note": "",
+  "n": 100,
+  "tags": [],
   "id": "w100"
  },
  {
   "head": "tarta",
-  "input": "tarta",
   "mean": "길",
-  "n": 101,
+  "input": "tarta",
   "note": "",
+  "n": 101,
+  "tags": [],
   "id": "w101"
  },
  {
   "head": "Cislia",
-  "input": "@cislia",
   "mean": "새",
-  "n": 102,
+  "input": "@cislia",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 102,
   "id": "w102"
  },
  {
   "head": "casva",
-  "input": "@casva",
   "mean": "물고기",
-  "n": 103,
+  "input": "@casva",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 103,
   "id": "w103"
  },
  {
   "head": "purel",
-  "input": "@purel",
   "mean": "죽다",
-  "n": 104,
+  "input": "@purel",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 104,
   "id": "w104"
  },
  {
   "head": "caso",
-  "input": "@caso",
   "mean": "개, 강아지",
-  "n": 105,
+  "input": "@caso",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 105,
   "id": "w105"
  },
  {
   "head": "pul",
-  "input": "pul",
   "mean": "산",
-  "n": 106,
+  "input": "pul",
   "note": "",
+  "n": 106,
+  "tags": [],
   "id": "w106"
  },
  {
   "head": "lapel",
-  "input": "lapel",
   "mean": "좋은, 좋다",
-  "n": 107,
+  "input": "lapel",
   "note": "",
+  "n": 107,
+  "tags": [],
   "id": "w107"
  },
  {
   "head": "sasla",
-  "input": "sasla",
   "mean": "새로운, 새, 새롭다",
-  "n": 108,
+  "input": "sasla",
   "note": "",
+  "n": 108,
+  "tags": [],
   "id": "w108"
  },
  {
   "head": "lael",
-  "input": "lael",
   "mean": "큰, 크다",
-  "n": 109,
+  "input": "lael",
   "note": "",
+  "n": 109,
+  "tags": [],
   "id": "w109"
  },
  {
-  "head": "laspe",
-  "input": "@laspe",
+  "head": "laete",
   "mean": "여성, 여자",
-  "n": 110,
+  "input": "@laete",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 110,
   "id": "w110"
  },
  {
-  "head": "rale",
-  "input": "rale",
-  "mean": "남성, 남자",
-  "n": 111,
+  "head": "patta",
+  "mean": "남자",
+  "input": "@patta",
   "note": "",
+  "tags": [
+   "비음형 화석"
+  ],
+  "n": 111,
   "id": "w111"
  },
  {
   "head": "lesvi",
-  "input": "lesvi",
   "mean": "이름",
-  "n": 112,
+  "input": "lesvi",
   "note": "",
+  "n": 112,
+  "tags": [],
   "id": "w112"
  },
  {
   "head": "luro",
-  "input": "luro",
   "mean": "비",
-  "n": 113,
+  "input": "luro",
   "note": "",
+  "n": 113,
+  "tags": [],
   "id": "w113"
  },
  {
   "head": "calke",
-  "input": "calke",
   "mean": "돌",
-  "n": 114,
+  "input": "calke",
   "note": "",
+  "n": 114,
+  "tags": [],
   "id": "w114"
  },
  {
   "head": "cileva",
-  "input": "cileva",
   "mean": "나무",
-  "n": 115,
+  "input": "cileva",
   "note": "",
+  "n": 115,
+  "tags": [],
   "id": "w115"
  },
  {
   "head": "curo",
-  "input": "curo",
   "mean": "뼈",
-  "n": 116,
+  "input": "curo",
   "note": "",
+  "n": 116,
+  "tags": [],
   "id": "w116"
  },
  {
   "head": "losir",
-  "input": "losir",
   "mean": "밤",
-  "n": 117,
+  "input": "losir",
   "note": "",
+  "n": 117,
+  "tags": [],
   "id": "w117"
  },
  {
   "head": "par",
-  "input": "par",
   "mean": "달",
-  "n": 118,
+  "input": "par",
   "note": "",
+  "n": 118,
+  "tags": [],
   "id": "w118"
  },
  {
   "head": "ris",
-  "input": "ris",
   "mean": "해, 태양",
-  "n": 119,
+  "input": "ris",
   "note": "",
+  "n": 119,
+  "tags": [],
   "id": "w119"
  },
  {
   "head": "rus",
-  "input": "rus",
   "mean": "별",
-  "n": 120,
+  "input": "rus",
   "note": "",
+  "n": 120,
+  "tags": [],
   "id": "w120"
  },
  {
   "head": "lisvi",
-  "input": "lisvi",
   "mean": "피",
-  "n": 121,
+  "input": "lisvi",
   "note": "",
+  "n": 121,
+  "tags": [],
   "id": "w121"
  },
  {
   "head": "cira",
-  "input": "cira",
   "mean": "불",
-  "n": 122,
+  "input": "cira",
   "note": "",
   "tags": [],
+  "n": 122,
   "id": "w122"
  },
  {
   "head": "uvla",
-  "input": "uvla",
   "mean": "물",
-  "n": 123,
+  "input": "uvla",
   "note": "",
+  "n": 123,
+  "tags": [],
   "id": "w123"
  },
  {
   "head": "tesa",
-  "input": "tesa",
   "mean": "손",
-  "n": 124,
+  "input": "tesa",
   "note": "",
   "tags": [],
+  "n": 124,
   "id": "w124"
  },
  {
   "head": "cevos",
-  "input": "cevos",
   "mean": "귀",
-  "n": 125,
+  "input": "cevos",
   "note": "",
+  "n": 125,
+  "tags": [],
   "id": "w125"
  },
  {
   "head": "sitra",
-  "input": "sitra",
   "mean": "이빨",
-  "n": 126,
+  "input": "sitra",
   "note": "",
+  "n": 126,
+  "tags": [],
   "id": "w126"
  },
  {
   "head": "cisko",
-  "input": "cisko",
   "mean": "작은, 작다",
-  "n": 127,
+  "input": "cisko",
   "note": "",
+  "n": 127,
+  "tags": [],
   "id": "w127"
  },
  {
   "head": "poklo",
-  "input": "poklo",
   "mean": "입",
-  "n": 128,
+  "input": "poklo",
   "note": "",
+  "n": 128,
+  "tags": [],
   "id": "w128"
  },
  {
   "head": "levela",
-  "input": "levela",
   "mean": "혀, 언어",
-  "n": 129,
+  "input": "levela",
   "note": "",
+  "n": 129,
+  "tags": [],
   "id": "w129"
  },
  {
   "head": "estic",
-  "input": "estic",
   "mean": "코",
-  "n": 130,
+  "input": "estic",
   "note": "",
+  "n": 130,
+  "tags": [],
   "id": "w130"
  },
  {
   "head": "tisu",
-  "input": "tisu",
   "mean": "자다",
-  "n": 131,
+  "input": "tisu",
   "note": "",
+  "n": 131,
+  "tags": [],
   "id": "w131"
  },
  {
   "head": "ukla",
-  "input": "@ukla",
   "mean": "갔다 (가다의 과거형)",
-  "n": 132,
+  "input": "@ukla",
   "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 ukla",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 132,
   "id": "w132"
  },
  {
   "head": "oslor",
-  "input": "oslor",
   "mean": "알다",
-  "n": 133,
+  "input": "oslor",
   "note": "",
+  "n": 133,
+  "tags": [],
   "id": "w133"
  },
  {
   "head": "astel",
-  "input": "@astel",
   "mean": "개인, 사람, 외톨이, 방랑자",
-  "n": 134,
+  "input": "@astel",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 134,
   "id": "w134"
  },
  {
   "head": "kapu",
-  "input": "kapu",
   "mean": "집",
-  "n": 135,
+  "input": "kapu",
   "note": "",
+  "n": 135,
+  "tags": [],
   "id": "w135"
  },
  {
   "head": "lukus",
-  "input": "lukus",
   "mean": "눈, 안구",
-  "n": 136,
+  "input": "lukus",
   "note": "",
+  "n": 136,
+  "tags": [],
   "id": "w136"
  },
  {
   "head": "Pe",
-  "input": "pe",
   "mean": "부정, 아니오",
-  "n": 137,
+  "input": "pe",
   "note": "",
+  "n": 137,
+  "tags": [],
   "id": "w137"
  },
  {
   "head": "Li",
-  "input": "li",
   "mean": "긍정, 네, 예, 그래",
-  "n": 138,
+  "input": "li",
   "note": "",
+  "n": 138,
+  "tags": [],
   "id": "w138"
  },
  {
   "head": "lat",
-  "input": "lat",
   "mean": "있다",
-  "n": 139,
+  "input": "lat",
   "note": "",
+  "n": 139,
+  "tags": [],
   "id": "w139"
  },
  {
   "head": "ar(e)-",
-  "input": "are-",
   "mean": "-하며",
-  "n": 140,
+  "input": "are-",
   "note": "",
+  "n": 140,
+  "tags": [],
   "id": "w140"
  },
  {
   "head": "tekla",
-  "input": "@tekla",
   "mean": "왔다 (오다의 과거형)",
-  "n": 141,
+  "input": "@tekla",
   "note": "완료상 비음형이 과거형으로 굳음. 현재형은 구강형 tekla",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 141,
   "id": "w141"
  },
  {
-  "head": "eko~vese",
-  "input": "eko~vese",
-  "mean": "듣개 (마법으로 소리를 듣는 도구)",
+  "head": "ekovese",
+  "mean": "이어폰",
+  "input": "eko·vese",
+  "note": "vese의 뜻 미확인",
+  "tags": [
+   "후대 합성어"
+  ],
   "n": 142,
-  "note": "에클라이아어 단계 합성어. eko-(도구)+vese(듣다). 기계 이어폰은 &ekovese(Écovège)로 따로 씀",
-  "tags": [],
   "id": "w142"
  },
  {
   "head": "keti",
-  "input": "keti",
   "mean": "자라다",
-  "n": 143,
+  "input": "keti",
   "note": "",
+  "n": 143,
+  "tags": [],
   "id": "w143"
  },
  {
   "head": "rekia",
-  "input": "rekia",
   "mean": "축복하다",
-  "n": 144,
+  "input": "rekia",
   "note": "",
+  "n": 144,
+  "tags": [],
   "id": "w144"
  },
  {
   "head": "asti-",
-  "input": "asti-",
   "mean": "능동형, 피동형 반대, 당하다, 었",
-  "n": 145,
+  "input": "asti-",
   "note": "",
+  "n": 145,
+  "tags": [],
   "id": "w145"
  },
  {
   "head": "av(e)-",
-  "input": "ave-",
   "mean": "형용사형",
-  "n": 146,
+  "input": "ave-",
   "note": "",
+  "n": 146,
+  "tags": [],
   "id": "w146"
  },
  {
   "head": "or(a)-",
-  "input": "ora-",
   "mean": "느낌, 감정",
-  "n": 147,
+  "input": "ora-",
   "note": "",
+  "n": 147,
+  "tags": [],
   "id": "w147"
  },
  {
   "head": "etakly",
-  "input": "@etakly",
   "mean": "끝내다, 마무리하다, 종결하다",
-  "n": 148,
+  "input": "@etakly",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 148,
   "id": "w148"
  },
  {
   "head": "pia",
-  "input": "pia",
   "mean": "싸우다",
-  "n": 149,
+  "input": "pia",
   "note": "",
+  "n": 149,
+  "tags": [],
   "id": "w149"
  },
  {
   "head": "eko-",
-  "input": "eko-",
   "mean": "~개, 하는 도구, 하는 물건",
-  "n": 150,
+  "input": "eko-",
   "note": "",
+  "n": 150,
+  "tags": [],
   "id": "w150"
  },
  {
   "head": "ekoir",
-  "input": "ekoir",
   "mean": "톱",
-  "n": 151,
+  "input": "ekoir",
   "note": "",
   "tags": [],
+  "n": 151,
   "id": "w151"
  },
  {
   "head": "ecia",
-  "input": "ecia",
   "mean": "천둥",
-  "n": 152,
+  "input": "ecia",
   "note": "",
   "tags": [],
+  "n": 152,
   "id": "w152"
  },
  {
   "head": "arpal",
-  "input": "arpal",
   "mean": "번개, 전기",
-  "n": 153,
+  "input": "arpal",
   "note": "",
   "tags": [],
+  "n": 153,
   "id": "w153"
  },
  {
   "head": "acura",
-  "input": "acura",
   "mean": "폭풍, 눈폭풍, 눈보라",
-  "n": 154,
+  "input": "acura",
   "note": "",
   "tags": [],
+  "n": 154,
   "id": "w154"
  },
  {
   "head": "et",
-  "input": "et",
   "mean": "잇다, 계속하다, 지속하다",
-  "n": 155,
+  "input": "et",
   "note": "",
+  "n": 155,
+  "tags": [],
   "id": "w155"
  },
  {
   "head": "lake",
-  "input": "lake",
   "mean": "원, 둥글다",
-  "n": 156,
+  "input": "lake",
   "note": "",
+  "n": 156,
+  "tags": [],
   "id": "w156"
  },
  {
   "head": "etlake",
-  "input": "etlake",
   "mean": "사슬",
-  "n": 157,
+  "input": "etlake",
   "note": "",
+  "n": 157,
+  "tags": [],
   "id": "w157"
  },
  {
   "head": "a-",
-  "input": "a-",
   "mean": "프랑스어 á; 수식; of에서 의 뺀 것",
-  "n": 158,
+  "input": "a-",
   "note": "",
+  "n": 158,
+  "tags": [],
   "id": "w158"
  },
  {
   "head": "arte",
-  "input": "arte",
   "mean": "모임, 조, 회의, 평의회",
-  "n": 159,
+  "input": "arte",
   "note": "",
   "tags": [],
+  "n": 159,
   "id": "w159"
  },
  {
   "head": "ratia",
-  "input": "ratia",
   "mean": "실용",
-  "n": 160,
+  "input": "ratia",
   "note": "",
+  "n": 160,
+  "tags": [],
   "id": "w160"
  },
  {
   "head": "suria",
-  "input": "suria",
   "mean": "수염",
-  "n": 161,
+  "input": "suria",
   "note": "",
+  "n": 161,
+  "tags": [],
   "id": "w161"
  },
  {
   "head": "lo",
-  "input": "lo",
   "mean": "다른, 다르다",
-  "n": 162,
+  "input": "lo",
   "note": "",
+  "n": 162,
+  "tags": [],
   "id": "w162"
  },
  {
   "head": "",
-  "input": "",
   "mean": "여자 이름",
-  "n": 163,
+  "input": "",
   "note": "",
+  "n": 163,
+  "tags": [],
   "id": "w163"
  },
  {
   "head": "ilut",
-  "input": "ilut",
   "mean": "우주",
-  "n": 164,
+  "input": "ilut",
   "note": "",
+  "n": 164,
+  "tags": [],
   "id": "w164"
  },
  {
   "head": "kartoc",
-  "input": "kartoc",
   "mean": "배, 선박",
-  "n": 165,
+  "input": "kartoc",
   "note": "",
+  "n": 165,
+  "tags": [],
   "id": "w165"
  },
  {
   "head": "irkua",
-  "input": "@irkua",
   "mean": "단결하다, 뭉치다, 묶이다, 하나가 되다",
-  "n": 166,
+  "input": "@irkua",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 166,
   "id": "w166"
  },
  {
   "head": "pairkua",
-  "input": "pairkua",
   "mean": "연맹",
-  "n": 167,
+  "input": "pairkua",
   "note": "",
+  "n": 167,
+  "tags": [],
   "id": "w167"
  },
  {
   "head": "ekoilut",
-  "input": "ekoilut",
   "mean": "우주선 (신화) + 우주선 (진)",
-  "n": 168,
+  "input": "ekoilut",
   "note": "신화 속 우주선을 뜻하는 계승어. 실제 우주선은 근대에 이 말을 재활용",
+  "n": 168,
+  "tags": [],
   "id": "w168"
  },
  {
   "head": "liestai",
-  "input": "liestai",
   "mean": "지구",
-  "n": 169,
+  "input": "liestai",
   "note": "",
+  "n": 169,
+  "tags": [],
   "id": "w169"
  },
  {
   "head": "katai",
-  "input": "katai",
   "mean": "낮",
-  "n": 170,
+  "input": "katai",
   "note": "",
+  "n": 170,
+  "tags": [],
   "id": "w170"
  },
  {
   "head": "riskatai",
-  "input": "riskatai",
   "mean": "해",
-  "n": 171,
+  "input": "riskatai",
   "note": "",
+  "n": 171,
+  "tags": [],
   "id": "w171"
  },
  {
   "head": "ruslosir",
-  "input": "ruslosir",
   "mean": "별",
-  "n": 172,
+  "input": "ruslosir",
   "note": "",
+  "n": 172,
+  "tags": [],
   "id": "w172"
  },
  {
   "head": "parlosir",
-  "input": "parlosir",
   "mean": "달",
-  "n": 173,
+  "input": "parlosir",
   "note": "",
+  "n": 173,
+  "tags": [],
   "id": "w173"
  },
  {
   "head": "kac(a)-",
-  "input": "kaca-",
   "mean": "에게",
-  "n": 174,
+  "input": "kaca-",
   "note": "",
+  "n": 174,
+  "tags": [],
   "id": "w174"
  },
  {
   "head": "lar",
-  "input": "lar",
   "mean": "묻다",
-  "n": 175,
+  "input": "lar",
   "note": "",
+  "n": 175,
+  "tags": [],
   "id": "w175"
  },
  {
   "head": "vau",
-  "input": "vau",
   "mean": "가지, 당(정당)",
-  "n": 176,
+  "input": "vau",
   "note": "지부·분파는 liska로 나눔",
+  "n": 176,
+  "tags": [],
   "id": "w176"
  },
  {
   "head": "atar",
-  "input": "atar",
   "mean": "일하다",
-  "n": 177,
+  "input": "atar",
   "note": "",
+  "n": 177,
+  "tags": [],
   "id": "w177"
  },
  {
   "head": "ciska",
-  "input": "ciska",
   "mean": "농사짓다",
-  "n": 178,
+  "input": "ciska",
   "note": "",
+  "n": 178,
+  "tags": [],
   "id": "w178"
  },
  {
   "head": "ak(a)-",
-  "input": "aka-",
   "mean": "~하는 사람",
-  "n": 179,
+  "input": "aka-",
   "note": "",
+  "n": 179,
+  "tags": [],
   "id": "w179"
  },
  {
   "head": "lie",
-  "input": "lie",
   "mean": "세계",
-  "n": 180,
+  "input": "lie",
   "note": "",
+  "n": 180,
+  "tags": [],
   "id": "w180"
  },
  {
   "head": "peskia",
-  "input": "peskia",
   "mean": "핵심, 중앙",
-  "n": 181,
+  "input": "peskia",
   "note": "",
+  "n": 181,
+  "tags": [],
   "id": "w181"
  },
  {
   "head": "rate",
-  "input": "rate",
   "mean": "행동, 하다",
-  "n": 182,
+  "input": "rate",
   "note": "",
+  "n": 182,
+  "tags": [],
   "id": "w182"
  },
  {
   "head": "aleya",
-  "input": "aleya",
   "mean": "정합",
-  "n": 183,
+  "input": "aleya",
   "note": "",
+  "n": 183,
+  "tags": [],
   "id": "w183"
  },
  {
   "head": "tasko",
-  "input": "tasko",
   "mean": "분출",
-  "n": 184,
+  "input": "tasko",
   "note": "",
+  "n": 184,
+  "tags": [],
   "id": "w184"
  },
  {
   "head": "etasko",
-  "input": "etasko",
   "mean": "분화구",
-  "n": 185,
+  "input": "etasko",
   "note": "",
+  "n": 185,
+  "tags": [],
   "id": "w185"
  },
  {
   "head": "uska",
-  "input": "uska",
   "mean": "~주의",
-  "n": 186,
+  "input": "uska",
   "note": "",
+  "n": 186,
+  "tags": [],
   "id": "w186"
  },
  {
   "head": "ekete",
-  "input": "ekete",
   "mean": "기구, 조합",
-  "n": 187,
+  "input": "ekete",
   "note": "",
+  "n": 187,
+  "tags": [],
   "id": "w187"
  },
  {
   "head": "kai-",
-  "input": "kai-",
   "mean": "~번째의",
-  "n": 188,
+  "input": "kai-",
   "note": "",
+  "n": 188,
+  "tags": [],
   "id": "w188"
  },
  {
   "head": "paope",
-  "input": "paope",
   "mean": "글자, 낱자",
-  "n": 189,
+  "input": "paope",
   "note": "",
+  "n": 189,
+  "tags": [],
   "id": "w189"
  },
  {
   "head": "tuka",
-  "input": "@tuka",
   "mean": "건설하다, 짓다",
-  "n": 190,
+  "input": "@tuka",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 190,
   "id": "w190"
  },
  {
   "head": "atlea",
-  "input": "atlea",
   "mean": "조직",
-  "n": 191,
+  "input": "atlea",
   "note": "",
+  "n": 191,
+  "tags": [],
   "id": "w191"
  },
  {
   "head": "Rasoko",
-  "input": "rasoko",
   "mean": "부족의 일종",
-  "n": 192,
+  "input": "rasoko",
   "note": "",
   "tags": [],
+  "n": 192,
   "id": "w192"
  },
  {
   "head": "telasei",
-  "input": "telasei",
   "mean": "지도",
-  "n": 193,
+  "input": "telasei",
   "note": "",
+  "n": 193,
+  "tags": [],
   "id": "w193"
  },
  {
   "head": "liaistau",
-  "input": "liaistau",
   "mean": "(역사적) 에클라이아 상륙",
-  "n": 194,
+  "input": "liaistau",
   "note": "",
+  "n": 194,
+  "tags": [],
   "id": "w194"
  },
  {
   "head": "aistau",
-  "input": "aistau",
   "mean": "상륙",
-  "n": 195,
+  "input": "aistau",
   "note": "",
+  "n": 195,
+  "tags": [],
   "id": "w195"
  },
  {
   "head": "ais",
-  "input": "@ais",
   "mean": "위로 가다, 오르다, 뜨다",
-  "n": 196,
+  "input": "@ais",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 196,
   "id": "w196"
  },
  {
   "head": "tau",
-  "input": "tau",
   "mean": "뭍, 흙, 땅",
-  "n": 197,
+  "input": "tau",
   "note": "",
+  "n": 197,
+  "tags": [],
   "id": "w197"
  },
  {
   "head": "apre",
-  "input": "apre",
   "mean": "위, (시간) 전/앞",
-  "n": 198,
+  "input": "apre",
   "note": "",
+  "n": 198,
+  "tags": [],
   "id": "w198"
  },
  {
   "head": "orais",
-  "input": "orais",
   "mean": "아래, (시간) 후/뒤",
-  "n": 199,
+  "input": "orais",
   "note": "",
+  "n": 199,
+  "tags": [],
   "id": "w199"
  },
  {
   "head": "akrua",
-  "input": "akrua",
   "mean": "돌다, 회전하다",
-  "n": 200,
+  "input": "akrua",
   "note": "",
+  "n": 200,
+  "tags": [],
   "id": "w200"
  },
  {
   "head": "asl(e)",
-  "input": "asle",
   "mean": "~~하는 것, ~~하는 물체",
-  "n": 201,
+  "input": "asle",
   "note": "",
+  "n": 201,
+  "tags": [],
   "id": "w201"
  },
  {
   "head": "arkatia",
-  "input": "arkatia",
   "mean": "마기계",
-  "n": 202,
+  "input": "arkatia",
   "note": "고대부터 쓰인 민간 계승어",
   "tags": [],
+  "n": 202,
   "id": "w202"
  },
  {
   "head": "arpalia",
-  "input": "&arpalia",
   "mean": "기계",
-  "n": 203,
+  "input": "&arpalia",
   "note": "",
   "tags": [
    "학술 차용어"
   ],
+  "n": 203,
   "id": "w203"
  },
  {
   "head": "olko",
-  "input": "olko",
   "mean": "두뇌, 뇌",
-  "n": 204,
+  "input": "olko",
   "note": "",
+  "n": 204,
+  "tags": [],
   "id": "w204"
  },
  {
   "head": "ekolko",
-  "input": "&ekolko",
   "mean": "인공 두뇌, 전뇌",
-  "n": 205,
+  "input": "&ekolko",
   "note": "",
   "tags": [
    "학술 차용어"
   ],
+  "n": 205,
   "id": "w205"
  },
  {
   "head": "arci",
-  "input": "arci",
   "mean": "학문, 배우다",
-  "n": 206,
+  "input": "arci",
   "note": "",
+  "n": 206,
+  "tags": [],
   "id": "w206"
  },
  {
   "head": "setloi",
-  "input": "setloi",
   "mean": "부활",
-  "n": 207,
+  "input": "setloi",
   "note": "",
+  "n": 207,
+  "tags": [],
   "id": "w207"
  },
  {
   "head": "loi",
-  "input": "loi",
   "mean": "태어나다",
-  "n": 208,
+  "input": "loi",
   "note": "",
+  "n": 208,
+  "tags": [],
   "id": "w208"
  },
  {
   "head": "set(o)-",
-  "input": "seto-",
   "mean": "다시-, 재-, 한번 더-",
-  "n": 209,
+  "input": "seto-",
   "note": "",
+  "n": 209,
+  "tags": [],
   "id": "w209"
  },
  {
   "head": "iutasko",
-  "input": "iutasko",
   "mean": "위대한",
-  "n": 210,
+  "input": "iutasko",
   "note": "",
+  "n": 210,
+  "tags": [],
   "id": "w210"
  },
  {
   "head": "Parlois",
-  "input": "parlois",
   "mean": "여자 이름",
-  "n": 211,
+  "input": "parlois",
   "note": "",
   "tags": [],
+  "n": 211,
   "id": "w211"
  },
  {
   "head": "air",
-  "input": "air",
   "mean": "모양, 도형",
-  "n": 212,
+  "input": "air",
   "note": "",
+  "n": 212,
+  "tags": [],
   "id": "w212"
  },
  {
   "head": "etospi",
-  "input": "etospi",
   "mean": "풍족한, 부,",
-  "n": 213,
+  "input": "etospi",
   "note": "",
+  "n": 213,
+  "tags": [],
   "id": "w213"
  },
  {
   "head": "taisko",
-  "input": "taisko",
   "mean": "창, 투창",
-  "n": 214,
+  "input": "taisko",
   "note": "",
   "tags": [],
+  "n": 214,
   "id": "w214"
  },
  {
   "head": "iscau",
-  "input": "iscau",
   "mean": "늙다, 나이들다",
-  "n": 215,
+  "input": "iscau",
   "note": "",
+  "n": 215,
+  "tags": [],
   "id": "w215"
  },
  {
   "head": "ekat",
-  "input": "ekat",
   "mean": "어리다, 어린, 젊은",
-  "n": 216,
+  "input": "ekat",
   "note": "",
+  "n": 216,
+  "tags": [],
   "id": "w216"
  },
  {
   "head": "ve~akiscau",
-  "input": "@v'akiscau",
   "mean": "족장",
-  "n": 217,
+  "input": "@v'akiscau",
   "note": "존칭 ve-가 호칭에서 굳어 붙음(messire·monsieur와 같은 경로). 이전 입력 @akiscau는 ègne로 @ais(오르다)와 동음",
   "tags": [
    "비음형 화석",
    "통치자",
    "행위자 명사"
   ],
+  "n": 217,
   "id": "w217"
  },
  {
   "head": "asiel",
-  "input": "@asiel",
   "mean": "짓다, 만들다",
-  "n": 218,
+  "input": "@asiel",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 218,
   "id": "w218"
  },
  {
   "head": "alkai",
-  "input": "alkai",
   "mean": "자비롭다, 자비",
-  "n": 219,
+  "input": "alkai",
   "note": "",
+  "n": 219,
+  "tags": [],
   "id": "w219"
  },
  {
   "head": "topa",
-  "input": "topa",
   "mean": "느낌",
-  "n": 220,
+  "input": "topa",
   "note": "",
+  "n": 220,
+  "tags": [],
   "id": "w220"
  },
  {
   "head": "ort(a)-",
-  "input": "orta-",
   "mean": "모든, 전체, 전부",
-  "n": 221,
+  "input": "orta-",
   "note": "",
+  "n": 221,
+  "tags": [],
   "id": "w221"
  },
  {
   "head": "etlika",
-  "input": "etlika",
   "mean": "새벽",
-  "n": 222,
+  "input": "etlika",
   "note": "",
+  "n": 222,
+  "tags": [],
   "id": "w222"
  },
  {
   "head": "aplie",
-  "input": "@aplie",
   "mean": "더하다, 덧셈, 합하다, 추가하다 (A+B->A')",
-  "n": 223,
+  "input": "@aplie",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 223,
   "id": "w223"
  },
  {
   "head": "pasle",
-  "input": "pasle",
   "mean": "배",
-  "n": 224,
+  "input": "pasle",
   "note": "",
+  "n": 224,
+  "tags": [],
   "id": "w224"
  },
  {
   "head": "apl(i)-",
-  "input": "apli-",
   "mean": "비교급",
-  "n": 225,
+  "input": "apli-",
   "note": "",
+  "n": 225,
+  "tags": [],
   "id": "w225"
  },
  {
   "head": "islepol",
-  "input": "islepol",
   "mean": "강제하다, 이끌다, 끌다, 밀다, 당기다",
-  "n": 226,
+  "input": "islepol",
   "note": "",
+  "n": 226,
+  "tags": [],
   "id": "w226"
  },
  {
   "head": "oku",
-  "input": "oku",
   "mean": "원하다, 바라다",
-  "n": 227,
+  "input": "oku",
   "note": "",
+  "n": 227,
+  "tags": [],
   "id": "w227"
  },
  {
   "head": "ikarsa",
-  "input": "ikarsa",
   "mean": "샘, 원천, 시작, 출발",
-  "n": 228,
+  "input": "ikarsa",
   "note": "",
+  "n": 228,
+  "tags": [],
   "id": "w228"
  },
  {
   "head": "cai",
-  "input": "cai",
   "mean": "도착, 바다",
-  "n": 229,
+  "input": "cai",
   "note": "",
+  "n": 229,
+  "tags": [],
   "id": "w229"
  },
  {
   "head": "cirpo",
-  "input": "cirpo",
   "mean": "누르다, 억누르다, 압제하다",
-  "n": 230,
+  "input": "cirpo",
   "note": "",
+  "n": 230,
+  "tags": [],
   "id": "w230"
  },
  {
   "head": "lovor",
-  "input": "lovor",
   "mean": "한스러운, 한, 슬픔, 분개, 억울함,",
-  "n": 231,
+  "input": "lovor",
   "note": "",
+  "n": 231,
+  "tags": [],
   "id": "w231"
  },
  {
   "head": "Ake",
-  "input": "@ake",
   "mean": "일어나다, 일어서다, 떨치다",
-  "n": 232,
+  "input": "@ake",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 232,
   "id": "w232"
  },
  {
   "head": "ask(e)-",
-  "input": "aske-",
   "mean": "A toB -> A와 B 사이",
-  "n": 233,
+  "input": "aske-",
   "note": "",
+  "n": 233,
+  "tags": [],
   "id": "w233"
  },
  {
   "head": "sakue",
-  "input": "sakue",
   "mean": "가운데, 사이, 틈",
-  "n": 234,
+  "input": "sakue",
   "note": "",
+  "n": 234,
+  "tags": [],
   "id": "w234"
  },
  {
   "head": "it(o)-",
-  "input": "ito-",
   "mean": "가능하다, 할 수 있다",
-  "n": 235,
+  "input": "ito-",
   "note": "",
+  "n": 235,
+  "tags": [],
   "id": "w235"
  },
  {
   "head": "keploi",
-  "input": "keploi",
   "mean": "평등하다",
-  "n": 236,
+  "input": "keploi",
   "note": "",
+  "n": 236,
+  "tags": [],
   "id": "w236"
  },
  {
   "head": "etursa",
-  "input": "etursa",
   "mean": "세다, 계산하다",
-  "n": 237,
+  "input": "etursa",
   "note": "",
+  "n": 237,
+  "tags": [],
   "id": "w237"
  },
  {
   "head": "pecio",
-  "input": "pecio",
   "mean": "거짓, 가짜, 조작",
-  "n": 238,
+  "input": "pecio",
   "note": "",
+  "n": 238,
+  "tags": [],
   "id": "w238"
  },
  {
   "head": "istia",
-  "input": "istia",
   "mean": "분명하다, 구별되다, 분별하다",
-  "n": 239,
+  "input": "istia",
   "note": "",
+  "n": 239,
+  "tags": [],
   "id": "w239"
  },
  {
   "head": "erkupe",
-  "input": "erkupe",
   "mean": "용감하다, 용맹하다",
-  "n": 240,
+  "input": "erkupe",
   "note": "",
+  "n": 240,
+  "tags": [],
   "id": "w240"
  },
  {
   "head": "arpar",
-  "input": "@arpar",
   "mean": "고치다, 수정하다",
-  "n": 241,
+  "input": "@arpar",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 241,
   "id": "w241"
  },
  {
   "head": "veka",
-  "input": "veka",
   "mean": "오래, 장기간",
-  "n": 242,
+  "input": "veka",
   "note": "",
+  "n": 242,
+  "tags": [],
   "id": "w242"
  },
  {
   "head": "orto",
-  "input": "orto",
   "mean": "틀린, 불의",
-  "n": 243,
+  "input": "orto",
   "note": "",
+  "n": 243,
+  "tags": [],
   "id": "w243"
  },
  {
   "head": "aspi",
-  "input": "@aspi",
   "mean": "열다",
-  "n": 244,
+  "input": "@aspi",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 244,
   "id": "w244"
  },
  {
   "head": "licio",
-  "input": "licio",
   "mean": "맞는, 참된",
-  "n": 245,
+  "input": "licio",
   "note": "",
+  "n": 245,
+  "tags": [],
   "id": "w245"
  },
  {
   "head": "cea",
-  "input": "cea",
   "mean": "이해하다",
-  "n": 246,
+  "input": "cea",
   "note": "",
+  "n": 246,
+  "tags": [],
   "id": "w246"
  },
  {
   "head": "ekate",
-  "input": "@ekate",
   "mean": "피하다, 탈출하다",
-  "n": 247,
+  "input": "@ekate",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 247,
   "id": "w247"
  },
  {
   "head": "sikuve",
-  "input": "sikuve",
   "mean": "산사태, 재앙, 재해, 재난",
-  "n": 248,
+  "input": "sikuve",
   "note": "",
+  "n": 248,
+  "tags": [],
   "id": "w248"
  },
  {
   "head": "siku",
-  "input": "@siku",
   "mean": "미끄러지다",
-  "n": 249,
+  "input": "@siku",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 249,
   "id": "w249"
  },
  {
   "head": "etlesta",
-  "input": "@etlesta",
   "mean": "다다르다, 이루다",
-  "n": 250,
+  "input": "@etlesta",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 250,
   "id": "w250"
  },
  {
   "head": "yple",
-  "input": "yple",
   "mean": "행복, 기쁨",
-  "n": 251,
+  "input": "yple",
   "note": "",
+  "n": 251,
+  "tags": [],
   "id": "w251"
  },
  {
   "head": "erpaca",
-  "input": "erpaca",
   "mean": "확실하다, 분명하다",
-  "n": 252,
+  "input": "erpaca",
   "note": "",
+  "n": 252,
+  "tags": [],
   "id": "w252"
  },
  {
   "head": "oslia",
-  "input": "oslia",
   "mean": "조화롭다",
-  "n": 253,
+  "input": "oslia",
   "note": "",
+  "n": 253,
+  "tags": [],
   "id": "w253"
  },
  {
   "head": "atraka",
-  "input": "@atraka",
   "mean": "아트라카, 소+말같은 동물, 베이스는 사슴",
-  "n": 254,
+  "input": "@atraka",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 254,
   "id": "w254"
  },
  {
   "head": "kartis",
-  "input": "@kartis",
   "mean": "카르티스, 멧돼지 같은 동물, 베이스는 사향고양이",
-  "n": 255,
+  "input": "@kartis",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 255,
   "id": "w255"
  },
  {
   "head": "paco",
-  "input": "paco",
   "mean": "못생기다",
-  "n": 256,
+  "input": "paco",
   "note": "",
+  "n": 256,
+  "tags": [],
   "id": "w256"
  },
  {
   "head": "cetoca",
-  "input": "cetoca",
   "mean": "잘생기다",
-  "n": 257,
+  "input": "cetoca",
   "note": "",
+  "n": 257,
+  "tags": [],
   "id": "w257"
  },
  {
   "head": "ratais",
-  "input": "ratais",
   "mean": "머리, 얼굴",
-  "n": 258,
+  "input": "ratais",
   "note": "",
+  "n": 258,
+  "tags": [],
   "id": "w258"
  },
  {
   "head": "etre",
-  "input": "etre",
   "mean": "도시",
-  "n": 259,
+  "input": "etre",
   "note": "",
+  "n": 259,
+  "tags": [],
   "id": "w259"
  },
  {
   "head": "Lysirle",
-  "input": "lysirle",
   "mean": "",
-  "n": 260,
+  "input": "lysirle",
   "note": "",
+  "n": 260,
+  "tags": [],
   "id": "w260"
  },
  {
   "head": "askepar",
-  "input": "askepar",
   "mean": "월간",
-  "n": 261,
+  "input": "askepar",
   "note": "",
+  "n": 261,
+  "tags": [],
   "id": "w261"
  },
  {
   "head": "aske",
-  "input": "aske",
   "mean": "국제",
-  "n": 262,
+  "input": "aske",
   "note": "",
+  "n": 262,
+  "tags": [],
   "id": "w262"
  },
  {
   "head": "etako",
-  "input": "etako",
   "mean": "가지다",
-  "n": 263,
+  "input": "etako",
   "note": "",
+  "n": 263,
+  "tags": [],
   "id": "w263"
  },
  {
   "head": "tiel",
-  "input": "@tiel",
   "mean": "빼다",
-  "n": 264,
+  "input": "@tiel",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 264,
   "id": "w264"
  },
  {
   "head": "alkas",
-  "input": "@alkas",
   "mean": "나누다",
-  "n": 265,
+  "input": "@alkas",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 265,
   "id": "w265"
  },
  {
   "head": "valkas",
-  "input": "valkas",
   "mean": "계급",
-  "n": 266,
+  "input": "valkas",
   "note": "",
+  "n": 266,
+  "tags": [],
   "id": "w266"
  },
  {
   "head": "liakla",
-  "input": "liakla",
   "mean": "연방",
-  "n": 267,
+  "input": "liakla",
   "note": "",
+  "n": 267,
+  "tags": [],
   "id": "w267"
  },
  {
   "head": "akla",
-  "input": "akla",
   "mean": "(사어) 에클라이아 성립 초기에 Eklaia와 혼용되던 국명",
-  "n": 268,
+  "input": "akla",
   "note": "B 강 이름 kla에 어두 a- 첨가(어두 kl 회피). akla~ia(신/강)에 화석으로 남음",
   "tags": [],
+  "n": 268,
   "id": "w268"
  },
  {
   "head": "kalepia",
-  "input": "kalepia",
   "mean": "낯설다, 이방인, 외국인",
-  "n": 269,
+  "input": "kalepia",
   "note": "",
   "tags": [],
+  "n": 269,
   "id": "w269"
  },
  {
   "head": "askal",
-  "input": "askal",
   "mean": "피부, 가죽",
-  "n": 270,
+  "input": "askal",
   "note": "",
+  "n": 270,
+  "tags": [],
   "id": "w270"
  },
  {
   "head": "etlir",
-  "input": "etlir",
   "mean": "싸움, 전쟁",
-  "n": 271,
+  "input": "etlir",
   "note": "",
+  "n": 271,
+  "tags": [],
   "id": "w271"
  },
  {
   "head": "ia",
-  "input": "@ia",
   "mean": "신",
-  "n": 272,
+  "input": "@ia",
   "note": "유생 일반명사라 비음형 화석(Dan). 고유명(akla~ia 등)은 화석화하지 않음",
   "tags": [
    "비음형 화석"
   ],
+  "n": 272,
   "id": "w272"
  },
  {
   "head": "asure",
-  "input": "asure",
   "mean": "종 (성당, 교회 등의)",
-  "n": 273,
+  "input": "asure",
   "note": "이전 형태 asero. 계급 접두사 asur(a)-의 어원",
+  "n": 273,
+  "tags": [],
   "id": "w273"
  },
  {
   "head": "iska",
-  "input": "iska",
   "mean": "인형, 기물, (게임) 말, 조종당하는 사람",
-  "n": 274,
+  "input": "iska",
   "note": "",
+  "n": 274,
+  "tags": [],
   "id": "w274"
  },
  {
   "head": "aklia",
-  "input": "aklia",
   "mean": "만두와 유사한 음식 이름, 성씨",
-  "n": 275,
+  "input": "aklia",
   "note": "",
+  "n": 275,
+  "tags": [],
   "id": "w275"
  },
  {
   "head": "ais(a)-",
-  "input": "aisa-",
   "mean": "옆, 곁, 함께",
-  "n": 276,
+  "input": "aisa-",
   "note": "",
+  "n": 276,
+  "tags": [],
   "id": "w276"
  },
  {
   "head": "siaklo",
-  "input": "siaklo",
   "mean": "쇠",
-  "n": 277,
+  "input": "siaklo",
   "note": "",
+  "n": 277,
+  "tags": [],
   "id": "w277"
  },
  {
   "head": "kar",
-  "input": "kar",
   "mean": "풀",
-  "n": 278,
+  "input": "kar",
   "note": "",
+  "n": 278,
+  "tags": [],
   "id": "w278"
  },
  {
   "head": "tipi",
-  "input": "tipi",
   "mean": "색깔",
-  "n": 279,
+  "input": "tipi",
   "note": "",
+  "n": 279,
+  "tags": [],
   "id": "w279"
  },
  {
   "head": "tipris",
-  "input": "tipris",
   "mean": "하양, 하얗다, 희다, 흰색, 백색",
-  "n": 280,
+  "input": "tipris",
   "note": "",
+  "n": 280,
+  "tags": [],
   "id": "w280"
  },
  {
   "head": "upikre",
-  "input": "upikre",
   "mean": "송진",
-  "n": 281,
+  "input": "upikre",
   "note": "",
+  "n": 281,
+  "tags": [],
   "id": "w281"
  },
  {
   "head": "epli",
-  "input": "epli",
   "mean": "자유롭다, 해방되다",
-  "n": 282,
+  "input": "epli",
   "note": "",
   "tags": [],
+  "n": 282,
   "id": "w282"
  },
  {
   "head": "kapra",
-  "input": "@kapra",
   "mean": "왕",
-  "n": 283,
+  "input": "@kapra",
   "note": "",
   "tags": [
    "비음형 화석",
    "통치자"
   ],
+  "n": 283,
   "id": "w283"
  },
  {
   "head": "es(i)-",
-  "input": "esi-",
   "mean": "(이름 앞에 붙어) 애칭",
-  "n": 284,
+  "input": "esi-",
   "note": "",
+  "n": 284,
+  "tags": [],
   "id": "w284"
  },
  {
   "head": "kyr",
-  "input": "kyr",
   "mean": "돌다",
-  "n": 285,
+  "input": "kyr",
   "note": "",
+  "n": 285,
+  "tags": [],
   "id": "w285"
  },
  {
   "head": "kyrlevre",
-  "input": "kyrlevre",
   "mean": "돌보다, 돕다, 보조하다",
-  "n": 286,
+  "input": "kyrlevre",
   "note": "",
+  "n": 286,
+  "tags": [],
   "id": "w286"
  },
  {
   "head": "akkyrle",
-  "input": "&akkyrle",
   "mean": "장관, 재상, 각료",
-  "n": 287,
+  "input": "&akkyrle",
   "note": "",
   "tags": [
    "학술 차용어",
    "행위자 명사"
   ],
+  "n": 287,
   "id": "w287"
  },
  {
   "head": "aret",
-  "input": "aret",
   "mean": "자리, 앉다, 의자",
-  "n": 288,
+  "input": "aret",
   "note": "",
+  "n": 288,
+  "tags": [],
   "id": "w288"
  },
  {
   "head": "los",
-  "input": "los",
   "mean": "전방, 앞",
-  "n": 289,
+  "input": "los",
   "note": "",
+  "n": 289,
+  "tags": [],
   "id": "w289"
  },
  {
   "head": "kiar",
-  "input": "kiar",
   "mean": "후방, 뒤",
-  "n": 290,
+  "input": "kiar",
   "note": "",
+  "n": 290,
+  "tags": [],
   "id": "w290"
  },
  {
   "head": "iska",
-  "input": "iska",
   "mean": "왼쪽, 좌",
-  "n": 291,
+  "input": "iska",
   "note": "",
+  "n": 291,
+  "tags": [],
   "id": "w291"
  },
  {
   "head": "kosta",
-  "input": "kosta",
   "mean": "오른쪽, 우",
-  "n": 292,
+  "input": "kosta",
   "note": "",
+  "n": 292,
+  "tags": [],
   "id": "w292"
  },
  {
   "head": "sevia",
-  "input": "sevia",
   "mean": "대신하다, 대체하다, 부-",
-  "n": 293,
+  "input": "sevia",
   "note": "",
+  "n": 293,
+  "tags": [],
   "id": "w293"
  },
  {
   "head": "sir",
-  "input": "@sir",
   "mean": "스스로, 자기, (명사 뒤) 그 자신, (명사 앞) 저, 그 (원칭 지시사)",
-  "n": 294,
+  "input": "@sir",
   "note": "자유어는 대명사처럼 비음형 화석 Dind [dɛ̃]. 명사 앞이면 지시사(dind va '저 사람'), 명사 뒤면 강조(va dind '그 사람 자신'). 강조어 → 전방조응 지시사 경로(라틴어 ipse → 사르데냐어 su, 그리스어 autós). 접어형은 관계절 표지 sir^(Chir)",
   "tags": [
    "비음형 화석",
    "자유 대명사"
   ],
+  "n": 294,
   "id": "w294"
  },
  {
   "head": "ryl",
-  "input": "ryl",
   "mean": "다스리다, 통치하다",
-  "n": 295,
+  "input": "ryl",
   "note": "",
+  "n": 295,
+  "tags": [],
   "id": "w295"
  },
  {
   "head": "sirryl",
-  "input": "sirryl",
   "mean": "자치",
-  "n": 296,
+  "input": "sirryl",
   "note": "",
+  "n": 296,
+  "tags": [],
   "id": "w296"
  },
  {
   "head": "kasar-",
-  "input": "kasar-",
   "mean": "명령형",
-  "n": 297,
+  "input": "kasar-",
   "note": "",
+  "n": 297,
+  "tags": [],
   "id": "w297"
  },
  {
   "head": "sikla",
-  "input": "sikla",
   "mean": "엇갈리다",
-  "n": 298,
+  "input": "sikla",
   "note": "",
+  "n": 298,
+  "tags": [],
   "id": "w298"
  },
  {
   "head": "eiva",
-  "input": "eiva",
   "mean": "다음",
-  "n": 299,
+  "input": "eiva",
   "note": "",
+  "n": 299,
+  "tags": [],
   "id": "w299"
  },
  {
   "head": "ilo",
-  "input": "ilo",
   "mean": "이전",
-  "n": 300,
+  "input": "ilo",
   "note": "",
+  "n": 300,
+  "tags": [],
   "id": "w300"
  },
  {
   "head": "leiv(a)-",
-  "input": "leiva-",
   "mean": "에서, 부터",
-  "n": 301,
+  "input": "leiva-",
   "note": "",
+  "n": 301,
+  "tags": [],
   "id": "w301"
  },
  {
   "head": "lil(o)-",
-  "input": "lilo-",
   "mean": "까지",
-  "n": 302,
+  "input": "lilo-",
   "note": "",
+  "n": 302,
+  "tags": [],
   "id": "w302"
  },
  {
   "head": "aitai",
-  "input": "aitai",
   "mean": "괜찮다",
-  "n": 303,
+  "input": "aitai",
   "note": "",
+  "n": 303,
+  "tags": [],
   "id": "w303"
  },
  {
   "head": "ait(a)-",
-  "input": "aita-",
   "mean": "좋은-, 좋다-",
-  "n": 304,
+  "input": "aita-",
   "note": "",
+  "n": 304,
+  "tags": [],
   "id": "w304"
  },
  {
   "head": "iai",
-  "input": "iai",
   "mean": "흐름",
-  "n": 305,
+  "input": "iai",
   "note": "",
+  "n": 305,
+  "tags": [],
   "id": "w305"
  },
  {
   "head": "ti-",
-  "input": "ti-",
   "mean": "보문소 (that, 것)",
-  "n": 306,
+  "input": "ti-",
   "note": "",
+  "n": 306,
+  "tags": [],
   "id": "w306"
  },
  {
   "head": "aitiai",
-  "input": "aitiai",
   "mean": "번영",
-  "n": 307,
+  "input": "aitiai",
   "note": "",
+  "n": 307,
+  "tags": [],
   "id": "w307"
  },
  {
   "head": "vekla",
-  "input": "vekla",
   "mean": "의문사",
-  "n": 308,
+  "input": "vekla",
   "note": "",
+  "n": 308,
+  "tags": [],
   "id": "w308"
  },
  {
   "head": "pe-",
-  "input": "pe-",
   "mean": "반대/아닌",
-  "n": 309,
+  "input": "pe-",
   "note": "",
+  "n": 309,
+  "tags": [],
   "id": "w309"
  },
  {
   "head": "perekia",
-  "input": "perekia",
   "mean": "저주하다",
-  "n": 310,
+  "input": "perekia",
   "note": "",
   "tags": [],
+  "n": 310,
   "id": "w310"
  },
  {
   "head": "iprot",
-  "input": "@iprot",
   "mean": "가두다, 감옥",
-  "n": 311,
+  "input": "@iprot",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 311,
   "id": "w311"
  },
  {
   "head": "eskosia",
-  "input": "eskosia",
   "mean": "배고프다, 굶주리다",
-  "n": 312,
+  "input": "eskosia",
   "note": "",
+  "n": 312,
+  "tags": [],
   "id": "w312"
  },
  {
   "head": "tarpa",
-  "input": "tarpa",
   "mean": "이성, 앎, 지성, 똑똑함",
-  "n": 313,
+  "input": "tarpa",
   "note": "",
+  "n": 313,
+  "tags": [],
   "id": "w313"
  },
  {
   "head": "atapri",
-  "input": "@atapri",
   "mean": "덮다, 지우다, 쓸어버리다",
-  "n": 314,
+  "input": "@atapri",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 314,
   "id": "w314"
  },
  {
   "head": "atio",
-  "input": "@atio",
   "mean": "노예",
-  "n": 315,
+  "input": "@atio",
   "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 315,
   "id": "w315"
  },
  {
   "head": "astu",
-  "input": "@astu",
   "mean": "변화시키다, 바꾸다",
-  "n": 316,
+  "input": "@astu",
   "note": "",
   "tags": [
    "비음형 화석",
    "종결상 동사"
   ],
+  "n": 316,
   "id": "w316"
  },
  {
   "head": "tuclo",
-  "input": "tuclo",
   "mean": "토대, 기반",
-  "n": 317,
+  "input": "tuclo",
   "note": "",
+  "n": 317,
+  "tags": [],
   "id": "w317"
  },
  {
   "head": "liva",
-  "input": "liva",
   "mean": "인류",
-  "n": 318,
+  "input": "liva",
   "note": "대화에서 추가",
+  "n": 318,
+  "tags": [],
   "id": "w318"
  },
  {
   "head": "litau",
-  "input": "litau",
   "mean": "대지",
-  "n": 319,
+  "input": "litau",
   "note": "대화에서 추가",
+  "n": 319,
+  "tags": [],
   "id": "w319"
  },
  {
   "head": "esir-",
-  "input": "esir-",
   "mean": "재귀 표지",
-  "n": 320,
+  "input": "esir-",
   "note": "대화에서 추가",
+  "n": 320,
+  "tags": [],
   "id": "w320"
  },
  {
   "head": "kala",
-  "input": "kala",
   "mean": "신호, 부름",
-  "n": 321,
+  "input": "kala",
   "note": "인터내셔널가 번역 중 Claude가 만든 단어",
+  "n": 321,
+  "tags": [],
   "id": "w321"
  },
  {
   "head": "talekia",
-  "input": "talekia",
   "mean": "화산",
-  "n": 322,
+  "input": "talekia",
   "note": "인터내셔널가 번역 중 Claude가 만든 단어",
+  "n": 322,
+  "tags": [],
   "id": "w322"
  },
  {
   "head": "tapru",
-  "input": "tapru",
   "mean": "뿌리, 근본",
-  "n": 323,
+  "input": "tapru",
   "note": "인터내셔널가 번역 중 Claude가 만든 단어",
+  "n": 323,
+  "tags": [],
   "id": "w323"
  },
  {
   "head": "aitu",
-  "input": "aitu",
   "mean": "모서리",
-  "n": 324,
+  "input": "aitu",
   "note": "",
   "tags": [],
+  "n": 324,
   "id": "w324"
  },
  {
   "head": "aitu+vu",
-  "input": "aitu~vu",
   "mean": "사각형",
-  "n": 325,
+  "input": "aitu~vu",
   "note": "고대 소유 복합어 '모서리 넷'이 융합",
   "tags": [],
+  "n": 325,
   "id": "w325"
  },
  {
   "head": "aitu+ci",
-  "input": "aitu~ci",
   "mean": "삼각형",
-  "n": 326,
+  "input": "aitu~ci",
   "note": "고대 소유 복합어 '모서리 셋'이 융합",
   "tags": [],
+  "n": 326,
   "id": "w326"
  },
  {
   "head": "kala a-ia",
-  "input": "kala a^@ia",
   "mean": "종교 상징물",
-  "n": 327,
+  "input": "kala a^@ia",
   "note": "kala le-@ia(신의 징조, 계시)와 구별",
   "tags": [],
+  "n": 327,
   "id": "w327"
  },
  {
   "head": "ukla",
-  "input": "ukla",
   "mean": "가다 (현재형)",
-  "n": 328,
+  "input": "ukla",
   "note": "과거형은 비음형 @ukla",
   "tags": [
    "현재형"
   ],
+  "n": 328,
   "id": "w328"
  },
  {
   "head": "tekla",
-  "input": "tekla",
   "mean": "오다 (현재형)",
-  "n": 329,
+  "input": "tekla",
   "note": "과거형은 비음형 @tekla",
   "tags": [
    "현재형"
   ],
+  "n": 329,
   "id": "w329"
  },
  {
   "head": "arta",
-  "input": "arta",
   "mean": "오다 (현재형)",
-  "n": 330,
+  "input": "arta",
   "note": "과거형은 비음형 @arta",
   "tags": [
    "현재형"
   ],
+  "n": 330,
   "id": "w330"
  },
  {
   "head": "il",
-  "input": "il",
   "mean": "발",
-  "n": 331,
+  "input": "il",
   "note": "",
   "tags": [],
+  "n": 331,
   "id": "w331"
  },
  {
   "head": "islas",
-  "input": "islas",
   "mean": "보라색, 보랏빛",
-  "n": 332,
+  "input": "islas",
   "note": "",
   "tags": [],
+  "n": 332,
   "id": "w332"
  },
  {
   "head": "va-",
-  "input": "va-",
   "mean": "~인, ~에 속한 사람 (민족·지역·집단·성품, 모음 앞 v')",
-  "n": 333,
+  "input": "va-",
   "note": "va a- 구가 접두사로 굳음. 행위자 ak-, 계급 asur(a)-와 구별",
   "tags": [],
+  "n": 333,
   "id": "w333"
  },
  {
   "head": "asur(a)-",
-  "input": "asura-",
   "mean": "~민, ~계급의 사람 (신분·계급명). 보통 asur-, 허용되지 않는 자음군이 생길 때만 asura-",
-  "n": 334,
+  "input": "asura-",
   "note": "asure(종)의 변형. 같은 종소리에 모이는 사람들 → 공동체·신분 집단. 신분·계급명에만 쓰고 민족·지역명에는 va-",
   "tags": [],
+  "n": 334,
   "id": "w334"
  },
  {
   "head": "las",
-  "input": "las",
   "mean": "먹이",
-  "n": 335,
+  "input": "las",
   "note": "e-las 먹이터",
   "tags": [],
+  "n": 335,
   "id": "w335"
  },
  {
   "head": "ratta",
-  "input": "ratta",
   "mean": "멍에",
-  "n": 336,
+  "input": "ratta",
   "note": "",
   "tags": [],
+  "n": 336,
   "id": "w336"
  },
  {
   "head": "el-",
-  "input": "el-",
   "mean": "~주의 (접두사)",
-  "n": 337,
+  "input": "el-",
   "note": "대부분 후대 합성어로 붙음(el·어근). 이니셜은 접두사가 아닌 어근의 첫 글자. 단 부정 pe-는 P로 남김",
   "tags": [],
+  "n": 337,
   "id": "w337"
  },
  {
   "head": "leppe",
-  "input": "leppe",
   "mean": "정합",
-  "n": 338,
+  "input": "leppe",
   "note": "el·leppe 정합주의",
   "tags": [],
+  "n": 338,
   "id": "w338"
  },
  {
   "head": "cateska",
-  "input": "cateska",
   "mean": "품을 팔다, 삯일하다",
-  "n": 339,
+  "input": "cateska",
   "note": "일반적인 '일하다'는 atar. 무산자 Asura cateska p'etako eko-asiel(A.S.P.E.)",
   "tags": [],
+  "n": 339,
   "id": "w339"
  },
  {
   "head": "Ekete Aske a Esir·kyrlevre a Akatar, Liska a-Eklaia",
-  "input": "ekete aske a esir·kyrlevre a @ak|atar, liska a^eklaia",
   "mean": "국제 노동자 상호원조 기구 에클레아 지부 (ÉACALÊ)",
-  "n": 340,
+  "input": "ekete aske a esir·kyrlevre a @ak|atar, liska a^eklaia",
   "note": "약칭 ÉACALÉ [eaˈkale] 에아칼레(이전 ÉACALÊ). 근대 명칭이라 연관 속격 a는 접어로 따로 씀. 약칭은 원래 단어의 악센트를 살려 적음",
   "tags": [
    "정당"
   ],
+  "n": 340,
   "id": "w340"
  },
  {
   "head": "Vau a-Eklaia l'Asura Cateska P'etako Eko·asiel El·leppe",
-  "input": "vau a^eklaia l'asura cateska p'etako eko·asiel el·leppe",
   "mean": "에클레아 무산자 정합주의당 (VÊASPAL)",
-  "n": 341,
+  "input": "vau a^eklaia l'asura cateska p'etako eko·asiel el·leppe",
   "note": "약칭 VÉASPAL [veˈaspal] 베아스팔(이전 VÊASPAL), 산 이름 Véaspal과 같음. ÉACALÉ 소속. 약칭은 원래 단어의 악센트를 살려 적음",
   "tags": [
    "정당"
   ],
+  "n": 341,
   "id": "w341"
  },
  {
   "head": "Vau Irkua El·leppe",
-  "input": "vau @irkua el·leppe",
   "mean": "통일 정합주의당 (VIL)",
-  "n": 342,
+  "input": "vau @irkua el·leppe",
   "note": "약칭 VIL [vil] 빌. ÉACALÊ 소속",
   "tags": [
    "정당"
   ],
+  "n": 342,
   "id": "w342"
  },
  {
   "head": "Pairkua a Arata El·leppe",
-  "input": "pairkua a arata el·leppe",
   "mean": "국민 정합주의 연맹 (PAL)",
-  "n": 344,
+  "input": "pairkua a arata el·leppe",
   "note": "약칭 PAL [pal] 팔. ÉACALÊ 소속. 근대 명칭이라 연관 속격 a는 따로 씀. 이전: akla(사어)",
   "tags": [
    "정당"
   ],
+  "n": 344,
   "id": "w344"
  },
  {
   "head": "aspal",
-  "input": "aspal",
   "mean": "(B 기원) 산의 옛 이름, 원뜻 불명",
-  "n": 346,
+  "input": "aspal",
   "note": "에클라이아어 이전 원주민어 B의 지명. 에클레아어 단계에서 존칭 ve를 붙여 Ve·aspal로 부름 (이전: 에클라이아어 단계 Ve-a-aspal. 이전 안 aspai, aspaa, aspar)",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 346,
   "id": "w346"
  },
  {
   "head": "Ve·aspal",
-  "input": "ve·aspal",
   "mean": "산 이름 (눈 덮인 아스파이 산)",
-  "n": 347,
+  "input": "ve·aspal",
   "note": "Véaspal [veˈaspal] 베아스팔. 에클레아어 단계 합성어(존칭 ve + aspal). 에클레아 무산자당 약칭 VÉASPAL과 같은 형태 (이전: ve-a-aspal, Vêaspal)",
   "tags": [
    "지명"
   ],
+  "n": 347,
   "id": "w347"
  },
  {
   "head": "liska",
-  "input": "liska",
   "mean": "지부, 분파",
-  "n": 348,
+  "input": "liska",
   "note": "Lisque [lisk] 리스크",
   "tags": [],
+  "n": 348,
   "id": "w348"
  },
  {
   "head": "iversa",
-  "input": "iversa",
   "mean": "뒤엎다, 혁명",
-  "n": 349,
+  "input": "iversa",
   "note": "Ivèrche [iˈveʁʃ] 이베르슈. '뒤엎다'가 근대에 '혁명'으로 확대. 형용사형 a Ivèrche",
   "tags": [],
+  "n": 349,
   "id": "w349"
  },
  {
   "head": "Arte a Iversa El·leppe",
-  "input": "arte a iversa el·leppe",
   "mean": "혁명적 정합주의 위원회 (AIL)",
-  "n": 350,
+  "input": "arte a iversa el·leppe",
   "note": "약칭 AIL [ail] 아일. ÉACALÊ 소속",
   "tags": [
    "정당"
   ],
+  "n": 350,
   "id": "w350"
  },
  {
   "head": "seprua",
-  "input": "seprua",
   "mean": "목소리",
-  "n": 351,
+  "input": "seprua",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 351,
   "id": "w351"
  },
  {
   "head": "kate",
-  "input": "kate",
   "mean": "잃다",
-  "n": 352,
+  "input": "kate",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 352,
   "id": "w352"
  },
  {
   "head": "ispika",
-  "input": "ispika",
   "mean": "꿈꾸다",
-  "n": 353,
+  "input": "ispika",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 353,
   "id": "w353"
  },
  {
   "head": "soiva",
-  "input": "soiva",
   "mean": "견디다, 참다",
-  "n": 354,
+  "input": "soiva",
   "note": "대화에서 추가. 불관용은 pe-soiva",
   "tags": [],
+  "n": 354,
   "id": "w354"
  },
  {
   "head": "arota",
-  "input": "arota",
   "mean": "잊다",
-  "n": 355,
+  "input": "arota",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 355,
   "id": "w355"
  },
  {
   "head": "ascoa",
-  "input": "ascoa",
   "mean": "마음",
-  "n": 356,
+  "input": "ascoa",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 356,
   "id": "w356"
  },
  {
   "head": "ikia",
-  "input": "ikia",
   "mean": "두렵다",
-  "n": 357,
+  "input": "ikia",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 357,
   "id": "w357"
  },
  {
   "head": "tetaloi",
-  "input": "tetaloi",
   "mean": "머뭇거리다",
-  "n": 358,
+  "input": "tetaloi",
   "note": "제망매가 번역에서 추가. 첫 음절 반복(te-ta)",
   "tags": [],
+  "n": 358,
   "id": "w358"
  },
  {
   "head": "tosi",
-  "input": "@tosi",
   "mean": "누이",
-  "n": 359,
+  "input": "@tosi",
   "note": "제망매가 번역에서 추가. 친족어라 비음형 화석",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 359,
   "id": "w359"
  },
  {
   "head": "veila",
-  "input": "veila",
   "mean": "잎",
-  "n": 360,
+  "input": "veila",
   "note": "제망매가 번역에서 추가",
   "tags": [],
+  "n": 360,
   "id": "w360"
  },
  {
   "head": "kepla",
-  "input": "kepla",
   "mean": "떨어지다 (낙하)",
-  "n": 361,
+  "input": "kepla",
   "note": "제망매가 번역에서 추가. @siku(미끄러지다)와 구별",
   "tags": [],
+  "n": 361,
   "id": "w361"
  },
  {
   "head": "ruva",
-  "input": "ruva",
   "mean": "바람",
-  "n": 362,
+  "input": "ruva",
   "note": "제망매가 번역에서 추가. acura(폭풍)와 구별되는 일반적인 바람",
   "tags": [],
+  "n": 362,
   "id": "w362"
  },
  {
   "head": "etli",
-  "input": "etli",
   "mean": "이르다 (早)",
-  "n": 363,
+  "input": "etli",
   "note": "제망매가 번역에서 추가. etlika(새벽)에서 역형성",
   "tags": [],
+  "n": 363,
   "id": "w363"
  },
  {
   "head": "rel",
-  "input": "rel",
   "mean": "가을",
-  "n": 364,
+  "input": "rel",
   "note": "제망매가 번역에서 추가",
   "tags": [],
+  "n": 364,
   "id": "w364"
  },
  {
   "head": "air-",
-  "input": "air-",
   "mean": "~처럼, ~같이",
-  "n": 365,
+  "input": "air-",
   "note": "제망매가 번역에서 추가. air(모양)에서 문법화",
   "tags": [],
+  "n": 365,
   "id": "w365"
  },
  {
   "head": "kir",
-  "input": "kir",
   "mean": "만나다",
-  "n": 366,
+  "input": "kir",
   "note": "제망매가 번역에서 추가",
   "tags": [],
+  "n": 366,
   "id": "w366"
  },
  {
   "head": "tesva",
-  "input": "tesva",
   "mean": "기다리다",
-  "n": 367,
+  "input": "tesva",
   "note": "제망매가 번역에서 추가",
   "tags": [],
+  "n": 367,
   "id": "w367"
  },
  {
   "head": "purarte",
-  "input": "purarte",
   "mean": "내세, 저승",
-  "n": 368,
+  "input": "purarte",
   "note": "제망매가 번역에서 추가. pur(저)+arte(모임) '저편의 모임'이 어휘화된 계승어",
   "tags": [],
+  "n": 368,
   "id": "w368"
  },
  {
   "head": "pasva",
-  "input": "pasva",
   "mean": "고통",
-  "n": 369,
+  "input": "pasva",
   "note": "대화에서 추가",
   "tags": [],
+  "n": 369,
   "id": "w369"
  },
  {
-  "head": "laspe~areta",
-  "input": "@laspe~areta",
+  "head": "laete~areta",
   "mean": "산파",
-  "n": 370,
+  "input": "@laete~areta",
   "note": "에클라이아어 단계 합성어. 여성+일으키다 '일으키는 여인'. Hebamme(heben), levatrice와 같은 발상. 이전 안 laspe~loi(산모로 읽힘), aisa~laspe(비모음+l) 폐기",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 370,
   "id": "w370"
  },
  {
   "head": "apre~la",
-  "input": "apre~la",
   "mean": "역사",
-  "n": 371,
+  "input": "apre~la",
   "note": "에클라이아어 단계 합성어. 앞(옛)+말 '옛이야기'에서 서술된 과거, 과거의 흐름으로 확대 (histoire와 같은 경로)",
   "tags": [],
+  "n": 371,
   "id": "w371"
  },
  {
   "head": "pa~islepol",
-  "input": "p'islepol",
   "mean": "힘, 강제, 폭력 (Gewalt)",
-  "n": 372,
+  "input": "p'islepol",
   "note": "에클라이아어 단계 합성어. 명사화 pa- + islepol(강제하다), 모음 앞 축약으로 p'",
   "tags": [],
+  "n": 372,
   "id": "w372"
  },
  {
   "head": "ace",
-  "input": "ace",
   "mean": "윙윙거리다, 웅웅대다 (날벌레 소리)",
-  "n": 373,
-  "note": "의성어 어근. 박쥐와 비슷한 생물 ace~ka의 앞 요소",
+  "input": "ace",
+  "note": "의성어 어근. 파리 ace~ka의 앞 요소",
   "tags": [],
+  "n": 373,
   "id": "w373"
  },
  {
   "head": "orta-opia",
-  "input": "ort'·@opia",
   "mean": "2인칭 복수 (에클레아어 자유 대명사)",
-  "n": 374,
+  "input": "ort'·@opia",
   "note": "에클레아어 단계 합성어. orta-(모든)+ogne(2단) '너희 모두'. 기존 2복 자유 대명사 dagne(@tepia)가 개(@caso)와 동음이 되어 생김",
   "tags": [
    "자유 대명사",
    "후대 합성어"
   ],
+  "n": 374,
   "id": "w374"
  },
  {
   "head": "arata",
-  "input": "arata",
   "mean": "국가",
-  "n": 375,
+  "input": "arata",
   "note": "사어가 된 akla를 대신함",
   "tags": [],
+  "n": 375,
   "id": "w375"
  },
  {
   "head": "akkala~puro",
-  "input": "akkala~puro",
   "mean": "왕국 1 (Kla의 계곡)",
-  "n": 376,
+  "input": "akkala~puro",
   "note": "B at-kla pɯro (속격-강 Kla 계곡). A에서 tk를 kk로 동화, kl 사이 모음 삽입. Accalapre",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 376,
   "id": "w376"
  },
  {
   "head": "urtei~sa",
-  "input": "urtei~sa",
   "mean": "왕국 2 (해협의 남쪽, 초기 상륙지)",
-  "n": 377,
+  "input": "urtei~sa",
   "note": "B t-rɯ ei ʃa (속격-좋은 습기 남쪽). B 내부: 첫 모음 복사 ɯt-, 유음 도치 tr→rt, 약모음 ɯ 모음 앞 탈락 → ɯrtei ʃa. Eurtêge",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 377,
   "id": "w377"
  },
  {
   "head": "iro~sepi",
-  "input": "iro~sepi",
   "mean": "왕국 3 (서쪽 + 민족 A)",
-  "n": 378,
+  "input": "iro~sepi",
   "note": "B iro ʃemi (서쪽 + '좁다'에서 온 민족명). 장소 부류라 비음 없음. Irchépi",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 378,
   "id": "w378"
  },
  {
   "head": "sora~so",
-  "input": "sora~so",
   "mean": "왕국 4 (동쪽 + 민족 B)",
-  "n": 379,
+  "input": "sora~so",
   "note": "B ʃora ʃo (동쪽 + '단검'에서 온 민족명). 장소 부류라 비음 없음. Chorage",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 379,
   "id": "w379"
  },
  {
   "head": "orail",
-  "input": "orail",
   "mean": "왕국 5 (경계의 땅)",
-  "n": 380,
+  "input": "orail",
   "note": "B orail (경계). 장소 부류라 사람 표지 *N-·집합 -n이 붙지 않음. 민족명은 @orailit. Orêl",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 380,
   "id": "w380"
  },
  {
   "head": "eppelot",
-  "input": "eppelot",
   "mean": "왕국 6 (숲의 부대)",
-  "n": 381,
+  "input": "eppelot",
   "note": "B et-pelo-n (속격-숲-부대). -n은 '쫓다'에서 문법화한 부대 접미사라 땅 이름에도 남음. A에서 tp를 pp로 동화. Éppélot",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 381,
   "id": "w381"
  },
  {
   "head": "sepi",
-  "input": "@sepi",
   "mean": "민족 A (좁은 사람들)",
-  "n": 382,
-  "note": "B N-ʃemi. 유생 부류라 비음형 화석. Démi (이전 Dambi)",
+  "input": "@sepi",
+  "note": "B N-ʃemi. 유생 부류라 비음형 화석. Dambi",
   "tags": [
    "B 기원",
    "민족명",
    "비음형 화석"
   ],
+  "n": 382,
   "id": "w382"
  },
  {
   "head": "so",
-  "input": "@so",
   "mean": "민족 B (단검의 사람들)",
-  "n": 383,
+  "input": "@so",
   "note": "B N-ʃo. 유생 부류라 비음형 화석. Don",
   "tags": [
    "B 기원",
    "민족명",
    "비음형 화석"
   ],
+  "n": 383,
   "id": "w383"
  },
  {
   "head": "orailit",
-  "input": "@orailit",
   "mean": "경계 민족",
-  "n": 384,
+  "input": "@orailit",
   "note": "B N-orail-n (사람-경계-집합). A에서 어말 자음군 lt 사이에 앞 모음 복사. Orêlind",
   "tags": [
    "B 기원",
    "민족명",
    "비음형 화석"
   ],
+  "n": 384,
   "id": "w384"
  },
  {
   "head": "rei",
-  "input": "rei",
   "mean": "해협 이름 (좋은 습기)",
-  "n": 385,
+  "input": "rei",
   "note": "B rɯ ei. 약모음 ɯ가 모음 앞에서 탈락. Rê",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 385,
   "id": "w385"
  },
  {
   "head": "pelo",
-  "input": "pelo",
   "mean": "숲 이름 (왕국 6의 숲)",
-  "n": 386,
+  "input": "pelo",
   "note": "B pelo (숲). Pèle",
   "tags": [
    "B 기원",
    "지명"
   ],
+  "n": 386,
   "id": "w386"
  },
  {
   "head": "atrepor",
-  "input": "@atrepor",
   "mean": "동굴에 사는 흔한 동물",
-  "n": 387,
+  "input": "@atrepor",
   "note": "마태 8:20 번역에서 추가(여우 자리). 동물이라 비음형 화석",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 387,
   "id": "w387"
  },
  {
   "head": "ailicis",
-  "input": "ailicis",
   "mean": "동굴, (짐승의) 굴",
-  "n": 388,
+  "input": "ailicis",
   "note": "마태 8:20 번역에서 추가",
   "tags": [],
+  "n": 388,
   "id": "w388"
  },
  {
   "head": "cipe",
-  "input": "cipe",
   "mean": "둥지",
-  "n": 389,
+  "input": "cipe",
   "note": "마태 8:20 번역에서 추가",
   "tags": [],
+  "n": 389,
   "id": "w389"
  },
  {
-  "head": "lere",
-  "input": "@lere",
+  "head": "kat",
   "mean": "아들",
-  "n": 390,
-  "note": "친족어라 비음형 화석. '인간의 아들'은 합성어가 아닌 구 @lere a-liva",
+  "input": "@kat",
+  "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 390,
   "id": "w390"
  },
  {
-  "head": "rate",
-  "input": "@rate",
+  "head": "kici",
   "mean": "딸",
-  "n": 391,
-  "note": "친족어라 비음형 화석",
+  "input": "@kici",
+  "note": "",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 391,
   "id": "w391"
  },
  {
   "head": "iai",
-  "input": "iai",
   "mean": "하늘",
-  "n": 392,
+  "input": "iai",
   "note": "Yê [je]. 숫자 ie(5) Yé [je]와 동음, 철자로만 구별",
   "tags": [],
+  "n": 392,
   "id": "w392"
  },
  {
   "head": "attu",
-  "input": "attu",
   "mean": "두다",
-  "n": 393,
+  "input": "attu",
   "note": "",
   "tags": [],
+  "n": 393,
   "id": "w393"
  },
  {
   "head": "oskia",
-  "input": "oskia",
   "mean": "눕히다",
-  "n": 394,
+  "input": "oskia",
   "note": "머리를 누이다(쉬다)에도 씀",
   "tags": [],
+  "n": 394,
   "id": "w394"
  },
  {
   "head": "sir^",
-  "input": "sir",
   "mean": "관계절 표지 (명사 뒤, 관계절 앞)",
-  "n": 395,
+  "input": "sir",
   "note": "지시사 sir의 접어형, 구강형 Chir [ʃiʁ]. 입력은 sir^. 절대격 논항(자동사 주어, 타동사 목적어)만 바로 관계화하고 능격 논항은 반피동 asti-를 거침. 빠진 자리는 비워 둠",
   "tags": [],
+  "n": 395,
   "id": "w395"
  },
  {
   "head": "risau",
-  "input": "risau",
   "mean": "투쟁",
-  "n": 396,
+  "input": "risau",
   "note": "인터내셔널가 번역에서 추가. etlir(전쟁)와 구별",
   "tags": [],
+  "n": 396,
   "id": "w396"
  },
  {
   "head": "tas",
-  "input": "tas",
   "mean": "끝",
-  "n": 397,
+  "input": "tas",
   "note": "인터내셔널가 번역에서 추가. tas(먹다)와 동음이의어(원가사 faim/fin과 같은 관계)",
   "tags": [],
+  "n": 397,
   "id": "w397"
  },
  {
   "head": "kiset",
-  "input": "@kiset",
   "mean": "B 민족 전체 (에냥어 자칭 N-kiʃe-n '말하는 사람들'의 차용)",
-  "n": 398,
+  "input": "@kiset",
   "note": "Ègnand [ˈeɲɑ̃] 에냥. B 원형 N-kiʃe-n [kĩʃẽn], 학술 명칭 N-kiʃe-n어. B 어근 kiʃe '말하다'는 B·F 공통 조상에서 물려받은 말이고, 이를 민족 자칭으로 쓴 것은 정복 뒤 Irchépi 시기 B의 혁신(F에는 대응하는 민족명 없음). 어두 k는 비음형에서 ŋ이 되어 탈락, ʃ는 gn. 언어명 Lévèle l'Ègnand(에클레아어 단계에서 만든 구라 속격이 모음 앞에서 축약, 입력 le-·@Kiset). @etlesta Ègnânde [eˈɲɑ̃d]와 강세·잠재 자음으로 구별",
   "tags": [
    "B 기원",
    "민족명",
    "비음형 화석"
   ],
+  "n": 398,
   "id": "w398"
  },
  {
-  "head": "powəxa",
-  "input": "%powəxa",
+  "head": "povara",
   "mean": "F 민족 (포브르어 자칭 pʰowəχa의 차용)",
-  "n": 399,
+  "input": "%powəxa",
   "note": "Fovre [fovʁ] 포브르. F 원형 pʰowəχa, 어근 뜻 미정. 경로 pʰowəχa → fowəʁ → fowʁ → fovʁ(pʰ→f, χ→ʁ, 어말 a 탈락, ʁ 앞 ə 탈락, 중세 w→v). 언어명 Lévèle lé-Fovre(에클레아어 단계에서 만든 구, 입력 le-·%Powəxa). 에클라이아 F 화자는 난민 국가 집단과 약 130km 떨어진 지역 출신으로, pʰ→f 개신의 주변부([pʰ~ɸ] 변이)라 A 화자가 f로 받아들임. 가장 큰 난민 집단이 세운 국가의 방언 자칭은 Vischwa [ˈviʃwa]: 출신 지역 단계 pʰ→f·ə 탈락(fowχa) → 정착 후 약 300년 동안 wχ→χw 음위전환, 어두 f→v, o→u→y, y 뒤 χ→ç, y→i, ç→ʃ",
   "tags": [
    "F 기원",
    "민족명"
   ],
+  "n": 399,
   "id": "w399"
  },
  {
   "head": "eril",
-  "input": "eril",
   "mean": "여행",
-  "n": 400,
+  "input": "eril",
   "note": "Éril [ˈeʁil]. 역사가 Érquepêril Urre Calêl Calêllurre의 이름 요소(erkupe~eril)",
   "tags": [],
+  "n": 400,
   "id": "w400"
  },
  {
   "head": "yrra",
-  "input": "yrra",
   "mean": "으르렁거리다",
-  "n": 401,
+  "input": "yrra",
   "note": "Urre [yʁʁ]. 굴리는 r을 겹친 의성어 어근. 역사가 Érquepêril의 부성",
   "tags": [],
+  "n": 401,
   "id": "w401"
  },
  {
   "head": "ka~lael",
-  "input": "@ka~lael",
   "mean": "수리, 매",
-  "n": 402,
+  "input": "@ka~lael",
   "note": "Alêl [aˈlel]. ka(날짐승) + lael(큰). 인명 요소로는 고유명사라 구강형 Calêl [kaˈlel](역사가 Érquepêril의 모성)",
   "tags": [
    "비음형 화석",
    "생물"
   ],
+  "n": 402,
   "id": "w402"
  },
  {
-  "head": "ekovese",
-  "input": "&ekovese",
-  "mean": "이어폰 (기계)",
-  "n": 403,
-  "note": "근대에 &ekolko(전뇌)처럼 옛 형태로 새로 지은 말. 마법 듣개 eko~vese(Écvège)와 구별",
+  "head": "pomer",
+  "mean": "치료하다",
+  "input": "%pomer",
+  "note": "",
   "tags": [
-   "학술 차용어"
+   "F 기원"
   ],
-  "id": "w403"
+  "n": 403,
+  "id": "wmvw9cm79o2qg"
+ },
+ {
+  "head": "mixko",
+  "mean": "성교하다",
+  "input": "%mixko",
+  "note": "원형 miχkʰo",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 404,
+  "id": "wmvw9cme7bgko"
+ },
+ {
+  "head": "belih",
+  "mean": "피곤하다",
+  "input": "%belih",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 405,
+  "id": "wmvw9cmja9e0i"
+ },
+ {
+  "head": "muƀex",
+  "mean": "거울",
+  "input": "%muƀex",
+  "note": "원형 muᵐbeχ",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 406,
+  "id": "wmvw9cmnxuzpe"
+ },
+ {
+  "head": "kxim",
+  "mean": "소유하다",
+  "input": "%kxim",
+  "note": "원형 kʰχim",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 407,
+  "id": "wmvw9cmsj2npu"
+ },
+ {
+  "head": "lukubre",
+  "mean": "성냥",
+  "input": "%lukubre",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 408,
+  "id": "wmvw9cmxnpvzi"
+ },
+ {
+  "head": "xomaxsu",
+  "mean": "곳간",
+  "input": "%xomaxsu",
+  "note": "원형 χomaχsu",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 409,
+  "id": "wmvw9cn2qcorc"
+ },
+ {
+  "head": "olma",
+  "mean": "값",
+  "input": "%olma",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 410,
+  "id": "wmvw9cn8a09iw"
+ },
+ {
+  "head": "xenim",
+  "mean": "불씨",
+  "input": "%xenim",
+  "note": "원형 χenim",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 411,
+  "id": "wmvw9cnddiok8"
+ },
+ {
+  "head": "txibun",
+  "mean": "귀찮게 하다",
+  "input": "%txibun",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 412,
+  "id": "wmvw9cnihvozs"
+ },
+ {
+  "head": "moba",
+  "mean": "살",
+  "input": "%moba",
+  "note": "원형 moba",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 413,
+  "id": "wmvw9cno1xvf1"
+ },
+ {
+  "head": "askek",
+  "mean": "깨다 (그릇을)",
+  "input": "%askek",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 414,
+  "id": "wmvw9h19ay7ui"
+ },
+ {
+  "head": "mə",
+  "mean": "빵",
+  "input": "%mə",
+  "note": "원형 mə",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 415,
+  "id": "wmvw9h1fbrw6p"
+ },
+ {
+  "head": "jura",
+  "mean": "흔들거리다",
+  "input": "%jura",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 416,
+  "id": "wmvw9h1keeufi"
+ },
+ {
+  "head": "laskom",
+  "mean": "끼니",
+  "input": "%laskom",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 417,
+  "id": "wmvwa7e2gmuks"
+ },
+ {
+  "head": "embela",
+  "mean": "맵다",
+  "input": "%embela",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 418,
+  "id": "wmvwa7e9eew2x"
+ },
+ {
+  "head": "glađama",
+  "mean": "껍데기",
+  "input": "%glađama",
+  "note": "원형 glaⁿdama",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 419,
+  "id": "wmvwa7eehvw92"
+ },
+ {
+  "head": "plait",
+  "mean": "그녀",
+  "input": "%plait",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 420,
+  "id": "wmvwa7ejlt4cv"
+ },
+ {
+  "head": "dilkəmi",
+  "mean": "기름",
+  "input": "%dilkəmi",
+  "note": "원형 dilkʰəmi",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 421,
+  "id": "wmvwa7ep53syp"
+ },
+ {
+  "head": "puxe",
+  "mean": "털가죽",
+  "input": "%puxe",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 422,
+  "id": "wmvwa7eup4wrf"
+ },
+ {
+  "head": "poho",
+  "mean": "껍질 (열매)",
+  "input": "%poho",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 423,
+  "id": "wmvwa7ezs2n13"
+ },
+ {
+  "head": "nelmo",
+  "mean": "찌르다",
+  "input": "%nelmo",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 424,
+  "id": "wmvwa7f5c59hv"
+ },
+ {
+  "head": "ahino",
+  "mean": "행복하다",
+  "input": "%ahino",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 425,
+  "id": "wmvwa7fawxd3r"
+ },
+ {
+  "head": "pxəme",
+  "mean": "피리",
+  "input": "%pxəme",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 426,
+  "id": "wmvwa7fgg66sn"
+ },
+ {
+  "head": "moxkolto",
+  "mean": "돛대",
+  "input": "%moxkolto",
+  "note": "원형 moχkʰoltʰo",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 427,
+  "id": "wmvwa7fm02is2"
+ },
+ {
+  "head": "madu",
+  "mean": "밑바닥",
+  "input": "%madu",
+  "note": "원형 madu",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 428,
+  "id": "wmvwa7frkxgnd"
+ },
+ {
+  "head": "dom",
+  "mean": "눈썹",
+  "input": "%dom",
+  "note": "원형 dom",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 429,
+  "id": "wmvwa7fx4wpef"
+ },
+ {
+  "head": "məxu",
+  "mean": "황무지",
+  "input": "%məxu",
+  "note": "원형 məχu",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 430,
+  "id": "wmvwa7g2okia0"
+ },
+ {
+  "head": "boaa",
+  "mean": "이불",
+  "input": "%boaa",
+  "note": "",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 431,
+  "id": "wmvwa7g887bzd"
+ },
+ {
+  "head": "akri",
+  "mean": "길다",
+  "input": "akri",
+  "note": "",
+  "tags": [],
+  "n": 432,
+  "id": "wmvwb6v9muvub"
+ },
+ {
+  "head": "ketup",
+  "mean": "연기",
+  "input": "ketup",
+  "note": "",
+  "tags": [],
+  "n": 433,
+  "id": "wmvwb6vh0mynx"
+ },
+ {
+  "head": "aisor",
+  "mean": "무겁다",
+  "input": "aisor",
+  "note": "",
+  "tags": [],
+  "n": 434,
+  "id": "wmvwb6vm4e9be"
+ },
+ {
+  "head": "tipa",
+  "mean": "물다 (이로)",
+  "input": "tipa",
+  "note": "",
+  "tags": [],
+  "n": 435,
+  "id": "wmvwb6vr72kyv"
+ },
+ {
+  "head": "loke",
+  "mean": "단단하다",
+  "input": "loke",
+  "note": "",
+  "tags": [],
+  "n": 436,
+  "id": "wmvwb6vwa1kmm"
+ },
+ {
+  "head": "luklo",
+  "mean": "배꼽",
+  "input": "luklo",
+  "note": "",
+  "tags": [],
+  "n": 437,
+  "id": "wmvwb6w1uymqx"
+ },
+ {
+  "head": "saklep",
+  "mean": "빨다 (입으로)",
+  "input": "saklep",
+  "note": "",
+  "tags": [],
+  "n": 438,
+  "id": "wmvwb6w6yda6p"
+ },
+ {
+  "head": "aplas",
+  "mean": "뿔",
+  "input": "aplas",
+  "note": "",
+  "tags": [],
+  "n": 439,
+  "id": "wmvwb6wcil8zb"
+ },
+ {
+  "head": "saipaka",
+  "mean": "허벅지",
+  "input": "saipaka",
+  "note": "",
+  "tags": [],
+  "n": 440,
+  "id": "wmvwb6wi2v3j5"
+ },
+ {
+  "head": "ketira",
+  "mean": "달리다",
+  "input": "ketira",
+  "note": "",
+  "tags": [],
+  "n": 441,
+  "id": "wmvwb6wn51xnt"
+ },
+ {
+  "head": "sotare",
+  "mean": "어제",
+  "input": "sotare",
+  "note": "",
+  "tags": [],
+  "n": 442,
+  "id": "wmvwb6wspl6yy"
+ },
+ {
+  "head": "utra",
+  "mean": "나르다",
+  "input": "utra",
+  "note": "",
+  "tags": [],
+  "n": 443,
+  "id": "wmvwb6wxssc53"
+ },
+ {
+  "head": "atteuro",
+  "mean": "울다",
+  "input": "atteuro",
+  "note": "",
+  "tags": [],
+  "n": 444,
+  "id": "wmvwb6x3cc0ux"
+ },
+ {
+  "head": "tispi",
+  "mean": "주다",
+  "input": "tispi",
+  "note": "",
+  "tags": [],
+  "n": 445,
+  "id": "wmvwb6x9djhwe"
+ },
+ {
+  "head": "ulko",
+  "mean": "마시다",
+  "input": "ulko",
+  "note": "",
+  "tags": [],
+  "n": 446,
+  "id": "wmvwb6xexfths"
+ },
+ {
+  "head": "vallor",
+  "mean": "살·고기",
+  "input": "vallor",
+  "note": "",
+  "tags": [],
+  "n": 447,
+  "id": "wmvwb6xkhe236"
+ },
+ {
+  "head": "tukko",
+  "mean": "누구",
+  "input": "tukko",
+  "note": "",
+  "tags": [],
+  "n": 448,
+  "id": "wmvwb6xqi08bh"
+ },
+ {
+  "head": "aca",
+  "mean": "소금",
+  "input": "aca",
+  "note": "",
+  "tags": [],
+  "n": 449,
+  "id": "wmvwb6xw2qwhj"
+ },
+ {
+  "head": "tospaka",
+  "mean": "무릎",
+  "input": "tospaka",
+  "note": "",
+  "tags": [],
+  "n": 450,
+  "id": "wmvwb6y1m9m0y"
+ },
+ {
+  "head": "ko",
+  "mean": "무엇",
+  "input": "ko",
+  "note": "",
+  "tags": [],
+  "n": 451,
+  "id": "wmvwb6y7mcjrp"
+ },
+ {
+  "head": "tapa",
+  "mean": "젖가슴",
+  "input": "tapa",
+  "note": "",
+  "tags": [],
+  "n": 452,
+  "id": "wmvwb6yd6dv5l"
+ },
+ {
+  "head": "putte",
+  "mean": "불다 (바람이)",
+  "input": "putte",
+  "note": "",
+  "tags": [],
+  "n": 453,
+  "id": "wmvwbmd69nlny"
+ },
+ {
+  "head": "tasa",
+  "mean": "쓰다 (맛)",
+  "input": "tasa",
+  "note": "",
+  "tags": [],
+  "n": 454,
+  "id": "wmvwbmdcais7s"
+ },
+ {
+  "head": "paku",
+  "mean": "두껍다",
+  "input": "paku",
+  "note": "",
+  "tags": [],
+  "n": 455,
+  "id": "wmvwc0rpsj92p"
+ },
+ {
+  "head": "sitati",
+  "mean": "등",
+  "input": "sitati",
+  "note": "",
+  "tags": [],
+  "n": 456,
+  "id": "wmvwc0rx6k5re"
+ },
+ {
+  "head": "tirpe",
+  "mean": "웃다",
+  "input": "tirpe",
+  "note": "",
+  "tags": [],
+  "n": 457,
+  "id": "wmvwc0s2qj5r8"
+ },
+ {
+  "head": "saupau",
+  "mean": "빻다",
+  "input": "saupau",
+  "note": "",
+  "tags": [],
+  "n": 459,
+  "id": "wmvwc0sduuft7"
+ },
+ {
+  "head": "turi",
+  "mean": "간",
+  "input": "turi",
+  "note": "",
+  "tags": [],
+  "n": 460,
+  "id": "wmvwc0sjv7bsq"
+ },
+ {
+  "head": "verte",
+  "mean": "검다",
+  "input": "verte",
+  "note": "",
+  "tags": [],
+  "n": 461,
+  "id": "wmvwc0tn8xx8e"
+ },
+ {
+  "head": "lour",
+  "mean": "날개",
+  "input": "lour",
+  "note": "",
+  "tags": [],
+  "n": 462,
+  "id": "wmvwc0u8zgswv"
+ },
+ {
+  "head": "cika",
+  "mean": "목",
+  "input": "cika",
+  "note": "",
+  "tags": [],
+  "n": 463,
+  "id": "wmvwd1km38irb"
+ },
+ {
+  "head": "ki",
+  "mean": "이것",
+  "input": "ki",
+  "note": "",
+  "tags": [],
+  "n": 464,
+  "id": "wmvwd1ktzo9ze"
+ },
+ {
+  "head": "lavra",
+  "mean": "타다 (불에)",
+  "input": "lavra",
+  "note": "",
+  "tags": [],
+  "n": 465,
+  "id": "wmvwd1kzjnmpg"
+ },
+ {
+  "head": "paio",
+  "mean": "붉다",
+  "input": "paio",
+  "note": "",
+  "tags": [],
+  "n": 466,
+  "id": "wmvwd1l53hm7w"
+ },
+ {
+  "head": "kopake",
+  "mean": "숨다",
+  "input": "kopake",
+  "note": "",
+  "tags": [],
+  "n": 467,
+  "id": "wmvwd1landseg"
+ },
+ {
+  "head": "sailko",
+  "mean": "서다",
+  "input": "sailko",
+  "note": "",
+  "tags": [],
+  "n": 468,
+  "id": "wmvwd1lg7xhts"
+ },
+ {
+  "head": "eksoi",
+  "mean": "집다",
+  "input": "eksoi",
+  "note": "",
+  "tags": [],
+  "n": 469,
+  "id": "wmvwd1llrazn8"
+ },
+ {
+  "head": "lasko",
+  "mean": "털·머리털",
+  "input": "lasko",
+  "note": "",
+  "tags": [],
+  "n": 470,
+  "id": "wmvwd1lrrd52l"
+ },
+ {
+  "head": "iipru",
+  "mean": "팔·손",
+  "input": "iipru",
+  "note": "",
+  "tags": [],
+  "n": 471,
+  "id": "wmvwd1lxb5i9a"
+ },
+ {
+  "head": "kota",
+  "mean": "멀리",
+  "input": "kota",
+  "note": "",
+  "tags": [],
+  "n": 472,
+  "id": "wmvwd1m3cs1jt"
+ },
+ {
+  "head": "paikku",
+  "mean": "묶다",
+  "input": "paikku",
+  "note": "",
+  "tags": [],
+  "n": 473,
+  "id": "wmvwd1m8wmii6"
+ },
+ {
+  "head": "koirso",
+  "mean": "재",
+  "input": "koirso",
+  "note": "",
+  "tags": [],
+  "n": 474,
+  "id": "wmvwd1mex7au6"
+ },
+ {
+  "head": "sipe",
+  "mean": "알",
+  "input": "sipe",
+  "note": "",
+  "tags": [],
+  "n": 475,
+  "id": "wmvwd1mkxq2of"
+ },
+ {
+  "head": "akoir",
+  "mean": "꼬리",
+  "input": "akoir",
+  "note": "",
+  "tags": [],
+  "n": 476,
+  "id": "wmvwd1mqyy9n3"
+ },
+ {
+  "head": "kokko",
+  "mean": "밧줄",
+  "input": "kokko",
+  "note": "",
+  "tags": [],
+  "n": 477,
+  "id": "wmvwd1mwz42on"
+ },
+ {
+  "head": "isepa",
+  "mean": "때리다",
+  "input": "isepa",
+  "note": "",
+  "tags": [],
+  "n": 478,
+  "id": "wmvwd1n2z5l2b"
+ },
+ {
+  "head": "aklot",
+  "mean": "달다",
+  "input": "aklot",
+  "note": "",
+  "tags": [],
+  "n": 479,
+  "id": "wmvwdlszxbv8v"
+ },
+ {
+  "head": "vil",
+  "mean": "눈 (몸)",
+  "input": "vil",
+  "note": "",
+  "tags": [],
+  "n": 480,
+  "id": "wmvwdlt89r1hq"
+ },
+ {
+  "head": "ekse",
+  "mean": "~ 안에",
+  "input": "ekse",
+  "note": "",
+  "tags": [],
+  "n": 481,
+  "id": "wmvwdltdtzk3z"
+ },
+ {
+  "head": "kulpa",
+  "mean": "다리·발",
+  "input": "kulpa",
+  "note": "",
+  "tags": [],
+  "n": 482,
+  "id": "wmvwdltjdgko4"
+ },
+ {
+  "head": "uase",
+  "mean": "그늘",
+  "input": "uase",
+  "note": "",
+  "tags": [],
+  "n": 483,
+  "id": "wmvwdltox5x0b"
+ },
+ {
+  "head": "sipiou",
+  "mean": "이르다 (말하다)",
+  "input": "sipiou",
+  "note": "",
+  "tags": [],
+  "n": 484,
+  "id": "wmvwdltuhmdcc"
+ },
+ {
+  "head": "eksi",
+  "mean": "모래",
+  "input": "eksi",
+  "note": "",
+  "tags": [],
+  "n": 485,
+  "id": "wmvwdlu0h8qtz"
+ },
+ {
+  "head": "ca",
+  "mean": "자식",
+  "input": "ca",
+  "note": "",
+  "tags": [],
+  "n": 486,
+  "id": "wmvwdlu61k656"
+ },
+ {
+  "head": "ate",
+  "mean": "넓다",
+  "input": "ate",
+  "note": "",
+  "tags": [],
+  "n": 487,
+  "id": "wmvwdluc2ac17"
  }
 ]
