@@ -124,15 +124,25 @@ for i in free:
 rnd = random.Random(args.seed)
 pick = {i: rnd.choices(O, P_[i])[0] for i in free}
 cnt = {o: sum(1 for i in free if pick[i] == o) for o in O}
+def best_move(o, u):
+    c = [(P_[i][J[u]] / P_[i][J[o]] if P_[i][J[o]] > 0 else 1e9, i) for i in free if pick[i] == o and P_[i][J[u]] > 0]
+    return max(c) if c else None
 for _ in range(5000):
-    over = [o for o in O if cnt[o] > need[o]]; under = [o for o in O if cnt[o] < need[o]]
-    if not over or not under: break
-    o = max(over, key=lambda x: cnt[x] - need[x]); u = max(under, key=lambda x: need[x] - cnt[x])
-    cand = [i for i in free if pick[i] == o and P_[i][J[u]] > 0]
-    if not cand: under.remove(u); 
-    if not cand: continue
-    i = max(cand, key=lambda i: P_[i][J[u]] / P_[i][J[o]])
-    pick[i] = u; cnt[o] -= 1; cnt[u] += 1
+    over = [o for o in O if cnt[o] > need[o]]
+    if not over: break
+    # 넘치는 기원에서 모자란 기원까지 옮길 수 있는 사슬(여러 단계)을 너비 우선으로 찾음
+    start = over[0]; prev = {start: None}; q = [start]; goal = None
+    while q and goal is None:
+        o = q.pop(0)
+        for u in O:
+            if u not in prev and best_move(o, u):
+                prev[u] = o; q.append(u)
+                if cnt[u] < need[u]: goal = u; break
+    if goal is None: break
+    u = goal
+    while prev[u] is not None:
+        o = prev[u]; _, i = best_move(o, u); pick[i] = u; u = o
+    cnt[start] -= 1; cnt[goal] += 1
 exp = dict(fixed); exp.update(pick)
 
 # 3. 저장 (제안 출처 열은 예상 기원으로 바꿈)
