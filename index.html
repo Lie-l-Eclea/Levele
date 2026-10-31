@@ -287,6 +287,8 @@ button.icon { min-width: 40px; min-height: 40px; padding: 0 8px; font-size: 1rem
 .m-word .warn { color: var(--err); font-size: 0.8rem; }
 .m-acts { display: flex; gap: 6px; flex-wrap: wrap; }
 .m-acts button { min-height: 36px; font-size: 0.82rem; }
+.m-in.bad { border-color: var(--err); background: color-mix(in srgb, var(--err) 8%, var(--bg)); }
+.m-issue { color: var(--err); font-size: 0.8rem; line-height: 1.4; margin-top: 4px; }
 .m-in { width: 100%; font-family: var(--font-lang); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
 .pair-pool { position: sticky; bottom: 0; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 12px 12px 0 0;
   box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.12); padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
@@ -2603,6 +2605,37 @@ function unlinkAll() {
   renderPair();
 }
 function unlink(it) { if (it.word) { pair.pool.unshift(it.word); if ((it.manual || "").trim() === it.word.input) it.manual = pair.prefix; it.word = null; } }
+/* 입력한 형태가 고른 기원에서 나올 수 있는 구조인지 살핌. 막지는 않고 이유만 돌려줌 */
+function formIssues(v, org) {
+  v = (v || "").trim(); var out = [];
+  if (blankForm(v)) return out;
+  if (org === "bp") org = "b";
+  var hasF = v.indexOf("%") >= 0, hasE = v.indexOf("·") >= 0, hasL = v.indexOf("&") >= 0;
+  var name = { a: "에클라이아어", b: "에냥어 차용", f: "포브르어", e: "에클레아어 신어" }[org] || "";
+  if (org === "f") {
+    if (!hasF) out.push("포브르어 기원은 입력 앞에 %가 있어야 합니다");
+    var r = v.replace(/[%@&\-|~=^'·\s]/g, "").toLowerCase();
+    var bad = r.match(/[^ptkbdgnmsxljwhƀđǥaeiouə]/g);
+    if (bad) out.push("포브르어 음소에 없는 글자: " + uniq(bad).join(" "));
+    else { var c3 = r.match(/[^aeiouə]{3,}/); if (c3) out.push("자음 " + c3[0].length + "개 연쇄 '" + c3[0] + "'는 포브르어에서 나오지 않습니다"); }
+    return out;
+  }
+  if (org === "e") { if (!hasE) out.push("에클레아어 신어는 두 구성 요소를 ·로 이어 만듭니다"); return out; }
+  if (hasF) { out.push("%는 포브르어 기호인데 고른 기원은 " + name + "입니다"); return out; }
+  if (hasE) { out.push("·는 에클레아어 신어 기호인데 고른 기원은 " + name + "입니다"); return out; }
+  if (hasL) return out;
+  var w = v.replace(/[@\-|~=^'\s]/g, "").toLowerCase();
+  var bad2 = w.match(/[^ptkcsvrlaeiouy]/g);
+  if (bad2) { var u = uniq(bad2); out.push(name + " 어근에 쓰지 않는 글자: " + u.join(" ") + (u.some(function (x) { return /[mnŋzž]/.test(x); }) ? " (비음은 @로 표시)" : "")); return out; }
+  var m0 = w.match(/^[^aeiouy]{2,}/);
+  if (m0) out.push("어두 자음군 '" + m0[0] + "'은 불가: 첫 모음을 앞에 덧붙입니다 (예: " + (w.match(/[aeiouy]/) ? w.match(/[aeiouy]/)[0] : "a") + w + ")");
+  var m1 = w.match(/[^aeiouy]{2,}$/);
+  if (m1) out.push("어말 자음군 '" + m1[0] + "'은 불가");
+  var mm, re = /[aeiouy]([^aeiouy]+)(?=[aeiouy])/g;
+  while ((mm = re.exec(w))) { if (!A_MED_OK.test(mm[1])) out.push("모음 사이 자음 연쇄 '" + mm[1] + "'는 불가 (허용: 홑자음·장자음, 자음+l·r 일부, ks, l·r·s+자음)"); re.lastIndex = mm.index + 1; }
+  return out;
+}
+function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
 function manualConv(v) {
   v = (v || "").trim(); if (!v) return null;
   try { var o = convert(v); return { spell: o.main.trim(), form: o.script.trim(), ipa: o.ipa.trim().replace(/‿/g, ""), ko: o.ko.trim() }; } catch (e) { return null; }
@@ -2678,16 +2711,20 @@ function renderPair() {
     var inp = el("input", "lang m-in"); inp.type = "text"; inp.value = it.manual || ""; inp.placeholder = "형태 입력 (예: " + (pair.prefix || "") + "pala)";
     inp.setAttribute("aria-label", it.mean + "의 형태 (변환기 입력)"); inp.autocomplete = "off"; inp.spellcheck = false; inp.dataset.id = it.id;
     inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off");
-    var prev = el("div", "w-line m-prev");
+    var prev = el("div", "w-line m-prev"), issue = el("div", "m-issue"); issue.hidden = true;
     function upd() {
       it.manual = inp.value; prev.innerHTML = "";
+      var iss = formIssues(inp.value, $("gOrigin").value);
+      inp.classList.toggle("bad", iss.length > 0); inp.setAttribute("aria-invalid", iss.length ? "true" : "false");
+      issue.innerHTML = ""; issue.hidden = !iss.length;
+      iss.forEach(function (t) { issue.appendChild(el("div", "", "⚠ " + t)); });
       var has = !blankForm(inp.value);
       if (has) { var o = manualConv(inp.value); if (o) { prev.appendChild(el("span", "sp", showSpell(o))); prev.appendChild(el("span", "ip", "[" + o.ipa + "]")); prev.appendChild(el("span", "ko", o.ko)); } }
       prev.hidden = !has;
       card.classList.toggle("done", has); updAdd();
     }
     inp.addEventListener("input", upd);
-    body.appendChild(inp); body.appendChild(prev); upd();
+    body.appendChild(inp); body.appendChild(prev); body.appendChild(issue); upd();
     if (it.word) {
       var w = it.word;
       var meta = w.native ? "원형 " + w.native : w.meaning ? w.meaning : "";
@@ -2783,6 +2820,7 @@ function genHint() {
   $("gSyl").disabled = o === "e";
 }
 $("gOrigin").addEventListener("change", genHint);
+$("gOrigin").addEventListener("change", function () { Array.prototype.forEach.call(document.querySelectorAll("#gPair .m-in"), function (i) { i.dispatchEvent(new Event("input")); }); });
 /* 시작 글자: 원형 / 에클레아어 표기 / 발음 */
 function stripMarks(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, ""); }
 function startTest(by, raw) {
