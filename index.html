@@ -503,7 +503,8 @@ button.pool-fold { border: 0; background: transparent; padding: 4px 2px; min-hei
         </div>
         <div class="tabs" role="tablist" id="tabs">
           <button class="tab" role="tab" type="button" data-key="cats" aria-selected="true">범주</button>
-          <button class="tab" role="tab" type="button" data-key="r1" aria-selected="false">문자형 규칙</button>
+          <button class="tab" role="tab" type="button" data-key="r1" aria-selected="false">내부형 규칙</button>
+          <button class="tab" role="tab" type="button" data-key="rf" aria-selected="false">문자형 규칙</button>
           <button class="tab" role="tab" type="button" data-key="r2" aria-selected="false">기본 표기 규칙</button>
           <button class="tab" role="tab" type="button" data-key="r3" aria-selected="false">발음 규칙</button>
         </div>
@@ -800,7 +801,7 @@ r1: [
 "/b/N(ˆ)_lA",
 "/b/N(ˆ)_lj",
 "&//_",
-"; 11. 문자형 표시",
+"; 11. 내부형 표시",
 "[ẽ õ ã ỹ]/[ɛ̃ ɔ̃ ɑ̃ œ̃]/_",
 "ʁ/r/_",
 "ǿ/œ́/_",
@@ -810,8 +811,40 @@ r1: [
 "ʃ/ch/_"
 ].join("\n"),
 
+rf: [
+"; 내부형 규칙을 '; 8.' 앞(7단계)까지 적용한 형태 → 문자형",
+"; 철자가 굳은 포브르어 접촉 중기의 고유 문자 철자를 라틴 문자로 옮겨 적음. 포브르어 단어는 앞에 %가 붙어 들어옴",
+"; 이 입력에서는 화석의 c·s 비음형이 ɲ·ʒ 대신 c·ʃ로 남음(어두는 내부형과 같이 d)",
+"!//_",
+"; 1. 장모음은 같은 글자 둘로",
+"ǿ/ɯɯ/_",
+"ú/ɯɯ/_",
+"í/ii/_",
+"ý/yy/_",
+"; 2. ɯ에서 온 œ·ə(강세에 따른 변이음)와 포브르어 ə는 ⟨ɯ⟩ 하나로",
+"œ/ɯ/_",
+"ə/ɯ/_",
+"ʊ/ɯ̃/_",
+"ɚ/ɯ̃/_",
+"; 3. v 옆에서 원순화한 고유어 u는 ⟨ɯ⟩, 포브르어 u는 ⟨u⟩",
+"u/ɯ/_/%…_",
+"ũ/ɯ̃/_/%…_",
+"; 4. 활음은 모음 글자로",
+"ʲ/i/_",
+"j/i/_",
+"ɥ/y/_",
+"w/ɯ/_/%…_",
+"w/u/_",
+"; 5. 자음",
+"ŋ/n/_",
+"x/χ/_",
+"; 6. 표시 제거",
+"%//_",
+"&//_"
+].join("\n"),
+
 r2: [
-"; 0. 문자형의 ch를 한 글자로",
+"; 0. 내부형의 ch를 한 글자로",
 "ch/ʃ/_",
 "; 1. 어말 ə, 닫힌 음절, 모음 연속 u, 장자음",
 "ə/ɘ/K_#",
@@ -881,7 +914,7 @@ r2: [
 ].join("\n"),
 
 r3: [
-"; 문자형 → 발음. 강세 ˈ는 미리 표시되고, 끝에 ‿가 붙으면 다음 단어와 연음",
+"; 내부형 → 발음. 강세 ˈ는 미리 표시되고, 끝에 ‿가 붙으면 다음 단어와 연음",
 "ˆ//_",
 "ch/ʃ/_",
 "r/ʁ/_",
@@ -909,11 +942,12 @@ r3: [
 
 var HINTS = {
   cats: "모든 단계가 함께 쓰는 범주입니다. 대문자 한 글자 또는 {이름} = 글자 목록(여러 글자 구성원은 띄어 씀).",
-  r1: "에클라이아어 입력 → 문자형. 단어마다 따로 적용됩니다.",
-  r2: "문자형 → 기본 표기(프랑스어식 철자).",
-  r3: "문자형 → 발음. 강세와 연음 표시는 이 규칙 전에 자동으로 붙습니다."
+  r1: "에클라이아어 입력 → 내부형(화면에 표시하지 않음). 기본 표기와 발음은 이 형태에서 만듭니다. 단어마다 따로 적용됩니다.",
+  rf: "내부형 규칙을 '; 8.'로 시작하는 줄 앞까지 적용한 형태 → 문자형(철자가 굳은 시기의 고유 문자 철자). 포브르어 단어는 앞에 %가 붙어 들어옵니다. 기본 표기와 발음에는 영향을 주지 않습니다.",
+  r2: "내부형 → 기본 표기(프랑스어식 철자).",
+  r3: "내부형 → 발음. 강세와 연음 표시는 이 규칙 전에 자동으로 붙습니다."
 };
-var TAB_NAMES = { cats: "범주", r1: "문자형 규칙", r2: "기본 표기 규칙", r3: "발음 규칙" };
+var TAB_NAMES = { cats: "범주", r1: "내부형 규칙", rf: "문자형 규칙", r2: "기본 표기 규칙", r3: "발음 규칙" };
 function hashStr(s) { var x = 5381; for (var i = 0; i < s.length; i++) x = ((x << 5) + x + s.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
 /* 기본 규칙이 바뀌면 저장 키도 바뀌어, 예전 기본값을 바탕으로 고친 규칙이 새 기본값을 가리지 않음 */
 var STORE_RULES = "eklea-converter-rules-" + hashStr(JSON.stringify(DEFAULTS));
@@ -923,9 +957,10 @@ var SAMPLE = "; 예시 입력입니다. 지우고 직접 넣어 보세요.\nleve
 function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
 function save(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
 
-var state = { cats: DEFAULTS.cats, r1: DEFAULTS.r1, r2: DEFAULTS.r2, r3: DEFAULTS.r3 };
+var RULE_KEYS = ["cats", "r1", "rf", "r2", "r3"];
+var state = { cats: DEFAULTS.cats, r1: DEFAULTS.r1, rf: DEFAULTS.rf, r2: DEFAULTS.r2, r3: DEFAULTS.r3 };
 var saved = load(STORE_RULES);
-if (saved) { try { var o = JSON.parse(saved); ["cats", "r1", "r2", "r3"].forEach(function (k) { if (typeof o[k] === "string") state[k] = o[k]; }); } catch (e) {} }
+if (saved) { try { var o = JSON.parse(saved); RULE_KEYS.forEach(function (k) { if (typeof o[k] === "string") state[k] = o[k]; }); } catch (e) {} }
 
 /* ---------- 규칙 엔진 ---------- */
 function cp(s) { return Array.from(s); }
@@ -1203,10 +1238,33 @@ function toHangul(ipa) {
 var compiled = null;
 function compileFrom(st) {
   var pc = parseCats(st.cats);
-  var s1 = compileSet(st.r1, pc.cats, "문자형 규칙");
+  var s1 = compileSet(st.r1, pc.cats, "내부형 규칙");
+  var s1a = compileSet(scriptBase(st.r1), pc.cats, "내부형 규칙");
+  var sf = compileSet(typeof st.rf === "string" ? st.rf : DEFAULTS.rf, pc.cats, "문자형 규칙");
   var s2 = compileSet(st.r2, pc.cats, "기본 표기 규칙");
   var s3 = compileSet(st.r3, pc.cats, "발음 규칙");
-  return { r1: s1.rules, r2: s2.rules, r3: s3.rules, errors: pc.errors.concat(s1.errors, s2.errors, s3.errors) };
+  return { r1: s1.rules, r1a: s1a.rules, rf: sf.rules, r2: s2.rules, r3: s3.rules, errors: pc.errors.concat(s1.errors, sf.errors, s2.errors, s3.errors) };
+}
+/* 문자형의 바탕: 내부형 규칙 중 '; 8.' 앞(철자가 굳은 시기)까지.
+   화석의 c·s 비음형(ž·z)은 ɲ·ʒ로 바꾸지 않고 c·ʃ로 남김(비모음 글자 뒤의 c·ʃ로 읽힘). 어두는 내부형과 같이 ɲ → n → d */
+function scriptBase(text) {
+  var lines = text.normalize("NFC").split("\n"), out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var t = lines[i].trim();
+    if (/^;\s*8\./.test(t)) break;
+    if (t === "[žz]/ɲ/@…_(!)V") out.push("[žz]/ɲ/@_(!)V");
+    else if (t === "[žz]/ɲ/@…_#") continue;
+    else if (t === "[žz]/ʒ/@…_") { out.push("ž/c/_"); out.push("z/ʃ/_"); }
+    else out.push(lines[i]);
+  }
+  return out.join("\n");
+}
+function scriptOf(part, trace) {
+  try {
+    var b = runSet(part, compiled.r1a);
+    if (part.indexOf("%") >= 0) b = "%" + b;
+    return runSet(b, compiled.rf, trace);
+  } catch (e) { return "?"; }
 }
 function compileAll() { compiled = compileFrom(state); }
 /* 다른 규칙 묶음으로 잠시 변환 (변경 비교용) */
@@ -1368,7 +1426,7 @@ function convert(text) {
   });
   items.forEach(function (it) {
     if (!it.word) return;
-    it.t1 = []; it.t2 = []; it.t3 = [];
+    it.t1 = []; it.t0 = []; it.t2 = []; it.t3 = [];
     it.input = it.raw.toLowerCase().replace(/~/g, "+");
     /* 문법 표지 자동 축약(le-astel → l'astel, are-rip → ar'rip). 조건은 ELIDE 위 주석 참고 */
     var keptMarks = [];
@@ -1390,7 +1448,8 @@ function convert(text) {
       }
       it.input = segs.join("");
       it.form = segs.filter(function (x, k) { return k % 2 === 0; }).map(function (part) { return runSet(part, compiled.r1, it.t1); }).join("");
-    } else it.form = runSet(it.input, compiled.r1, it.t1);
+      it.script = segs.filter(function (x, k) { return k % 2 === 0; }).map(function (part) { return scriptOf(part, it.t0); }).join("");
+    } else { it.form = runSet(it.input, compiled.r1, it.t1); it.script = scriptOf(it.input, it.t0); }
     var sp0 = hyphenate(it.input, runSet(it.form, compiled.r2, it.t2));
     /* 축약형에 모음이 남는 표지(kal-, ire- 등)도 아포스트로피로 붙임(cal'eucle, ar'rip) */
     keptMarks.forEach(function (p) {
@@ -1412,23 +1471,23 @@ function convert(text) {
     if (it.clitic) { it.ipa = it.ipa.replace(/ˈ/g, ""); it.ipaCite = it.ipaCite.replace(/ˈ/g, ""); }
     it.ko = toHangul(it.ipaCite);
   });
-  var main = "", form = "", ipa = "", ko = "";
+  var main = "", form = "", script = "", ipa = "", ko = "";
   items.forEach(function (it, i) {
     var prevIt = items[i - 1];
     if (it.word) {
       var sp = it.spell;
       var nx = items[i + 2];
       if (it.clitic && nx && nx.word && VOWEL_START.test(nx.form) && /ə$/.test(it.form) && /e$/.test(sp)) { sp = sp.slice(0, -1) + "'"; it.elided = true; }
-      main += sp; form += it.form; ipa += it.ipa; ko += it.ko;
+      main += sp; form += it.form; script += it.script; ipa += it.ipa; ko += it.ko;
     }
     else {
-      if (it.joiner && prevIt && prevIt.elided) { form += it.raw; ko += it.raw; return; }
-      main += it.raw; form += it.raw; ko += it.raw;
+      if (it.joiner && prevIt && prevIt.elided) { form += it.raw; script += it.raw; ko += it.raw; return; }
+      main += it.raw; form += it.raw; script += it.raw; ko += it.raw;
       var prev = items[i - 1];
       ipa += (prev && prev.liaison) ? "" : it.raw;
     }
   });
-  return { items: items, main: main, form: form, ipa: ipa, ko: ko };
+  return { items: items, main: main, form: form, script: script, ipa: ipa, ko: ko };
 }
 
 /* ---------- 화면 ---------- */
@@ -1445,13 +1504,13 @@ function renderErrors() {
     d.textContent = e.where + " " + e.line + "행: " + e.msg;
     box.appendChild(d);
   });
-  $("status").textContent = "규칙 " + (compiled.r1.length + compiled.r2.length + compiled.r3.length) + "개" + (compiled.errors.length ? " · 오류 " + compiled.errors.length + "개" : "");
+  $("status").textContent = "규칙 " + (compiled.r1.length + compiled.rf.length + compiled.r2.length + compiled.r3.length) + "개" + (compiled.errors.length ? " · 오류 " + compiled.errors.length + "개" : "");
 }
 
 function renderOutput() {
   var res = convert(input.value);
   $("outMain").textContent = res.main.trim() ? res.main : "";
-  $("outForm").textContent = res.form;
+  $("outForm").textContent = res.script;
   $("outIpa").textContent = res.ipa.trim() ? "[" + res.ipa.trim() + "]" : "";
   $("outKo").textContent = res.ko;
   var words = $("words");
@@ -1465,14 +1524,14 @@ function renderOutput() {
     var b = document.createElement("button");
     b.type = "button";
     b.setAttribute("aria-expanded", "false");
-    [it.raw, it.form, it.spell, "[" + it.ipa.replace(/‿$/, "") + "]"].forEach(function (v, idx) {
+    [it.raw, it.script, it.spell, "[" + it.ipa.replace(/‿$/, "") + "]"].forEach(function (v, idx) {
       var s = document.createElement("span"); s.textContent = v;
       if (idx === 3) { var k = document.createElement("span"); k.className = "ko-sm"; k.textContent = it.ko; s.appendChild(k); }
       b.appendChild(s);
     });
     var tr = document.createElement("div");
     tr.className = "trace"; tr.hidden = true;
-    [["문자형 규칙", it.t1], ["기본 표기 규칙", it.t2], ["발음 규칙", it.t3]].forEach(function (pair) {
+    [["내부형 규칙", it.t1], ["문자형 규칙", it.t0], ["기본 표기 규칙", it.t2], ["발음 규칙", it.t3]].forEach(function (pair) {
       var h = document.createElement("h3"); h.textContent = pair[0] + " (" + pair[1].length + ")";
       var ol = document.createElement("ol");
       if (!pair[1].length) { var li0 = document.createElement("li"); li0.textContent = "바뀐 것 없음"; ol.appendChild(li0); }
@@ -1548,7 +1607,7 @@ function copyText(text, fallbackEl, okMsg) {
   try { navigator.clipboard.writeText(text).then(done, fail); } catch (e) { fail(); }
 }
 $("copyAll").addEventListener("click", function () {
-  var all = "[범주]\n" + state.cats + "\n\n[문자형 규칙]\n" + state.r1 + "\n\n[기본 표기 규칙]\n" + state.r2 + "\n\n[발음 규칙]\n" + state.r3 + "\n";
+  var all = "[범주]\n" + state.cats + "\n\n[내부형 규칙]\n" + state.r1 + "\n\n[문자형 규칙]\n" + state.rf + "\n\n[기본 표기 규칙]\n" + state.r2 + "\n\n[발음 규칙]\n" + state.r3 + "\n";
   copyText(all, editor, "규칙 전체를 복사했습니다.");
 });
 Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (b) {
@@ -1569,7 +1628,7 @@ function convOne(inp) {
   if (!key.trim()) return { spell: "", form: "", ipa: "" };
   if (!lexCache[key]) {
     var r = convert(key);
-    lexCache[key] = { spell: r.main.trim(), form: r.form.trim(), ipa: r.ipa.trim().replace(/‿/g, ""), ko: r.ko.trim() };
+    lexCache[key] = { spell: r.main.trim(), form: r.script.trim(), ipa: r.ipa.trim().replace(/‿/g, ""), ko: r.ko.trim() };
   }
   return lexCache[key];
 }
@@ -1904,7 +1963,7 @@ $("statReset").addEventListener("click", function () { statT = { o: Object.assig
 /* ---------- 규칙 변경 비교 ---------- */
 var STORE_MARK = "eklea-converter-mark-v1";
 var diffTimer = null;
-function ruleCopy(st) { return { cats: st.cats, r1: st.r1, r2: st.r2, r3: st.r3 }; }
+function ruleCopy(st) { return { cats: st.cats, r1: st.r1, rf: typeof st.rf === "string" ? st.rf : DEFAULTS.rf, r2: st.r2, r3: st.r3 }; }
 function baseRules() {
   if ($("diffBase").value === "mark") {
     var m = load(STORE_MARK);
@@ -1982,7 +2041,7 @@ function projSave() {
     words: lex.words.map(function (w) { var o = wordData(w); o.id = w.id; return o; }) };
   var text = JSON.stringify(proj, null, 2);
   var name = "eklea-project-" + new Date().toISOString().slice(0, 10) + ".json";
-  var okMsg = "규칙 " + (compiled.r1.length + compiled.r2.length + compiled.r3.length) + "개와 단어 " + lex.words.length + "개를 프로젝트 파일로 저장했습니다.";
+  var okMsg = "규칙 " + (compiled.r1.length + compiled.rf.length + compiled.r2.length + compiled.r3.length) + "개와 단어 " + lex.words.length + "개를 프로젝트 파일로 저장했습니다.";
   var plain = function () {
     var blob = new Blob([text], { type: "application/json" });
     var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
@@ -2036,7 +2095,7 @@ function projLoad(file) {
     var words = Array.isArray(p) ? p : (p && Array.isArray(p.words) ? p.words : null);
     var msg = [];
     if (p && p.rules && typeof p.rules.r1 === "string") {
-      ["cats", "r1", "r2", "r3"].forEach(function (k) { if (typeof p.rules[k] === "string") state[k] = p.rules[k]; });
+      RULE_KEYS.forEach(function (k) { if (typeof p.rules[k] === "string") state[k] = p.rules[k]; });
       editor.value = state[current]; refreshRules(); msg.push("규칙을 불러왔습니다");
     }
     if (words && lex.status === "ready") {
