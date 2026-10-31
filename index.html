@@ -2050,10 +2050,12 @@ function originGaps() {
     var state = cur < lo - eps ? "lo" : cur > hi + eps ? "hi" : "ok";
     var need = state === "lo" && t < 1 ? Math.max(1, Math.ceil((t * T - cnt[k]) / (1 - t))) : 0;
     var over = state === "hi" && t < 1 ? Math.max(1, Math.ceil((cnt[k] - t * T) / (1 - t))) : 0;
-    return { k: k, n: cnt[k], cur: cur, tg: tg, lo: lo, hi: hi, state: state, need: need, over: over, diff: cur - tg };
+    var tn = Math.round(t * T);
+    return { k: k, n: cnt[k], tn: tn, dn: cnt[k] - tn, cur: cur, tg: tg, lo: lo, hi: hi, state: state, need: need, over: over, diff: cur - tg };
   });
 }
-function gapText(g) { return g.state === "lo" ? "부족 +" + g.need : g.state === "hi" ? "과다 " + sgn(g.diff) + "%p" : "충족"; }
+function sgnN(n) { return n > 0 ? "+" + n : n < 0 ? "−" + (-n) : "±0"; }
+function gapText(g) { return (g.state === "lo" ? "부족 " : g.state === "hi" ? "과다 " : "충족 ") + sgnN(g.dn); }
 function selectOrigin(v) { var s = $("gOrigin"); if (s.value === v) return; s.value = v; s.dispatchEvent(new Event("change", { bubbles: true })); }
 function renderOriginBrief() {
   var box = $("gOriginBrief"); if (!box || lex.status !== "ready") return;
@@ -2075,7 +2077,7 @@ function renderOriginBrief() {
     c.appendChild(el("span", "o-n", ORIGIN_SHORT[k]));
     c.appendChild(el("span", "o-v", pct2(g.cur) + "%"));
     c.appendChild(el("span", "o-g", gapText(g)));
-    c.title = ORIGIN_LABEL[k] + ": " + g.n + "개, 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (목표 대비 " + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%" + (k === "l" ? ". 학술 차용은 변환기에서 & 로 직접 입력하므로 생성 대상이 아닙니다" : "");
+    c.title = ORIGIN_LABEL[k] + ": " + g.n + "개 / 목표 " + g.tn + "개 (" + sgnN(g.dn) + "), 현재 " + pct2(g.cur) + "%, 목표 " + pct2(g.tg) + "% (" + sgn(g.diff) + "%p), 충족 범위 " + pct2(g.lo) + "~" + pct2(g.hi) + "%" + (k === "l" ? ". 학술 차용은 변환기에서 & 로 직접 입력하므로 생성 대상이 아닙니다" : "");
     box.appendChild(c);
   });
 }
@@ -2097,7 +2099,7 @@ function renderStats() {
     var bc = barCell(cur, tg, 100); bc.className = "opt"; tr.appendChild(bc);
     var ti = el("td", "num"); ti.appendChild(numInput(statT.o[k], function (v) { statT.o[k] = v; }, ORIGIN_LABEL[k] + " 목표 비율")); tr.appendChild(ti);
     var gg = gaps[k];
-    tr.appendChild(el("td", "num stat-gap" + (gg.state !== "ok" ? " " + gg.state : ""), gapText(gg) + (gg.state === "ok" ? " (" + sgn(gg.diff) + "%p)" : "")));
+    tr.appendChild(el("td", "num stat-gap" + (gg.state !== "ok" ? " " + gg.state : ""), gapText(gg) + " (목표 " + gg.tn + ")"));
     tbl.appendChild(tr);
   });
   var foot = el("tr"); foot.appendChild(el("td", "", "합계")); foot.appendChild(el("td", "num", String(T))); foot.appendChild(el("td", "num", "100%"));
