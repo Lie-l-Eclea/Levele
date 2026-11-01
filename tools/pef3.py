@@ -53,6 +53,10 @@ def enyang(p):
     # E11 이중모음 정리: ai ei만 남김
     for a,b in [('au','o'),('eu','u'),('ou','u'),('iu','u'),('oi','ei'),('ui','i')]: s=s.replace(a,b)
     s=s.replace('.','')
+    s=s.replace('S','ʃ')
+    # E10 ɯ가 i로 (자음 옆), E11 s가 i 앞에서 ʃ로, E12 o가 l 앞에서 a로
+    s=re.sub('(?<=[ptksʃmrl])ɯ','i',s); s=re.sub('ɯ(?=[ptksʃmrl])','i',s)
+    s=re.sub('s(?=i)','ʃ',s); s=re.sub('o(?=l)','a',s)
     return s
 # ---------- 포브르어 (1600년) ----------
 LEGAL_F=re.compile(r'^(?:[ptkbdgnmsxljwh]|[pkbg]l|[px]|tx|[hlsxnm][ptkbdgnmsxlj])$')
@@ -100,6 +104,8 @@ def fovre(syl):
     # F10 어말 ə 탈락: 직전이 단일 자음이면 (어말 자음 합법 목록 h l s x n m 에 한함)
     f3=re.sub('(?<=[aeiou])([lsxnmh])ə$',r'\1',f2)
     f3=re.sub('(?<=[aeiou])([ptkbdgƀđǥ])ə$',lambda m:m.group(0),f3)
+    # F11 k가 i 앞에서 p로(순음화), F12 어말 s가 h로, F13 a가 l 앞에서 e로
+    f3=re.sub('k(?=i)','p',f3); f3=re.sub('s$','h',f3); f3=re.sub('a(?=l)','e',f3)
     return '%'+f3
 def b2a(b):
     s=re.sub('s(?=[aeiouɯ]|$)','c',b).replace('ʃ','s')   # 에냥어 s는 모음 앞·어말에서 c([s]), 자음 앞에서는 s(sC 자음군이 합법), ʃ는 s([ʃ])에 대응
