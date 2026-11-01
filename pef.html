@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에냥-포브르 조어 변환기</title>
+<style>
+:root { --bg:#f4f7fa; --surface:#fff; --fg:#17212b; --muted:#5b6b7a; --line:#d5dee7; --accent:#2f6f9f; --err:#b3412f; color-scheme: light dark; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f151b; --surface:#161f28; --fg:#e4ebf1; --muted:#93a2b0; --line:#2a3643; --accent:#8dbad8; --err:#ff9b8a; } }
+:root[data-theme="dark"] { --bg:#0f151b; --surface:#161f28; --fg:#e4ebf1; --muted:#93a2b0; --line:#2a3643; --accent:#8dbad8; --err:#ff9b8a; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 "Noto Sans KR", system-ui, sans-serif; padding:20px 16px 40px; }
+.wrap { max-width:960px; margin:0 auto; display:grid; gap:16px; }
+h1 { margin:0; font-size:1.5rem; }
+a { color:var(--accent); }
+.panel { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px; display:grid; gap:10px; min-width:0; }
+.hint { color:var(--muted); font-size:.85rem; margin:0; }
+textarea { width:100%; min-height:110px; resize:vertical; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--fg); padding:10px 12px; font:1.05rem/1.5 "Noto Sans Mono","DejaVu Sans Mono",monospace; }
+table { width:100%; border-collapse:collapse; font-size:.95rem; }
+th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--muted); font-weight:600; font-size:.8rem; }
+td.m { font-family:"Noto Sans Mono","DejaVu Sans Mono",monospace; }
+td.bad { color:var(--err); }
+.scroll { overflow-x:auto; }
+code { font-family:"Noto Sans Mono","DejaVu Sans Mono",monospace; }
+details summary { cursor:pointer; font-weight:600; }
+ol { margin:6px 0 0; padding-left:1.3rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>에냥-포브르 조어 변환기</h1>
+  <p class="hint"><a href="index.html">← 에클레아어 변환기</a>. 조어 어근을 넣으면 에냥어형, 에클라이아어 차용형, 포브르어형이 나옵니다. 에클레아어형은 변환기에서 <code>$어근</code>(에냥어 경로) 또는 <code>$%어근</code>(포브르어 경로)으로 입력해도 바로 얻을 수 있습니다.</p>
+  <section class="panel">
+    <label for="in"><b>조어 어근</b> (줄 또는 공백으로 구분)</label>
+    <textarea id="in" spellcheck="false" autocomplete="off" aria-label="조어 어근">kAtu
+Taplə
+nasik
+qeri</textarea>
+    <p class="hint">기호: 폐쇄음 p t k q, 방출음 P T K, 유성 b d g, 마찰 s S(ʃ) x(구개수), 비음 m n N(ŋ), 유음 l r, 활음 w j, 모음 a e i o u ə, 장모음 A E I O U(첫 음절만). 음절은 (C)V(C)이고 점(.)이나 밑줄(_)로 나눌 수 있으며, 점이 없으면 자음 하나는 뒤 음절의 첫소리, 둘이면 앞은 끝소리로 봅니다.</p>
+  </section>
+  <section class="panel">
+    <div class="scroll"><table>
+      <thead><tr><th>조어</th><th>에냥어 (1000년)</th><th>에클라이아어 차용형 (에냥어 경로)</th><th>포브르어 (1600년)</th><th>변환기</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </section>
+  <section class="panel">
+    <details>
+      <summary>규칙</summary>
+      <p class="hint">에냥어 (조어에서 갈라진 뒤 에클라이아어 성립기까지 1000년)</p>
+      <ol>
+        <li>방출음 P T K가 평음 p t k에 합류</li><li>q는 k, x는 탈락</li><li>유성 폐쇄음 앞 비음 탈락</li><li>b d g가 p t k에 합류</li>
+        <li>n: 어두 l, 모음 사이 r, p 앞 m, 어말 m (N은 m)</li><li>활음 j w가 모음 i u로</li><li>ə가 ɯ로</li><li>강세 없는 안쪽 음절의 짧은 e o가 ɯ로</li>
+        <li>장모음 단축</li><li>이중모음은 ai ei만 남김 (au→o, eu ou iu→u, oi→ei, ui→i)</li>
+      </ol>
+      <p class="hint">에클라이아어 차용 (에냥어 → 에클라이아어 글자): s는 모음 앞·어말에서 c, ʃ는 s, ɯ는 u, m은 p, n은 t, 첫머리 자음군에는 첫 모음을 앞에 붙이고, tk→kk, tp→pp, pk→kk.</p>
+      <p class="hint">포브르어 (접촉기까지 1600년)</p>
+      <ol>
+        <li>방출음이 유성음으로, q와 r는 x, S는 s, N은 n</li><li>장모음 이동 A→o, E→a, I→e, O→u, U→i</li><li>i 움라우트</li><li>강세 뒤 모음 사이 무성 폐쇄음 유성화</li>
+        <li>강세 없는 a e o가 ə로</li><li>비음+유성 폐쇄음은 ƀ đ ǥ, 비음+무성 폐쇄음은 h</li><li>열린 단음절 어근에 어말 h</li><li>모음 연속에 활음 삽입 또는 약한 ə 탈락</li>
+        <li>안쪽 ə는 합법 자음군이 될 때만 탈락</li><li>어말 ə는 l s x n m h 뒤에서 탈락</li>
+      </ol>
+    </details>
+  </section>
+</div>
+<script src="pef.js"></script>
+<script>
+(function () {
+  var ta = document.getElementById("in"), rows = document.getElementById("rows");
+  function cell(tr, t, cls) { var td = document.createElement("td"); td.textContent = t; if (cls) td.className = cls; tr.appendChild(td); return td; }
+  function render() {
+    rows.innerHTML = "";
+    ta.value.split(/\s+/).filter(Boolean).slice(0, 500).forEach(function (w) {
+      var tr = document.createElement("tr"), d = window.PEF.derive(w);
+      if (!d) { cell(tr, w, "m"); var bad = cell(tr, "읽을 수 없는 어근 (음절은 (C)V(C))", "bad"); bad.colSpan = 4; rows.appendChild(tr); return; }
+      cell(tr, d.pef, "m"); cell(tr, d.eny, "m"); cell(tr, d.ekl, "m"); cell(tr, d.fov, "m");
+      var td = document.createElement("td");
+      [["$" + d.pef.replace(/\./g, "_"), "에냥어 경로"], ["$%" + d.pef.replace(/\./g, "_"), "포브르어 경로"]].forEach(function (p, k) {
+        var a = document.createElement("a"); a.href = "index.html#in=" + encodeURIComponent(p[0]); a.textContent = p[1];
+        if (k) td.appendChild(document.createTextNode(" · ")); td.appendChild(a);
+      });
+      tr.appendChild(td); rows.appendChild(tr);
+    });
+  }
+  ta.addEventListener("input", render); render();
+})();
+</script>
+</body>
+</html>

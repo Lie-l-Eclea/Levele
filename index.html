@@ -407,6 +407,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
     <button class="view-tab" role="tab" type="button" data-view="conv" aria-selected="true">변환기</button>
     <button class="view-tab" role="tab" type="button" data-view="lex" aria-selected="false">단어장</button>
     <button class="view-tab" role="tab" type="button" data-view="gen" aria-selected="false">단어 생성</button>
+    <a class="view-tab" href="pef.html" style="text-decoration:none;display:inline-block">조어 변환기</a>
   </nav>
 
   <section id="viewGen" hidden>
@@ -567,6 +568,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
           <span><code>=</code> 인칭 어미</span>
           <span><code>^</code> 접어 (따로 변화)</span>
           <span><code>~</code> 에클라이아어 단계 합성어</span>
+          <span><code>$</code> 에냥포브르조어 어근 (<code>$katu</code>는 에냥어 경로, <code>$%katu</code>는 포브르어 경로로 에클라이아어형을 유추. 음절 구분은 <code>_</code>. 기호는 <a href="pef.html">조어 변환기</a> 참고)</span>
           <span><code>·</code> 에클레아어 단계 합성어 (에클레아어 형태로 새로 만든 구: <code>le-·@kiset</code> → l'Ègnand)</span>
         </div>
       </section>
@@ -670,6 +672,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
     <button type="button" data-go="cond">생성 조건</button>
     <button type="button" data-go="find">발음 검색</button>
   </div>
+<script src="pef.js"></script>
 <script>
 (function () {
 "use strict";
@@ -760,6 +763,12 @@ r1: [
 "p/f/%…[lxh]_",
 "h//_",
 "p/f/%_",
+"; 5a. 접촉 이후 자음 변화 (에냥어·정복층 어휘에만. 포브르어 단어는 제외)",
+"k/g/V(!)_(!)V/%…_",
+"t/d/V(!)_(!)V/%…_",
+"l/m/#_(!)V/%…_",
+"l/n/V(!)_(!)V/%…_",
+"p/b/_l/%…_",
 "@//_",
 "%//_",
 "; 5b. 접촉 이후 p 약화 (포브르어 pʰ→f와 같은 방향으로 모든 단어의 모음 사이 p가 f가 됨)",
@@ -1567,7 +1576,13 @@ function convert(text) {
   items.forEach(function (it) {
     if (!it.word) return;
     it.t1 = []; it.t0 = []; it.t2 = []; it.t3 = [];
-    it.input = it.raw.toLowerCase().replace(/~/g, "+");
+    /* $어근: 에냥포브르조어 어근에서 에클라이아어 입력을 유추. $어근은 에냥어 경로, $%어근은 포브르어 경로 */
+    var pefM = /^\$(%?)(.+)$/.exec(it.raw);
+    if (pefM && window.PEF) {
+      var pd = window.PEF.derive(pefM[2]);
+      it.pef = pd ? { fov: !!pefM[1], d: pd } : { bad: true };
+      it.input = pd ? (pefM[1] ? pd.fov : pd.ekl) : "";
+    } else it.input = it.raw.toLowerCase().replace(/~/g, "+");
     /* 문법 표지 자동 축약(le-astel → l'astel, are-rip → ar'rip). 조건은 ELIDE 위 주석 참고 */
     var keptMarks = [];
     it.input = it.input.replace(ELIDE_RE, function (m, a, p, b, off, whole) {
@@ -1598,7 +1613,8 @@ function convert(text) {
       var rest = hyphenate(km[1], spellOf(km[1])), restPlain = rest.replace(/[-']/g, ""), plain = sp0.replace(/[-']/g, "");
       if (plain.length > restPlain.length && plain.slice(-restPlain.length) === restPlain) sp0 = plain.slice(0, plain.length - restPlain.length) + "'" + rest;
     });
-    it.spell = capitalizeParts(capitalize(sp0, it.raw), it.raw);
+    var capRaw = it.pef ? it.raw.toLowerCase() : it.raw;   /* 조어 기호의 대문자(A T 등)는 고유명사 표시가 아님 */
+    it.spell = capitalizeParts(capitalize(sp0, capRaw), capRaw);
   });
   items.forEach(function (it, i) {
     if (!it.word) return;
@@ -1671,6 +1687,12 @@ function renderOutput() {
     });
     var tr = document.createElement("div");
     tr.className = "trace"; tr.hidden = true;
+    if (it.pef) {
+      var ph = document.createElement("p"); ph.className = "hint";
+      ph.textContent = it.pef.bad ? "조어 어근으로 읽을 수 없습니다 (음절은 (C)V(C))"
+        : "조어 " + it.pef.d.pef + " → " + (it.pef.fov ? "포브르어 " + it.pef.d.fov : "에냥어 " + it.pef.d.eny + " → 에클라이아어 입력 " + it.pef.d.ekl);
+      tr.appendChild(ph);
+    }
     [["내부형 규칙", it.t1], ["문자형 규칙", it.t0], ["기본 표기 규칙", it.t2], ["발음 규칙", it.t3]].forEach(function (pair) {
       var h = document.createElement("h3"); h.textContent = pair[0] + " (" + pair[1].length + ")";
       var ol = document.createElement("ol");
@@ -3121,7 +3143,7 @@ function showView(v) {
   if (typeof placeToTop === "function") placeToTop();
 }
 $("views").addEventListener("click", function (e) {
-  var t = e.target.closest(".view-tab"); if (t) showView(t.getAttribute("data-view"));
+  var t = e.target.closest(".view-tab"); if (t && t.getAttribute("data-view")) showView(t.getAttribute("data-view"));
 });
 
 /* 독립 실행판: 단어장은 이 파일에 내장된 초기 데이터와 브라우저 localStorage에 저장됨 */
@@ -3168,9 +3190,13 @@ $("lexReset").addEventListener("click", function () {
 
 var savedInput = load(STORE_INPUT);
 input.value = savedInput !== null && savedInput !== "" ? savedInput : SAMPLE;
+(function () {
+  var hm = /^#in=(.+)$/.exec(location.hash);
+  if (hm) { try { input.value = decodeURIComponent(hm[1]); } catch (e) {} }
+})();
 showTab("cats");
 compileAll(); renderErrors(); renderOutput();
-(function () { var v0 = load(STORE_VIEW); showView(v0 === "lex" || v0 === "gen" ? v0 : "conv"); })();
+(function () { var v0 = load(STORE_VIEW); showView(/^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" ? v0 : "conv")); })();
 renderLex();
 startLex();
 /* ---- GitHub 동기화 ---- */
