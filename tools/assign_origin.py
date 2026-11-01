@@ -39,7 +39,7 @@ def tags(w):
 def origin_of(w):
     i, tg = w.get("input", ""), tags(w)
     if "%" in i or "F 기원" in tg: return "f"
-    if "B 기원" in tg: return "b"
+    if "에냥어 기원" in tg or "B 기원" in tg: return "b"
     if re.match(r"^@?&", i) or "학술 차용어" in tg: return "l"
     if "·" in i or "후대 합성어" in tg: return "e"
     return "a"
