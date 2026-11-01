@@ -4754,9 +4754,9 @@
   "id": "wmvwfz0sk26bn"
  },
  {
-  "head": "sesano",
+  "head": "sehano",
   "mean": "빨래",
-  "input": "%sesano",
+  "input": "%sehano",
   "note": "원형 sesano",
   "tags": [
    "F 기원"
@@ -4831,9 +4831,9 @@
   "id": "wmvwfz202oc99"
  },
  {
-  "head": "isikuxa",
+  "head": "ihikuxa",
   "mean": "옮기다",
-  "input": "%isikuxa",
+  "input": "%ihikuxa",
   "note": "",
   "tags": [
    "F 기원"
@@ -4985,9 +4985,9 @@
   "id": "wmvwjmi3chqnf"
  },
  {
-  "head": "ileso",
+  "head": "ileho",
   "mean": "속옷",
-  "input": "%%ileso",
+  "input": "%ileho",
   "note": "",
   "tags": [
    "F 기원"

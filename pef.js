@@ -59,7 +59,7 @@
     [["au", "o"], ["eu", "u"], ["ou", "u"], ["iu", "u"], ["oi", "ei"], ["ui", "i"]].forEach(function (p) { s = s.split(p[0]).join(p[1]); });   // E11
     s = s.replace(/\./g, "").replace(/S/g, "ʃ");
     s = s.replace(/(?<=[ptksʃmrl])ɯ/g, "i").replace(/ɯ(?=[ptksʃmrl])/g, "i");              // E10 ɯ가 자음 옆에서 i로
-    return s.replace(/s(?=i)/g, "ʃ").replace(/o(?=l)/g, "a");                              // E11 s가 i 앞에서 ʃ로, E12 o가 l 앞에서 a로
+    return s.replace(/s(?=i)/g, "ʃ").replace(/o(?=l)/g, "a").replace(/(?<=i)s/g, "ʃ");                              // E11 s가 i 앞에서 ʃ로, E12 o가 l 앞에서 a로
   }
 
   /* ---------- 포브르어 (1600년) ---------- */
@@ -94,6 +94,7 @@
     for (var k = 0; k < 2; k++) f = f.replace(re9, function (m, a, b) { return LEGAL_F.test(a + b) ? a + b : m; });   // F9
     f = f.replace(/(?<=[aeiou])([lsxnmh])ə$/, "$1");                                       // F10
     f = f.replace(/k(?=i)/g, "p").replace(/s$/, "h").replace(/a(?=l)/g, "e");              // F11 i 앞 k→p, F12 어말 s→h, F13 l 앞 a→e
+    f = f.replace(/t(?=u)/g, "p").replace(/(?<=[aeiouə])s(?=[aeiouə])/g, "h");           // F14 u 앞 t→p, F15 모음 사이 s→h
     return "%" + f;
   }
 
