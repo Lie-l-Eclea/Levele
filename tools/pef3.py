@@ -10,9 +10,9 @@ def pw(a):
         r-=w
         if r<0: return x
     return a[-1][0]
-ON=[('p',1.2),('t',1.8),('k',1.3),('q',.5),('P',.4),('T',.5),('K',.4),('b',.8),('d',1.2),('g',.5),('s',2),('S',.5),('x',.6),('h',.5),
+ON=[('p',1.2),('t',1.8),('k',1.3),('q',.5),('P',.4),('T',.5),('K',.4),('b',.8),('d',1.2),('g',.5),('s',2),('S',.5),('x',.6),('h',.5),('z',.5),('c',.4),('f',.5),('v',.4),
     ('m',1),('n',1.6),('l',1),('r',1.6),('w',.5),('j',.5),('',.3)]
-NU=[('a',3),('e',3),('i',3),('o',3),('u',2),('ə',1.5),('A',.5),('E',.4),('I',.4),('O',.4),('U',.3)]
+NU=[('a',3),('e',3),('i',3),('o',3),('u',2),('ə',1.5),('A',.5),('E',.4),('I',.4),('O',.4),('U',.3),('ɛ',.8),('ɔ',.8),('y',.5),('ø',.4)]
 CO=[('',.7),('n',.07),('m',.04),('N',.02),('l',.06),('r',.07),('s',.03),('x',.01),('h',.03)]
 def gen():
     n=pw([(1,1.5),(2,6),(3,3.5)])
@@ -35,10 +35,11 @@ def gen():
     # 어말 비음은 드묾: 그대로
     return syl
 def s2str(syl): return '.'.join(x['on']+x['nu']+x['co'] for x in syl)
-V='aeiouɯəAEIOU'
+V='aeiouɯəɛɔyøAEIOU'
 # ---------- 에냥어 (1000년) ----------
 def enyang(p):
     s=p
+    s=s.translate(str.maketrans('zcfɛɔyø','tspeaie')).replace('v','')               # E0 새 조어 음소 θ(z) ç(c) ɸ(f) ɣ(v) ɛ ɔ y ø의 에냥어 반영
     s=re.sub('[PTK]',lambda m:{'P':'p','T':'t','K':'k'}[m.group()],s)          # E1 방출음이 평음에 합류
     s=s.replace('q','k')                                                        # E2 구개수 폐쇄음은 k
     s=re.sub('[xh]','',s)                                                      # E3 구개수 마찰음과 후음 탈락(모음 연속이 생김)
@@ -64,7 +65,9 @@ LEGAL_F=re.compile(r'^(?:[ptkbdgnmsxljwh]|[pkbg]l|[px]|tx|[hlsxnm][ptkbdgnmsxlj]
 def fovre(syl):
     S=[dict(x) for x in syl]; n=len(S)
     # F1 방출음 -> 유성 폐쇄음, 구개수·r -> x, S -> s, N -> n
-    mp={'P':'b','T':'d','K':'g','q':'x','r':'x','S':'s','N':'n'}
+    mp={'P':'b','T':'d','K':'g','q':'x','r':'x','S':'s','N':'n','z':'t','c':'j','f':'h','v':'g'}
+    vm={'ɛ':'a','ɔ':'o','y':'u','ø':'o'}
+    for x in S: x['nu']=vm.get(x['nu'],x['nu'])
     for x in S:
         x['on']=''.join(mp.get(c,c) for c in x['on']); x['co']=''.join(mp.get(c,c) for c in x['co'])
     # F2 장모음 순환 이동 (Great Vowel Shift형): A>o E>a I>e O>u U>i

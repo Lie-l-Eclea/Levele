@@ -4,7 +4,7 @@
    음절 (C)V(C), 어두에는 파열음+유음 자음군 가능, 점(.) 또는 밑줄(_)로 음절을 직접 나눌 수 있음. 점이 없으면 자음 하나는 뒤 음절의 첫소리, 둘이면 앞은 끝소리. */
 (function (root) {
   "use strict";
-  var VOW = "aeiouəAEIOU";
+  var VOW = "aeiouəɛɔyøAEIOU";
   var isV = function (c) { return VOW.indexOf(c) >= 0; };
 
   /* 문자열 → 음절 배열 [{on, nu, co}] */
@@ -13,7 +13,7 @@
     var parts = s.indexOf(".") >= 0 ? s.split(".") : null;
     var syl = [];
     function one(t) {
-      var m = t.match(/^([^aeiouəAEIOU]*)([aeiouəAEIOU])([^aeiouəAEIOU]*)$/);
+      var m = t.match(/^([^aeiouəɛɔyøAEIOU]*)([aeiouəɛɔyøAEIOU])([^aeiouəɛɔyøAEIOU]*)$/);
       if (!m) return null;
       return { on: m[1], nu: m[2], co: m[3] };
     }
@@ -45,6 +45,8 @@
   /* ---------- 에냥어 (1000년) ---------- */
   function enyang(syl) {
     var s = str(syl);
+    var m0 = { z: "t", c: "s", f: "p", "ɛ": "e", "ɔ": "a", y: "i", "ø": "e" };                // E0 새 조어 음소 θ(z) ç(c) ɸ(f) ɣ(v) ɛ ɔ y ø의 에냥어 반영
+    s = s.replace(/[zcfɛɔyø]/g, function (c) { return m0[c]; }).replace(/v/g, "");
     s = s.replace(/[PTK]/g, function (m) { return { P: "p", T: "t", K: "k" }[m]; });   // E1
     s = s.replace(/q/g, "k");                                                         // E2
     s = s.replace(/[xh]/g, "");                                                         // E3
@@ -66,7 +68,9 @@
   var LEGAL_F = /^(?:[ptkbdgnmsxljwh]|[pkbg]l|[px]|tx|[hlsxnm][ptkbdgnmsxlj])$/;
   function fovre(syl0) {
     var S = syl0.map(function (x) { return { on: x.on, nu: x.nu, co: x.co }; }), n = S.length, i;
-    var mp = { P: "b", T: "d", K: "g", q: "x", r: "x", S: "s", N: "n" };
+    var mp = { P: "b", T: "d", K: "g", q: "x", r: "x", S: "s", N: "n", z: "t", c: "j", f: "h", v: "g" };
+    var vm = { "ɛ": "a", "ɔ": "o", y: "u", "ø": "o" };
+    S.forEach(function (x) { x.nu = vm[x.nu] || x.nu; });
     var mapc = function (t) { return Array.from(t).map(function (c) { return mp[c] || c; }).join(""); };
     S.forEach(function (x) { x.on = mapc(x.on); x.co = mapc(x.co); });          // F1
     var sh = { A: "o", E: "a", I: "e", O: "u", U: "i" };
