@@ -3844,7 +3844,7 @@
  {
   "head": "pomer",
   "mean": "치료하다",
-  "input": "%pomer",
+  "input": "%pomex",
   "note": "",
   "tags": [
    "F 기원"
@@ -3897,9 +3897,9 @@
   "id": "wmvw9cmsj2npu"
  },
  {
-  "head": "lukubre",
+  "head": "lukubare",
   "mean": "성냥",
-  "input": "%lukubre",
+  "input": "%lukubəxe",
   "note": "",
   "tags": [
    "F 기원"
@@ -3987,7 +3987,7 @@
  {
   "head": "jura",
   "mean": "흔들거리다",
-  "input": "%jura",
+  "input": "%juxa",
   "note": "",
   "tags": [
    "F 기원"

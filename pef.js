@@ -1,7 +1,7 @@
 /* 에냥-포브르 조어(PEF) 처리기: 조어 어근에서 에냥어형(1000년)과 포브르어형(1600년)을 만들고,
    에클라이아어 변환기 입력으로 바꿈. tools/pef3.py와 같은 규칙(검증용 비교 스크립트 tools/pef_check.js).
    기호: 방출음 P T K, 구개수 q, 마찰 x(구개수) S(ʃ), 비음 m n N(ŋ), 장모음 A E I O U(첫 음절만), 약모음 ə, 활음 w j
-   음절 (C)V(C), 점(.) 또는 밑줄(_)로 음절을 직접 나눌 수 있음. 점이 없으면 자음 하나는 뒤 음절의 첫소리, 둘이면 앞은 끝소리. */
+   음절 (C)V(C), 어두에는 파열음+유음 자음군 가능, 점(.) 또는 밑줄(_)로 음절을 직접 나눌 수 있음. 점이 없으면 자음 하나는 뒤 음절의 첫소리, 둘이면 앞은 끝소리. */
 (function (root) {
   "use strict";
   var VOW = "aeiouəAEIOU";
@@ -47,7 +47,7 @@
     var s = str(syl);
     s = s.replace(/[PTK]/g, function (m) { return { P: "p", T: "t", K: "k" }[m]; });   // E1
     s = s.replace(/q/g, "k");                                                         // E2
-    s = s.replace(/x/g, "");                                                          // E3
+    s = s.replace(/[xh]/g, "");                                                         // E3
     s = s.replace(/[mnN](?=\.?[bdg])/g, "");                                          // E4
     s = s.replace(/[bdg]/g, function (m) { return { b: "p", d: "t", g: "k" }[m]; });  // E5
     s = s.replace(/^n/, "l");                                                         // E6
@@ -55,9 +55,6 @@
     s = s.replace(/n(?=\.?[pP])/g, "m").replace(/N/g, "m").replace(/n$/, "m").replace(/n/g, "r");
     s = s.replace(/j/g, "i").replace(/w/g, "u");                                      // E7
     s = s.replace(/ə/g, "ɯ");                                                         // E8
-    var sy = s.split(".");                                                            // E9
-    for (var i = 1; i < sy.length - 1; i++) sy[i] = sy[i].replace(/(?<![aeiouɯ])[eo](?![aeiouɯ])/g, "ɯ");
-    s = sy.join(".");
     s = s.replace(/A/g, "a").replace(/E/g, "e").replace(/I/g, "i").replace(/O/g, "o").replace(/U/g, "u");   // E10
     [["au", "o"], ["eu", "u"], ["ou", "u"], ["iu", "u"], ["oi", "ei"], ["ui", "i"]].forEach(function (p) { s = s.split(p[0]).join(p[1]); });   // E11
     return s.replace(/\./g, "").replace(/S/g, "ʃ");
@@ -68,30 +65,25 @@
   function fovre(syl0) {
     var S = syl0.map(function (x) { return { on: x.on, nu: x.nu, co: x.co }; }), n = S.length, i;
     var mp = { P: "b", T: "d", K: "g", q: "x", r: "x", S: "s", N: "n" };
-    S.forEach(function (x) { x.on = mp[x.on] || x.on; x.co = mp[x.co] || x.co; });          // F1
+    var mapc = function (t) { return Array.from(t).map(function (c) { return mp[c] || c; }).join(""); };
+    S.forEach(function (x) { x.on = mapc(x.on); x.co = mapc(x.co); });          // F1
     var sh = { A: "o", E: "a", I: "e", O: "u", U: "i" };
     S.forEach(function (x) { x.nu = sh[x.nu] || x.nu; });                                  // F2
     for (i = 0; i < n - 1; i++) {                                                          // F3
       var nxt = S[i + 1];
-      if (nxt.nu === "i" || nxt.on === "j") S[i].nu = { a: "e", o: "e", u: "i" }[S[i].nu] || S[i].nu;
+      if (nxt.nu === "i" || nxt.on === "j") S[i].nu = { o: "e", u: "i" }[S[i].nu] || S[i].nu;
     }
-    for (i = 1; i < n; i++) {                                                              // F4
-      if ((S[i].on === "p" || S[i].on === "t" || S[i].on === "k") && S[i - 1].co === "")
-        S[i].on = { p: "b", t: "d", k: "g" }[S[i].on];
-    }
-    for (i = 1; i < n; i++) S[i].nu = { a: "ə", e: "ə", o: "ə" }[S[i].nu] || S[i].nu;     // F5
+    /* F4(Verner 유성화)와 F5(강세 없는 모음 ə 약화)는 기존 포브르어 단어와 맞지 않아 두지 않음 */
     for (i = 0; i < n - 1; i++) {                                                          // F6
       var c = S[i].co, nx = S[i + 1].on;
       if ((c === "m" || c === "n") && (nx === "b" || nx === "d" || nx === "g")) {
         S[i].co = ""; S[i + 1].on = { b: "ƀ", d: "đ", g: "ǥ" }[nx];
       } else if ((c === "m" || c === "n") && (nx === "p" || nx === "t" || nx === "k")) S[i].co = "h";
     }
-    if (n === 1 && S[0].co === "" && "aeiou".indexOf(S[0].nu) >= 0 && S[0].on) S[0].co = "h";   // F7
     for (i = 1; i < n; i++) {                                                              // F8
       if (S[i].on === "" && S[i - 1].co === "") {
         var pv = S[i - 1].nu;
-        if (pv === "ə") S[i - 1].nu = "";
-        else S[i].on = (pv === "o" || pv === "u") ? "w" : "j";
+        if (pv === "ə") S[i - 1].nu = "";   /* 활음 삽입은 하지 않고 모음 연속을 둠 */
       }
     }
     var f = S.map(function (x) { return x.on + x.nu + x.co; }).join("");
