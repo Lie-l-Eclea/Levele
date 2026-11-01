@@ -74,7 +74,7 @@
 김 (증기)	자연 세계	에냥어	WOLD	1-831	the steam	0.225		Noun	0.832	0.879
 얼다	자연 세계	에냥어	WOLD	1-775	to freeze	0.13		Verb	0.836	0.774
 땅바닥	자연 세계	에냥어	NorthEuraLex	Boden::N	ground					
-불티	자연 세계	에냥어	NorthEuraLex	Funke::N	spark					
+불티	자연 세계	포브르어	NorthEuraLex	Funke::N	spark					
 더위	자연 세계	에냥어	NorthEuraLex	Hitze::N	heat					
 물살	자연 세계	에냥어	NorthEuraLex	Strömung::N	current					
 방울	자연 세계	에냥어	NorthEuraLex	Tropfen::N	drop					
@@ -149,7 +149,7 @@
 아우	친족	에냥어	WOLD	2-445	the younger brother	0.031		Noun	0.843	0.731
 자매	친족	에냥어	WOLD	2-45	the sister	0.118		Noun	0.809	0.815
 언니 (손위 자매)	친족	에냥어	WOLD	2-454	the older sister	0.055		Noun	0.822	0.712
-여동생	친족	포브르어	WOLD	2-455	the younger sister	0.011		Noun	0.789	0.680
+여동생	친족	에냥어	WOLD	2-455	the younger sister	0.011		Noun	0.789	0.680
 동기 (형제자매)	친족	에냥어	WOLD	2-456	the sibling	0.136		Noun	0.846	0.660
 쌍둥이	친족	정복층 언어	WOLD	2-458	the twins	0.23		Noun	0.806	0.757
 할아버지	친족	에냥어	WOLD	2-46	the grandfather	0.267		Noun	0.826	0.827
@@ -167,7 +167,7 @@
 조카딸	친족	에냥어	WOLD	2-54	the niece	0.146		Noun	0.825	0.678
 사촌	친족	에냥어	WOLD	2-55	the cousin	0.124		Noun	0.801	0.696
 조상	친족	정복층 언어	WOLD	2-56	the ancestors	0.278		Noun	0.796	0.696
-후손	친족	포브르어	WOLD	2-57	the descendants	0.345		Noun	0.824	0.703
+후손	친족	에냥어	WOLD	2-57	the descendants	0.345		Noun	0.824	0.703
 장인	친족	에냥어	WOLD	2-61	the father-in-law (of a man)	0.125		Noun	0.831	0.734
 시아버지	친족	에냥어	WOLD	2-611	the father-in-law (of a woman)	0.17		Noun	0.792	0.756
 장모	친족	정복층 언어	WOLD	2-62	the mother-in-law (of a man)	0.122		Noun	0.802	0.718
@@ -298,7 +298,7 @@
 팔꿈치	몸	정복층 언어	WOLD	4-32	the elbow	0.085		Noun	0.814	0.847
 손목	몸	에냥어	WOLD	4-321	the wrist	0.133		Noun	0.771	0.737
 손	몸	에냥어	WOLD	4-33	the hand	0.151		Noun	0.874	0.993
-손바닥	몸	정복층 언어	WOLD	4-331	the palm of the hand	0.11		Noun	0.838	0.725
+손바닥	몸	포브르어	WOLD	4-331	the palm of the hand	0.11		Noun	0.838	0.725
 손가락	몸	에냥어	WOLD	4-34	the finger	0.051		Noun	0.827	0.820
 엄지	몸	정복층 언어	WOLD	4-342	the thumb	0.08		Noun	0.770	0.670
 손톱	몸	에냥어	WOLD	4-344	the fingernail	0.76		Noun	0.853	0.872
@@ -319,11 +319,11 @@
 젖꼭지	몸	정복층 언어	WOLD	4-412	the nipple or teat	0.062		Noun	0.764	0.715
 배꼽	몸	에냥어	WOLD	4-43	the navel	0.122	42	Noun	0.923	0.982
 심장	몸	에냥어	WOLD	4-44	the heart	0.223		Noun	0.832	0.959
-허파	몸	정복층 언어	WOLD	4-441	the lung	0.262		Noun	0.855	0.911
+허파	몸	에냥어	WOLD	4-441	the lung	0.262		Noun	0.855	0.911
 간	몸	에냥어	WOLD	4-45	the liver	0.131	66	Noun	0.896	0.967
 콩팥	몸	정복층 언어	WOLD	4-451	the kidney	0.168		Noun	0.853	0.908
 지라	몸	에냥어	WOLD	4-452	the spleen	0.197		Noun	0.797	0.947
-위장	몸	에냥어	WOLD	4-46	the stomach	0.318		Noun	0.852	0.967
+위장	몸	포브르어	WOLD	4-46	the stomach	0.318		Noun	0.852	0.967
 창자	몸	에냥어	WOLD	4-461	the intestines or guts	0.165		Noun	0.852	0.865
 허리	몸	에냥어	WOLD	4-462	the waist	0.16		Noun	0.846	0.914
 엉덩이 (골반)	몸	에냥어	WOLD	4-463	the hip	0.125		Noun	0.834	0.924
@@ -368,7 +368,7 @@
 건강하다	몸	정복층 언어	WOLD	4-83	healthy	0.355		Adjective	0.866	0.778
 아프다 (병들다)	몸	에냥어	WOLD	4-84	sick/ill	0.178		Adjective	0.812	0.846
 열 (병)	몸	에냥어	WOLD	4-841	the fever	0.307		Noun	0.798	0.838
-갑상샘종	몸	정복층 언어	WOLD	4-842	the goitre/goiter	0.141		Noun	0.828	0.781
+갑상샘종	몸	포브르어	WOLD	4-842	the goitre/goiter	0.141		Noun	0.828	0.781
 감기	몸	정복층 언어	WOLD	4-843	the cold	0.195		Noun	0.793	0.848
 상처	몸	에냥어	WOLD	4-85	the wound or sore	0.152		Noun	0.808	0.875
 멍	몸	에냥어	WOLD	4-852	the bruise	0.07		Noun	0.768	0.772
@@ -404,7 +404,7 @@
 살·고기	몸	정복층 언어	Leipzig-Jakarta	2615	flesh/meat	0.123	18			
 팔·손	몸	정복층 언어	Leipzig-Jakarta	2121	arm/hand	0.119	19			
 털·머리털	몸	포브르어	Leipzig-Jakarta	1040	hair	0.056	31			
-다리·발	몸	포브르어	Leipzig-Jakarta	2098	leg/foot	0.144	37			
+다리·발	몸	에냥어	Leipzig-Jakarta	2098	leg/foot	0.144	37			
 콧수염	몸	에냥어	NorthEuraLex	Schnurrbart::N	moustache					
 손발톱	몸	에냥어	NorthEuraLex	Nagel[Anatomie]::N	nail					
 혈관	몸	정복층 언어	NorthEuraLex	Ader::N	vein					
@@ -453,7 +453,7 @@
 굽다 (불에)	음식과 마실 것	포브르어	WOLD	5-23	to roast or fry	0.279		Verb	0.860	0.942
 굽다 (화덕에)	음식과 마실 것	정복층 언어	WOLD	5-24	to bake	0.158		Verb	0.840	0.877
 화덕	음식과 마실 것	포브르어	WOLD	5-25	the oven	0.514		Noun	0.819	0.903
-솥	음식과 마실 것	포브르어	WOLD	5-26	the pot	0.328		Noun	0.839	0.956
+솥	음식과 마실 것	에냥어	WOLD	5-26	the pot	0.328		Noun	0.839	0.956
 주전자	음식과 마실 것	포브르어	WOLD	5-27	the kettle	0.678		Noun	0.844	0.923
 납작한 냄비	음식과 마실 것	포브르어	WOLD	5-28	the pan	0.549		Noun	0.833	0.856
 큰 접시	음식과 마실 것	포브르어	WOLD	5-31	the dish	0.55		Noun	0.802	0.992
@@ -462,7 +462,7 @@
 물병	음식과 마실 것	에냥어	WOLD	5-34	the jug/pitcher	0.403		Noun	0.859	0.926
 잔	음식과 마실 것	포브르어	WOLD	5-35	the cup	0.615		Noun	0.799	0.928
 잔 받침	음식과 마실 것	에냥어	WOLD	5-36	the saucer	0.5		Noun	0.783	0.795
-숟가락	음식과 마실 것	포브르어	WOLD	5-37	the spoon	0.401		Noun	0.819	0.911
+숟가락	음식과 마실 것	에냥어	WOLD	5-37	the spoon	0.401		Noun	0.819	0.911
 식탁용 칼	음식과 마실 것	포브르어	WOLD	5-38	the knife(1)	0.257		Noun	0.856	0.909
 포크	음식과 마실 것	포브르어	WOLD	5-39	the fork	0.544		Noun	0.740	0.876
 집게	음식과 마실 것	에냥어	WOLD	5-391	the tongs	0.403		Noun	0.752	0.863
@@ -489,11 +489,11 @@
 채소	음식과 마실 것	에냥어	WOLD	5-65	the vegetables	0.256		Noun	0.829	0.860
 열매	음식과 마실 것	에냥어	WOLD	5-71	the fruit	0.255		Noun	0.861	0.874
 송이	음식과 마실 것	에냥어	WOLD	5-712	the bunch	0.14		Noun	0.796	0.906
-견과	음식과 마실 것	포브르어	WOLD	5-77	the nut	0.273		Noun	0.804	0.883
+견과	음식과 마실 것	에냥어	WOLD	5-77	the nut	0.273		Noun	0.804	0.883
 기름	음식과 마실 것	포브르어	WOLD	5-79	the oil	0.6		Noun	0.810	0.919
 비계	음식과 마실 것	에냥어	WOLD	5-791	the grease or fat	0.18		Noun	0.880	0.922
 소금	음식과 마실 것	정복층 언어	WOLD	5-81	the salt	0.152	91	Noun	0.839	0.976
-젖 (마시는 것)	음식과 마실 것	포브르어	WOLD	5-86	the milk	0.312		Noun	0.846	0.888
+젖 (마시는 것)	음식과 마실 것	에냥어	WOLD	5-86	the milk	0.312		Noun	0.846	0.888
 젖을 짜다	음식과 마실 것	에냥어	WOLD	5-87	to milk	0.07		Verb	0.816	0.744
 굳힌 젖	음식과 마실 것	포브르어	WOLD	5-88	the cheese	0.664		Noun	0.837	0.921
 버터	음식과 마실 것	포브르어	WOLD	5-89	the butter	0.487		Noun	0.831	0.893
@@ -522,9 +522,9 @@
 절임	음식과 마실 것	에냥어	추가		pickled food					
 과일즙	음식과 마실 것	포브르어	추가		fruit juice					
 삶은 알	음식과 마실 것	에냥어	추가		boiled egg					
-껍질 벗긴 곡식	음식과 마실 것	포브르어	추가		hulled grain					
+껍질 벗긴 곡식	음식과 마실 것	에냥어	추가		hulled grain					
 엿	음식과 마실 것	포브르어	추가		malt candy					
-찌꺼기	음식과 마실 것	포브르어	추가		dregs					
+찌꺼기	음식과 마실 것	에냥어	추가		dregs					
 옷을 입다	옷과 몸단장	정복층 언어	WOLD	6-11	to put on	0.071		Verb	0.867	0.817
 옷	옷과 몸단장	정복층 언어	WOLD	6-12	the clothing or clothes	0.197		Noun	0.857	0.805
 재단사	옷과 몸단장	정복층 언어	WOLD	6-13	the tailor	0.294		Noun	0.794	0.662
@@ -544,7 +544,7 @@
 망토	옷과 몸단장	포브르어	WOLD	6-41	the cloak	0.704		Noun	0.855	0.883
 드레스	옷과 몸단장	에냥어	WOLD	6-42	the (woman's) dress	0.468		Noun	0.816	0.887
 외투	옷과 몸단장	에냥어	WOLD	6-43	the coat	0.608		Noun	0.761	0.882
-셔츠	옷과 몸단장	포브르어	WOLD	6-44	the shirt	0.506		Noun	0.829	0.935
+셔츠	옷과 몸단장	정복층 언어	WOLD	6-44	the shirt	0.506		Noun	0.829	0.935
 옷깃	옷과 몸단장	에냥어	WOLD	6-45	the collar	0.37		Noun	0.806	0.864
 치마	옷과 몸단장	에냥어	WOLD	6-46	the skirt	0.61		Noun	0.801	0.975
 바지	옷과 몸단장	에냥어	WOLD	6-48	the trousers	0.565		Noun	0.814	0.935
@@ -609,7 +609,7 @@
 창문	집	에냥어	WOLD	7-25	the window	0.568		Noun	0.818	0.905
 바닥	집	정복층 언어	WOLD	7-26	the floor	0.346		Noun	0.821	0.879
 벽	집	정복층 언어	WOLD	7-27	the wall	0.34		Noun	0.821	0.954
-아궁이	집	정복층 언어	WOLD	7-31	the fireplace	0.233		Noun	0.789	0.762
+아궁이	집	포브르어	WOLD	7-31	the fireplace	0.233		Noun	0.789	0.762
 난로	집	에냥어	WOLD	7-32	the stove	0.576		Noun	0.838	0.904
 굴뚝	집	에냥어	WOLD	7-33	the chimney	0.336		Noun	0.847	0.764
 침대	집	에냥어	WOLD	7-42	the bed	0.386		Noun	0.836	0.921
@@ -619,7 +619,7 @@
 탁자	집	에냥어	WOLD	7-44	the table	0.735		Noun	0.813	0.959
 등불	집	에냥어	WOLD	7-45	the lamp or torch	0.649		Noun	0.785	0.932
 초	집	에냥어	WOLD	7-46	the candle	0.627		Noun	0.834	0.928
-선반	집	정복층 언어	WOLD	7-47	the shelf	0.444		Noun	0.776	0.897
+선반	집	에냥어	WOLD	7-47	the shelf	0.444		Noun	0.776	0.897
 구유	집	에냥어	WOLD	7-48	the trough	0.309		Noun	0.877	0.918
 지붕	집	정복층 언어	WOLD	7-51	the roof	0.143		Noun	0.793	0.789
 이엉	집	에클레아어 신어	WOLD	7-52	the thatch	0.027		Noun	0.816	0.707
@@ -656,7 +656,7 @@
 화로	집	에냥어	추가		hearth					
 물동이	집	에냥어	추가		water jar					
 빨래	집	포브르어	추가		laundry					
-농부	농사와 식물	포브르어	WOLD	8-11	the farmer	0.443		Noun	0.774	0.728
+농부	농사와 식물	에냥어	WOLD	8-11	the farmer	0.443		Noun	0.774	0.728
 밭	농사와 식물	에냥어	WOLD	8-12	the field	0.191		Noun	0.843	0.883
 뜰 (텃밭)	농사와 식물	에냥어	WOLD	8-13	the garden	0.462		Noun	0.825	0.926
 경작하다	농사와 식물	에냥어	WOLD	8-15	to cultivate	0.137		Verb	0.790	0.750
@@ -741,11 +741,11 @@
 하다	기본 동작과 기술	에냥어	WOLD	9-11	to do	0.028		Verb	0.897	0.939
 일	기본 동작과 기술	에냥어	WOLD	9-12	the work	0.362		Noun	0.849	0.912
 구부리다	기본 동작과 기술	정복층 언어	WOLD	9-14	to bend	0.125		Verb	0.799	0.846
-접다	기본 동작과 기술	정복층 언어	WOLD	9-15	to fold	0.096		Verb	0.798	0.856
-묶다	기본 동작과 기술	에냥어	WOLD	9-16	to tie	0.121	88	Verb	0.875	0.948
+접다	기본 동작과 기술	포브르어	WOLD	9-15	to fold	0.096		Verb	0.798	0.856
+묶다	기본 동작과 기술	정복층 언어	WOLD	9-16	to tie	0.121	88	Verb	0.875	0.948
 풀다	기본 동작과 기술	정복층 언어	WOLD	9-161	to untie	0.082		Verb	0.828	0.780
 사슬	기본 동작과 기술	정복층 언어	WOLD	9-18	the chain	0.562		Noun	0.763	0.922
-밧줄	기본 동작과 기술	에냥어	WOLD	9-19	the rope	0.152	91	Noun	0.866	0.993
+밧줄	기본 동작과 기술	정복층 언어	WOLD	9-19	the rope	0.152	91	Noun	0.866	0.993
 매듭	기본 동작과 기술	정복층 언어	WOLD	9-192	the knot	0.106		Noun	0.793	0.928
 때리다	기본 동작과 기술	정복층 언어	WOLD	9-21	to strike or hit or beat	0.045	36	Verb	0.813	0.947
 주먹으로 치다	기본 동작과 기술	정복층 언어	WOLD	9-211	to pound	0.219		Verb	0.837	0.842
@@ -783,7 +783,7 @@
 못	기본 동작과 기술	포브르어	WOLD	9-5	the nail	0.409		Noun	0.838	0.932
 아교	기본 동작과 기술	정복층 언어	WOLD	9-56	the glue	0.417		Noun	0.799	0.931
 대장장이	기본 동작과 기술	정복층 언어	WOLD	9-6	the blacksmith	0.29		Noun	0.821	0.710
-벼리다	기본 동작과 기술	정복층 언어	WOLD	9-61	to forge	0.093		Verb	0.818	0.732
+벼리다	기본 동작과 기술	포브르어	WOLD	9-61	to forge	0.093		Verb	0.818	0.732
 모루	기본 동작과 기술	에냥어	WOLD	9-62	the anvil	0.281		Noun	0.767	0.798
 주조하다	기본 동작과 기술	에냥어	WOLD	9-63	to cast	0.317		Verb	0.887	0.778
 금	기본 동작과 기술	에냥어	WOLD	9-64	the gold	0.575		Noun	0.849	0.938
@@ -813,7 +813,7 @@
 말뚝	기본 동작과 기술	포브르어	WOLD	9-91	the peg	0.319		Noun	0.849	0.957
 만들다	기본 동작과 기술	에냥어	WOLD	9-111	to make	0.08		Verb	0.870	0.896
 닦다	기본 동작과 기술	정복층 언어	WOLD	9-311	to wipe	0.14		Verb	0.814	0.857
-하다·만들다	기본 동작과 기술	정복층 언어	Leipzig-Jakarta	2575	to do/make	0.053	25			
+하다·만들다	기본 동작과 기술	포브르어	Leipzig-Jakarta	2575	to do/make	0.053	25			
 잠	기본 동작과 기술	에냥어	NorthEuraLex	Schlaf::N	sleep					
 올가미 매듭	기본 동작과 기술	에냥어	NorthEuraLex	Schlinge::N	noose					
 새 소식	기본 동작과 기술	에냥어	NorthEuraLex	Neuigkeit::N	news					
@@ -896,7 +896,7 @@
 몸을 씻다	기본 동작과 기술	정복층 언어	NorthEuraLex	sich waschen::V	wash					
 담소하다	기본 동작과 기술	에냥어	NorthEuraLex	sich unterhalten::V	chat					
 전하다	기본 동작과 기술	에냥어	NorthEuraLex	mitteilen::V	convey					
-번역하다	기본 동작과 기술	정복층 언어	NorthEuraLex	übersetzen::V	translate					
+번역하다	기본 동작과 기술	포브르어	NorthEuraLex	übersetzen::V	translate					
 알아차리다	기본 동작과 기술	정복층 언어	NorthEuraLex	bemerken::V	notice					
 알아보다	기본 동작과 기술	포브르어	NorthEuraLex	erkennen::V	recognize					
 견디다	기본 동작과 기술	정복층 언어	NorthEuraLex	ertragen::V	endure					
@@ -941,7 +941,7 @@
 돌리다	움직임	정복층 언어	WOLD	10-12	to turn	0.148		Verb	0.819	0.758
 돌아서다	움직임	정복층 언어	WOLD	10-13	to turn around	0.096		Verb	0.761	0.691
 싸다 (포장)	움직임	정복층 언어	WOLD	10-14	to wrap	0.115		Verb	0.830	0.893
-굴리다	움직임	정복층 언어	WOLD	10-15	to roll	0.187		Verb	0.810	0.801
+굴리다	움직임	포브르어	WOLD	10-15	to roll	0.187		Verb	0.810	0.801
 떨어뜨리다	움직임	에냥어	WOLD	10-16	to drop	0.04		Verb	0.817	0.677
 비틀다	움직임	정복층 언어	WOLD	10-17	to twist	0.158		Verb	0.799	0.883
 오르다 (위로)	움직임	에냥어	WOLD	10-21	to rise	0.011		Verb	0.833	0.759
@@ -969,13 +969,13 @@
 걷다	움직임	정복층 언어	WOLD	10-45	to walk	0.088		Verb	0.813	0.819
 절뚝거리다	움직임	에냥어	WOLD	10-451	to limp	0.17		Verb	0.808	0.758
 달리다	움직임	에냥어	WOLD	10-46	to run	0.024	81	Verb	0.852	0.867
-가다	움직임	에냥어	WOLD	10-47	to go	0.037	3	Verb	0.916	0.974
+가다	움직임	정복층 언어	WOLD	10-47	to go	0.037	3	Verb	0.916	0.974
 올라가다	움직임	에냥어	WOLD	10-471	to go up	0.114		Verb	0.826	0.753
 기어오르다	움직임	정복층 언어	WOLD	10-472	to climb	0.046		Verb	0.817	0.837
 내려가다	움직임	정복층 언어	WOLD	10-473	to go down	0.122		Verb	0.793	0.786
 나가다	움직임	정복층 언어	WOLD	10-474	to go out	0.028		Verb	0.791	0.768
-오다	움직임	에냥어	WOLD	10-48	to come	0.032	11	Verb	0.881	0.940
-돌아오다	움직임	정복층 언어	WOLD	10-481	to come back	0.177		Verb	0.815	0.825
+오다	움직임	정복층 언어	WOLD	10-48	to come	0.032	11	Verb	0.881	0.940
+돌아오다	움직임	포브르어	WOLD	10-481	to come back	0.177		Verb	0.815	0.825
 떠나다	움직임	에냥어	WOLD	10-49	to leave	0.136		Verb	0.820	0.799
 사라지다	움직임	정복층 언어	WOLD	10-491	to disappear	0.133		Verb	0.822	0.811
 달아나다	움직임	정복층 언어	WOLD	10-51	to flee	0.125		Verb	0.821	0.832
@@ -1041,7 +1041,7 @@
 돌려주다	소유와 거래	에냥어	WOLD	11-22	to give back	0.088		Verb	0.769	0.678
 보존하다	소유와 거래	에냥어	WOLD	11-24	to preserve	0.241		Verb	0.788	0.745
 구하다 (위험에서)	소유와 거래	정복층 언어	WOLD	11-25	to rescue	0.368		Verb	0.787	0.811
-부수다	소유와 거래	정복층 언어	WOLD	11-27	to destroy	0.179		Verb	0.789	0.780
+부수다	소유와 거래	포브르어	WOLD	11-27	to destroy	0.179		Verb	0.789	0.780
 다치게 하다	소유와 거래	포브르어	WOLD	11-28	to injure	0.187		Verb	0.799	0.741
 찾다	소유와 거래	정복층 언어	WOLD	11-31	to look for	0.084		Verb	0.852	0.884
 발견하다	소유와 거래	정복층 언어	WOLD	11-32	to find	0.086		Verb	0.824	0.873
@@ -1103,11 +1103,11 @@
 밑바닥	공간	포브르어	WOLD	12-34	the bottom	0.092		Noun	0.818	0.933
 끝 (자리)	공간	에냥어	WOLD	12-35	the end(1)	0.097		Noun	0.837	0.893
 뾰족하다	공간	정복층 언어	WOLD	12-352	pointed	0.147		Adjective	0.814	0.798
-가장자리	공간	포브르어	WOLD	12-353	the edge	0.129		Noun	0.884	0.964
+가장자리	공간	에냥어	WOLD	12-353	the edge	0.129		Noun	0.884	0.964
 옆 (쪽)	공간	에냥어	WOLD	12-36	the side	0.14		Noun	0.786	0.917
 가운데	공간	에냥어	WOLD	12-37	the middle	0.154		Noun	0.858	0.868
 가까이	공간	에냥어	WOLD	12-43	near	0.117		Adverb	0.804	0.898
-멀리	공간	에냥어	WOLD	12-44	far	0.056	23	Adverb	0.818	0.948
+멀리	공간	정복층 언어	WOLD	12-44	far	0.056	23	Adverb	0.818	0.948
 동쪽	공간	정복층 언어	WOLD	12-45	the east	0.234		Noun	0.798	0.788
 서쪽	공간	에냥어	WOLD	12-46	the west	0.244		Noun	0.773	0.789
 북쪽	공간	정복층 언어	WOLD	12-47	the north	0.205		Noun	0.778	0.801
@@ -1115,9 +1115,9 @@
 자라다	공간	에냥어	WOLD	12-53	to grow	0.039		Verb	0.833	0.851
 재다	공간	정복층 언어	WOLD	12-54	to measure	0.196		Verb	0.803	0.839
 길 (팔 벌린 길이)	공간	에냥어	WOLD	12-541	the fathom	0.167		Noun	0.846	0.958
-크다	공간	에냥어	WOLD	12-55	big	0.111	32	Adjective	0.880	0.980
+크다	공간	정복층 언어	WOLD	12-55	big	0.111	32	Adjective	0.880	0.980
 작다	공간	정복층 언어	WOLD	12-56	small	0.091	91	Adjective	0.854	0.966
-길다	공간	에냥어	WOLD	12-57	long	0.044	78	Adjective	0.888	0.898
+길다	공간	정복층 언어	WOLD	12-57	long	0.044	78	Adjective	0.888	0.898
 키가 크다	공간	정복층 언어	WOLD	12-58	tall	0.076		Adjective	0.866	0.836
 짧다	공간	정복층 언어	WOLD	12-59	short	0.099		Adjective	0.751	0.851
 넓다	공간	정복층 언어	WOLD	12-61	wide	0.45	96	Adjective	0.835	0.885
@@ -1142,7 +1142,7 @@
 바꾸다	공간	정복층 언어	WOLD	12-93	to change	0.267		Verb	0.851	0.830
 ~에 (자리)	공간	정복층 언어	WOLD	12-013	at	0.053		Function word	0.885	1.000
 ~ 안에	공간	정복층 언어	WOLD	12-012	in	0.052	97	Function word	0.863	0.943
-숨다	공간	에냥어	Leipzig-Jakarta	2486	to hide	0.072	67			
+숨다	공간	정복층 언어	Leipzig-Jakarta	2486	to hide	0.072	67			
 틈	공간	에냥어	NorthEuraLex	Abstand::N	gap					
 거리 (사이)	공간	에냥어	NorthEuraLex	Entfernung::N	distance					
 가 (가장자리)	공간	정복층 언어	NorthEuraLex	Rand::N	fringe					
@@ -1198,9 +1198,9 @@
 양 (분량)	수량	정복층 언어	NorthEuraLex	Menge::N	amount					
 채우다	수량	정복층 언어	NorthEuraLex	füllen::V	fill					
 나이	시간	에냥어	WOLD	14-12	the age	0.452		Noun	0.823	0.873
-새롭다	시간	에냥어	WOLD	14-13	new	0.08	53	Adjective	0.851	0.920
+새롭다	시간	정복층 언어	WOLD	14-13	new	0.08	53	Adjective	0.851	0.920
 젊다	시간	정복층 언어	WOLD	14-14	young	0.163		Adjective	0.831	0.871
-일찍	시간	정복층 언어	WOLD	14-16	early	0.175		Function word	0.802	0.869
+일찍	시간	포브르어	WOLD	14-16	early	0.175		Function word	0.802	0.869
 늦게	시간	에냥어	WOLD	14-17	late	0.131		Function word	0.831	0.834
 지금	시간	정복층 언어	WOLD	14-18	now	0.103		Function word	0.832	0.875
 곧바로	시간	정복층 언어	WOLD	14-19	immediately	0.234		Function word	0.765	0.773
@@ -1231,7 +1231,7 @@
 오늘	시간	정복층 언어	WOLD	14-47	today	0.048		Function word	0.845	0.781
 내일	시간	정복층 언어	WOLD	14-48	tomorrow	0.06		Function word	0.816	0.886
 모레	시간	정복층 언어	WOLD	14-481	the day after tomorrow	0.013		Function word	0.785	0.665
-어제	시간	에냥어	WOLD	14-49	yesterday	0.042	41	Function word	0.871	0.922
+어제	시간	정복층 언어	WOLD	14-49	yesterday	0.042	41	Function word	0.871	0.922
 그저께	시간	에냥어	WOLD	14-491	the day before yesterday	0.019		Function word	0.798	0.623
 시간 (한 시간)	시간	정복층 언어	WOLD	14-51	the hour	0.758		Noun	0.813	0.931
 시계	시간	포브르어	WOLD	14-53	the clock	0.743		Noun	0.821	0.931
@@ -1242,7 +1242,7 @@
 철 (계절)	시간	에클레아어 신어	WOLD	14-78	the season	0.38		Noun	0.747	0.830
 처음	시간	정복층 언어	WOLD	14-251	the beginning	0.221		Noun	0.782	0.724
 날 (하루)	시간	정복층 언어	WOLD	14-411	the day(2)	0.19		Noun	0.898	0.912
-예전의	시간	정복층 언어	NorthEuraLex	ehemalig::A	former					
+예전의	시간	포브르어	NorthEuraLex	ehemalig::A	former					
 나이 든	시간	정복층 언어	NorthEuraLex	alt[Lebewesen]::A	aged, old					
 갑자기	시간	정복층 언어	NorthEuraLex	plötzlich::ADV	suddenly					
 즉시	시간	정복층 언어	NorthEuraLex	sofort::ADV	instantly					
@@ -1349,7 +1349,7 @@
 행운	감정과 가치	에냥어	WOLD	16-18	the good luck	0.44		Noun	0.779	0.803
 불운	감정과 가치	정복층 언어	WOLD	16-19	the bad luck	0.226		Noun	0.801	0.689
 행복하다	감정과 가치	포브르어	WOLD	16-23	happy	0.181		Adjective	0.780	0.796
-웃다	감정과 가치	에냥어	WOLD	16-25	to laugh	0.058	61	Verb	0.837	0.910
+웃다	감정과 가치	정복층 언어	WOLD	16-25	to laugh	0.058	61	Verb	0.837	0.910
 미소 짓다	감정과 가치	정복층 언어	WOLD	16-251	to smile	0.138		Verb	0.785	0.728
 놀다	감정과 가치	정복층 언어	WOLD	16-26	to play	0.043		Verb	0.827	0.854
 사랑하다	감정과 가치	정복층 언어	WOLD	16-27	to love	0.153		Verb	0.837	0.841
@@ -1360,7 +1360,7 @@
 걱정	감정과 가치	정복층 언어	WOLD	16-33	the anxiety	0.145		Noun	0.773	0.701
 뉘우치다	감정과 가치	포브르어	WOLD	16-34	to regret or be sorry	0.269		Verb	0.816	0.738
 동정	감정과 가치	정복층 언어	WOLD	16-35	the pity	0.305		Noun	0.789	0.756
-울다	감정과 가치	에냥어	WOLD	16-37	to cry	0.129	87	Verb	0.868	0.921
+울다	감정과 가치	정복층 언어	WOLD	16-37	to cry	0.129	87	Verb	0.868	0.921
 눈물	감정과 가치	정복층 언어	WOLD	16-38	the tear	0.062		Noun	0.812	0.819
 신음하다	감정과 가치	에냥어	WOLD	16-39	to groan	0.141		Verb	0.795	0.850
 미워하다	감정과 가치	에냥어	WOLD	16-41	to hate	0.11		Verb	0.822	0.777
@@ -1380,7 +1380,7 @@
 거짓말하다	감정과 가치	정복층 언어	WOLD	16-67	to lie(2)	0.094		Verb	0.769	0.769
 속임수	감정과 가치	에냥어	WOLD	16-68	the deceit	0.167		Noun	0.749	0.741
 용서하다	감정과 가치	에냥어	WOLD	16-69	to forgive	0.343		Verb	0.826	0.707
-좋다	감정과 가치	에냥어	WOLD	16-71	good	0.107	56	Adjective	0.869	0.945
+좋다	감정과 가치	정복층 언어	WOLD	16-71	good	0.107	56	Adjective	0.869	0.945
 나쁘다	감정과 가치	에냥어	WOLD	16-72	bad	0.087		Adjective	0.804	0.864
 옳다	감정과 가치	에냥어	WOLD	16-73	right(2)	0.266		Adjective	0.867	0.883
 그르다	감정과 가치	정복층 언어	WOLD	16-74	wrong	0.161		Adjective	0.835	0.707
@@ -1462,7 +1462,7 @@
 또는	인지	에냥어	WOLD	17-54	or	0.392		Function word	0.788	0.969
 예	인지	정복층 언어	WOLD	17-55	yes	0.136		Function word	0.829	0.983
 아니오	인지	에냥어	WOLD	17-56	no	0.159		Function word	0.841	0.960
-어떻게	인지	정복층 언어	WOLD	17-61	how?	0.02		Function word	0.804	0.812
+어떻게	인지	포브르어	WOLD	17-61	how?	0.02		Function word	0.804	0.812
 몇 개	인지	정복층 언어	WOLD	17-62	how many?	0.061		Function word	0.867	0.805
 얼마나	인지	에냥어	WOLD	17-63	how much?	0.054		Function word	0.833	0.800
 무엇	인지	정복층 언어	WOLD	17-64	what?	0.029	50	Function word	0.823	0.939
@@ -1504,15 +1504,15 @@
 울부짖다 (짐승이)	말과 언어	에냥어	WOLD	18-19	to howl	0.038		Verb	0.852	0.849
 말하다	말과 언어	정복층 언어	WOLD	18-21	to speak or talk	0.093		Verb	0.806	0.765
 말을 더듬다	말과 언어	에클레아어 신어	WOLD	18-211	to stutter or stammer	0.126		Verb	0.795	0.780
-이르다 (말하다)	말과 언어	에냥어	WOLD	18-22	to say	0.028	28	Verb	0.840	0.928
+이르다 (말하다)	말과 언어	정복층 언어	WOLD	18-22	to say	0.028	28	Verb	0.840	0.928
 이야기하다	말과 언어	정복층 언어	WOLD	18-221	to tell	0.138		Verb	0.786	0.770
-연설	말과 언어	포브르어	WOLD	18-222	the speech	0.336		Noun	0.807	0.750
+연설	말과 언어	에냥어	WOLD	18-222	the speech	0.336		Noun	0.807	0.750
 입 다물다	말과 언어	정복층 언어	WOLD	18-23	to be silent	0.074		Verb	0.740	0.744
 낱말	말과 언어	에냥어	WOLD	18-26	the word	0.254		Noun	0.835	0.937
 이름	말과 언어	정복층 언어	WOLD	18-28	the name	0.085	15	Noun	0.882	0.955
 묻다 (질문)	말과 언어	에냥어	WOLD	18-31	to ask(1)	0.132		Verb	0.826	0.890
 대답하다	말과 언어	정복층 언어	WOLD	18-32	to answer	0.216		Verb	0.847	0.762
-인정하다	말과 언어	정복층 언어	WOLD	18-33	to admit	0.364		Verb	0.817	0.696
+인정하다	말과 언어	포브르어	WOLD	18-33	to admit	0.364		Verb	0.817	0.696
 부인하다	말과 언어	정복층 언어	WOLD	18-34	to deny	0.366		Verb	0.834	0.807
 부탁하다	말과 언어	에냥어	WOLD	18-35	to ask(2)	0.091		Verb	0.845	0.883
 약속하다	말과 언어	정복층 언어	WOLD	18-36	to promise	0.321		Verb	0.816	0.701
@@ -1520,7 +1520,7 @@
 금하다	말과 언어	정복층 언어	WOLD	18-38	to forbid	0.322		Verb	0.792	0.775
 꾸짖다	말과 언어	포브르어	WOLD	18-39	to scold	0.167		Verb	0.839	0.814
 부르다 (불러오다)	말과 언어	정복층 언어	WOLD	18-41	to call(1)	0.11		Verb	0.820	0.820
-이름 짓다	말과 언어	포브르어	WOLD	18-42	to call(2)	0.08		Verb	0.796	0.694
+이름 짓다	말과 언어	에냥어	WOLD	18-42	to call(2)	0.08		Verb	0.796	0.694
 알리다	말과 언어	정복층 언어	WOLD	18-43	to announce	0.235		Verb	0.803	0.730
 위협하다	말과 언어	정복층 언어	WOLD	18-44	to threaten	0.122		Verb	0.814	0.749
 자랑하다	말과 언어	정복층 언어	WOLD	18-45	to boast	0.077		Verb	0.796	0.654
@@ -1549,7 +1549,7 @@
 화내다	말과 언어	정복층 언어	추가		get angry					
 기뻐하다	말과 언어	에냥어	추가		rejoice					
 슬퍼하다	말과 언어	에냥어	추가		grieve					
-부끄러워하다	말과 언어	포브르어	추가		feel ashamed					
+부끄러워하다	말과 언어	에냥어	추가		feel ashamed					
 지다 (패배)	말과 언어	정복층 언어	추가		lose (be defeated)					
 가리키다	말과 언어	정복층 언어	추가		point at					
 정하다	말과 언어	정복층 언어	추가		decide					
@@ -1559,7 +1559,7 @@
 나라	사회와 정치	정복층 언어	WOLD	19-11	the country	0.48		Noun	0.833	0.912
 고향 땅	사회와 정치	정복층 언어	WOLD	19-12	the native country	0.167		Noun	0.737	0.583
 도시	사회와 정치	정복층 언어	WOLD	19-15	the town	0.468		Noun	0.817	0.903
-마을	사회와 정치	정복층 언어	WOLD	19-16	the village	0.289		Noun	0.845	0.891
+마을	사회와 정치	포브르어	WOLD	19-16	the village	0.289		Noun	0.845	0.891
 경계	사회와 정치	정복층 언어	WOLD	19-17	the boundary	0.433		Noun	0.767	0.861
 백성	사회와 정치	정복층 언어	WOLD	19-21	the people	0.378		Noun	0.821	0.821
 씨족	사회와 정치	정복층 언어	WOLD	19-23	the clan	0.449		Noun	0.794	0.891
@@ -1609,7 +1609,7 @@
 부족	사회와 정치	정복층 언어	추가		tribe					
 마을 사람	사회와 정치	정복층 언어	추가		villager					
 약속	사회와 정치	정복층 언어	추가		promise					
-재판	사회와 정치	정복층 언어	추가		trial					
+재판	사회와 정치	포브르어	추가		trial					
 전쟁 포로	사회와 정치	에냥어	추가		prisoner of war					
 몸값	사회와 정치	정복층 언어	추가		ransom					
 손님 대접	사회와 정치	정복층 언어	추가		hospitality					
@@ -1660,7 +1660,7 @@
 그물	전쟁과 사냥	에냥어	WOLD	20-54	the fishnet	0.263		Noun	0.826	0.842
 통발	전쟁과 사냥	정복층 언어	WOLD	20-55	the fish trap	0.229		Noun	0.792	0.854
 미끼	전쟁과 사냥	정복층 언어	WOLD	20-56	the bait	0.153		Noun	0.802	0.884
-사냥하다	전쟁과 사냥	포브르어	WOLD	20-61	to hunt	0.095		Verb	0.773	0.833
+사냥하다	전쟁과 사냥	에냥어	WOLD	20-61	to hunt	0.095		Verb	0.773	0.833
 쏘다	전쟁과 사냥	정복층 언어	WOLD	20-62	to shoot	0.093		Verb	0.814	0.805
 빗맞히다	전쟁과 사냥	정복층 언어	WOLD	20-63	to miss	0.158		Verb	0.832	0.781
 덫	전쟁과 사냥	에냥어	WOLD	20-64	the trap	0.235		Noun	0.843	0.933
@@ -1700,7 +1700,7 @@
 제사 지내다	종교와 믿음	에클레아어 신어	WOLD	22-16	to worship	0.253		Verb	0.762	0.674
 기도하다	종교와 믿음	정복층 언어	WOLD	22-17	to pray	0.379		Verb	0.811	0.790
 사제	종교와 믿음	에냥어	WOLD	22-18	the priest	0.621		Noun	0.805	0.860
-거룩하다	종교와 믿음	포브르어	WOLD	22-19	holy	0.286		Adjective	0.836	0.768
+거룩하다	종교와 믿음	에냥어	WOLD	22-19	holy	0.286		Adjective	0.836	0.768
 설교하다	종교와 믿음	에냥어	WOLD	22-22	to preach	0.585		Verb	0.820	0.792
 축복하다	종교와 믿음	정복층 언어	WOLD	22-23	to bless	0.289		Verb	0.761	0.737
 저주하다	종교와 믿음	정복층 언어	WOLD	22-24	to curse	0.169		Verb	0.765	0.767
@@ -1719,7 +1719,7 @@
 죄	종교와 믿음	정복층 언어	NorthEuraLex	Sünde::N	sin					
 기도	종교와 믿음	정복층 언어	추가		prayer					
 축복	종교와 믿음	정복층 언어	추가		blessing					
-주문	종교와 믿음	포브르어	추가		spell					
+주문	종교와 믿음	에냥어	추가		spell					
 마력	종교와 믿음	정복층 언어	추가		magic power					
 부적	종교와 믿음	정복층 언어	추가		amulet					
 예언	종교와 믿음	정복층 언어	추가		prophecy					
