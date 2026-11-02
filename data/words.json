@@ -581,7 +581,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "nde"
+  "pef": "Te"
  },
  {
   "head": "estai",
@@ -593,7 +593,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "eSn.da.i"
+  "pef": "e.sən.da.i"
  },
  {
   "head": "areta",
@@ -959,7 +959,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "mbul"
+  "pef": "pul"
  },
  {
   "head": "lapel",
@@ -1040,7 +1040,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "salN.ge"
+  "pef": "sA.lə.ke"
  },
  {
   "head": "cileva",
@@ -1060,7 +1060,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "spro"
+  "pef": "su.ro"
  },
  {
   "head": "losir",
@@ -1080,7 +1080,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "mbAr"
+  "pef": "pAr"
  },
  {
   "head": "ris",
@@ -1230,7 +1230,7 @@
    "에냥어 기원"
   ],
   "id": "w134",
-  "pef": "aSn.del"
+  "pef": "a.sən.del"
  },
  {
   "head": "kapu",
@@ -1561,7 +1561,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "rəSN.gan.da.i"
+  "pef": "rəS.ka.ta.i"
  },
  {
   "head": "ruslosir",
@@ -1569,11 +1569,7 @@
   "mean": "별",
   "n": 172,
   "note": "",
-  "id": "w172",
-  "tags": [
-   "에냥어 기원"
-  ],
-  "pef": "ruS.loSk.nə"
+  "id": "w172"
  },
  {
   "head": "parlosir",
@@ -1581,11 +1577,7 @@
   "mean": "달",
   "n": 173,
   "note": "",
-  "id": "w173",
-  "tags": [
-   "에냥어 기원"
-  ],
-  "pef": "pa.rə.loSk.nə"
+  "id": "w173"
  },
  {
   "head": "kac(a)-",
@@ -2412,7 +2404,7 @@
    "에냥어 기원"
   ],
   "id": "w264",
-  "pef": "ndi.xel"
+  "pef": "ti.xel"
  },
  {
   "head": "alkas",
@@ -2468,7 +2460,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "aSN.ga.lə"
+  "pef": "aS.ka.lə"
  },
  {
   "head": "etlir",
@@ -2543,7 +2535,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "NgAr"
+  "pef": "KAr"
  },
  {
   "head": "tipi",
@@ -2957,7 +2949,7 @@
    "에냥어 기원"
   ],
   "id": "w324",
-  "pef": "a.itw"
+  "pef": "a.i.tu"
  },
  {
   "head": "aitu+vu",
@@ -3327,7 +3319,7 @@
    "에냥어 기원"
   ],
   "id": "w366",
-  "pef": "Ngər"
+  "pef": "Kər"
  },
  {
   "head": "tesva",
@@ -4094,7 +4086,7 @@
   ],
   "n": 439,
   "id": "wmvwb6wcil8zb",
-  "pef": "Am.laS"
+  "pef": "am.bə.laS"
  },
  {
   "head": "saipaka",
@@ -4402,7 +4394,7 @@
   ],
   "n": 474,
   "id": "wmvwd1mex7au6",
-  "pef": "Ko.in.So"
+  "pef": "Ko.ər.So"
  },
  {
   "head": "sipe",
@@ -4433,12 +4425,8 @@
   "mean": "때리다",
   "input": "isepa",
   "note": "",
-  "tags": [
-   "에냥어 기원"
-  ],
   "n": 478,
-  "id": "wmvwd1n2z5l2b",
-  "pef": "jSe.pa"
+  "id": "wmvwd1n2z5l2b"
  },
  {
   "head": "aklot",
@@ -4466,7 +4454,7 @@
   ],
   "n": 481,
   "id": "wmvwdltdtzk3z",
-  "pef": "kSe"
+  "pef": "eK.Se"
  },
  {
   "head": "kulpa",
@@ -4498,7 +4486,7 @@
   "tags": [
    "에냥어 기원"
   ],
-  "pef": "Sjmbjxo.u"
+  "pef": "Səp.jo.xu"
  },
  {
   "head": "eksi",
@@ -4510,7 +4498,7 @@
   ],
   "n": 485,
   "id": "wmvwdlu0h8qtz",
-  "pef": "eNgSj"
+  "pef": "eK.Sə"
  },
  {
   "head": "ca",
@@ -4670,7 +4658,7 @@
   ],
   "n": 499,
   "id": "wmvwfz1tlmglz",
-  "pef": "SAm.mah"
+  "pef": "Sa.mə.mah"
  },
  {
   "head": "tammah",
@@ -4682,7 +4670,7 @@
   ],
   "n": 500,
   "id": "wmvwfz202oc99",
-  "pef": "tEm.mah"
+  "pef": "te.mə.mah"
  },
  {
   "head": "ehixux",
@@ -4814,7 +4802,7 @@
   ],
   "n": 511,
   "id": "wmvwfz3zuov7v",
-  "pef": "am.tej"
+  "pef": "an.tej"
  },
  {
   "head": "penda",
@@ -4838,7 +4826,7 @@
   ],
   "n": 513,
   "id": "wmvwjmhv0jn1f",
-  "pef": "kun.kux"
+  "pef": "kuh.kux"
  },
  {
   "head": "soǥu",
@@ -4850,7 +4838,7 @@
   ],
   "n": 514,
   "id": "wmvwjmi3chqnf",
-  "pef": "San.gu"
+  "pef": "SaN.gu"
  },
  {
   "head": "iləho",
