@@ -3656,6 +3656,17 @@
   "id": "wmvw9cm79o2qg"
  },
  {
+  "head": "mixkə",
+  "mean": "성교하다",
+  "input": "%mixkə",
+  "note": "조어 *mix.ko, 이전 형태 mixko",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 404,
+  "id": "wmvw9cme7bgko"
+ },
+ {
   "head": "belih",
   "mean": "피곤하다",
   "input": "%belih",
@@ -3687,6 +3698,28 @@
   ],
   "n": 407,
   "id": "wmvw9cmsj2npu"
+ },
+ {
+  "head": "luxubəhe",
+  "mean": "성냥",
+  "input": "%luxubəhe",
+  "note": "조어 *lo.ku.bə.xe, 이전 형태 lukubəxe",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 408,
+  "id": "wmvw9cmxnpvzi"
+ },
+ {
+  "head": "xoməxsu",
+  "mean": "곳간",
+  "input": "%xoməxsu",
+  "note": "조어 *xa.max.su, 이전 형태 xomaxsu",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 409,
+  "id": "wmvw9cn2qcorc"
  },
  {
   "head": "olma",
@@ -3722,6 +3755,28 @@
   "id": "wmvw9cnihvozs"
  },
  {
+  "head": "mobə",
+  "mean": "살",
+  "input": "%mobə",
+  "note": "조어 *ma.ba, 이전 형태 moba",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 413,
+  "id": "wmvw9cno1xvf1"
+ },
+ {
+  "head": "ahkek",
+  "mean": "깨다 (그릇을)",
+  "input": "%ahkek",
+  "note": "조어 *as.kek, 이전 형태 askek",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 414,
+  "id": "wmvw9h19ay7ui"
+ },
+ {
   "head": "mə",
   "mean": "빵",
   "input": "%mə",
@@ -3731,6 +3786,83 @@
   ],
   "n": 415,
   "id": "wmvw9h1fbrw6p"
+ },
+ {
+  "head": "jəha",
+  "mean": "흔들거리다",
+  "input": "%jəha",
+  "note": "조어 *jə.xa, 이전 형태 juxa",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 416,
+  "id": "wmvw9h1keeufi"
+ },
+ {
+  "head": "lahkom",
+  "mean": "끼니",
+  "input": "%lahkom",
+  "note": "조어 *las.kom, 이전 형태 laskom",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 417,
+  "id": "wmvwa7e2gmuks"
+ },
+ {
+  "head": "embəla",
+  "mean": "맵다",
+  "input": "%embəla",
+  "note": "조어 *i.mə.be.la, 이전 형태 embela",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 418,
+  "id": "wmvwa7e9eew2x"
+ },
+ {
+  "head": "glađəma",
+  "mean": "껍데기",
+  "input": "%glađəma",
+  "note": "조어 *glen.da.ma, 이전 형태 glađama",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 419,
+  "id": "wmvwa7eehvw92"
+ },
+ {
+  "head": "jilkəmi",
+  "mean": "기름",
+  "input": "%jilkəmi",
+  "note": "조어 *dil.kə.mi, 이전 형태 dilkəmi",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 421,
+  "id": "wmvwa7ep53syp"
+ },
+ {
+  "head": "pibə",
+  "mean": "털가죽",
+  "input": "%pibə",
+  "note": "조어 *pu.pe, 이전 형태 puxe",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 422,
+  "id": "wmvwa7eup4wrf"
+ },
+ {
+  "head": "puhu",
+  "mean": "껍질 (열매)",
+  "input": "%puhu",
+  "note": "조어 *po.hu, 이전 형태 poho",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 423,
+  "id": "wmvwa7ezs2n13"
  },
  {
   "head": "nelmo",
@@ -3744,6 +3876,17 @@
   "id": "wmvwa7f5c59hv"
  },
  {
+  "head": "ahin",
+  "mean": "행복하다",
+  "input": "%ahin",
+  "note": "조어 *e.hi.no, 이전 형태 ahino",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 425,
+  "id": "wmvwa7fawxd3r"
+ },
+ {
   "head": "pxəme",
   "mean": "피리",
   "input": "%pxəme",
@@ -3753,6 +3896,17 @@
   ],
   "n": 426,
   "id": "wmvwa7fgg66sn"
+ },
+ {
+  "head": "moxkəlto",
+  "mean": "돛대",
+  "input": "%moxkəlto",
+  "note": "조어 *mox.kol.to, 이전 형태 moxkolto",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 427,
+  "id": "wmvwa7fm02is2"
  },
  {
   "head": "madu",
@@ -4317,6 +4471,17 @@
   "id": "wmvwfz0air50y"
  },
  {
+  "head": "ilmeh",
+  "mean": "수건",
+  "input": "%ilmeh",
+  "note": "조어 *u.la.meh, 이전 형태 ilameh",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 491,
+  "id": "wmvwfz0giyng4"
+ },
+ {
   "head": "sulle",
   "mean": "선물",
   "input": "%sulle",
@@ -4326,6 +4491,28 @@
   ],
   "n": 492,
   "id": "wmvwfz0mjv1eh"
+ },
+ {
+  "head": "axgəme",
+  "mean": "갑옷",
+  "input": "%axgəme",
+  "note": "조어 *ax.ga.me, 이전 형태 axgame",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 493,
+  "id": "wmvwfz0sk26bn"
+ },
+ {
+  "head": "sehno",
+  "mean": "빨래",
+  "input": "%sehno",
+  "note": "조어 *si.ha.no, 이전 형태 sehano",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 494,
+  "id": "wmvwfz0yk3wpp"
  },
  {
   "head": "idli",
@@ -4361,6 +4548,17 @@
   "id": "wmvwfz1h3mrvr"
  },
  {
+  "head": "pemultə",
+  "mean": "방해하다",
+  "input": "%pemultə",
+  "note": "조어 *pi.mul.te, 이전 형태 pemulte",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 498,
+  "id": "wmvwfz1n47rqc"
+ },
+ {
   "head": "sommah",
   "mean": "조금",
   "input": "%sommah",
@@ -4383,6 +4581,17 @@
   "id": "wmvwfz202oc99"
  },
  {
+  "head": "ehixux",
+  "mean": "옮기다",
+  "input": "%ehixux",
+  "note": "조어 *i.hi.ku.ka, 이전 형태 ihikuxa",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 501,
+  "id": "wmvwfz26ksm0i"
+ },
+ {
   "head": "den",
   "mean": "도랑",
   "input": "%den",
@@ -4394,6 +4603,17 @@
   "id": "wmvwfz2d1wje8"
  },
  {
+  "head": "ohəhkeə",
+  "mean": "어울림",
+  "input": "%ohəhkeə",
+  "note": "조어 *a.xes.ke.e, 이전 형태 axepkee",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 503,
+  "id": "wmvwfz2jibm8g"
+ },
+ {
   "head": "kanej",
   "mean": "마법사",
   "input": "%kanej",
@@ -4403,6 +4623,39 @@
   ],
   "n": 504,
   "id": "wmvwfz2pj59m0"
+ },
+ {
+  "head": "madej",
+  "mean": "절름발이이다",
+  "input": "%madej",
+  "note": "조어 *me.tej, 이전 형태 matej",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 505,
+  "id": "wmvwfz2w0m6dm"
+ },
+ {
+  "head": "amiəjiə",
+  "mean": "유령",
+  "input": "%amiəjiə",
+  "note": "조어 *e.mi.e.gi.e, 이전 형태 amiegie",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 506,
+  "id": "wmvwfz32itv7s"
+ },
+ {
+  "head": "plidə",
+  "mean": "잉걸불",
+  "input": "%plidə",
+  "note": "조어 *plu.de, 이전 형태 plide",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 507,
+  "id": "wmvwfz39g9v5t"
  },
  {
   "head": "xunat",
@@ -4480,5 +4733,38 @@
   ],
   "n": 514,
   "id": "wmvwjmi3chqnf"
+ },
+ {
+  "head": "iləho",
+  "mean": "속옷",
+  "input": "%iləho",
+  "note": "조어 *u.le.ho, 이전 형태 ileho",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 515,
+  "id": "wmvwjmi9ccaez"
+ },
+ {
+  "head": "muđəje",
+  "mean": "대장간",
+  "input": "%muđəje",
+  "note": "조어 *mon.da.ke, 이전 형태 muđake",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 516,
+  "id": "wmvwjmifur11s"
+ },
+ {
+  "head": "puhji",
+  "mean": "꾸짖다",
+  "input": "%puhji",
+  "note": "조어 *po.hə.ti, 이전 형태 puhti",
+  "tags": [
+   "F 기원"
+  ],
+  "n": 517,
+  "id": "wmvwjmimbm10m"
  }
 ]
