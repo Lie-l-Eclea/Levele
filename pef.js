@@ -1,5 +1,5 @@
 /* 에냥-포브르 조어(PEF) 처리기: 조어 어근에서 에냥어형(1000년)과 포브르어형(1600년)을 만들고,
-   에클라이아어 변환기 입력으로 바꿈. tools/pef3.py와 같은 규칙(검증용 비교 스크립트 tools/pef_check.js).
+   에클라이아어 변환기 입력으로 바꿈. 규칙의 근거와 측정은 docs/pef.md, 어근 생성기는 tools/pef3.py.
    기호: 방출음 P T K, 구개수 q, 마찰 x(구개수) S(ʃ), 비음 m n N(ŋ), 장모음 A E I O U(첫 음절만), 약모음 ə, 활음 w j
    음절 (C)V(C), 어두에는 파열음+유음 자음군 가능, 점(.) 또는 밑줄(_)로 음절을 직접 나눌 수 있음. 점이 없으면 자음 하나는 뒤 음절의 첫소리, 둘이면 앞은 끝소리. */
 (function (root) {
@@ -43,25 +43,51 @@
   function str(syl) { return syl.map(function (x) { return x.on + x.nu + x.co; }).join("."); }
 
   /* ---------- 에냥어 (1000년) ---------- */
+  function sylParts(s) { return s.split(".").map(function (t) { var m = t.match(/^([^aeiouəɯAEIOU]*)(.*?)([^aeiouəɯAEIOU]*)$/); return { on: m[1], nu: m[2], co: m[3] }; }); }
+  function sylStr(a) { return a.map(function (x) { return x.on + x.nu + x.co; }).join("."); }
+  /* 안쪽 모음이 빠져 만들어지는 자음군 중 에클라이아어에서 합법인 것 */
+  var LEGAL_CL = function (c1, c2) { return (c1 === c2) || ("lrsʃ".indexOf(c1) >= 0 && "ptksʃlr".indexOf(c2) >= 0) || ("ptk".indexOf(c1) >= 0 && "lr".indexOf(c2) >= 0) || (c1 === "k" && c2 === "s"); };
   function enyang(syl) {
     var s = str(syl);
     var m0 = { z: "t", c: "s", f: "p", "ɛ": "e", "ɔ": "a", y: "i", "ø": "e" };                // E0 새 조어 음소 θ(z) ç(c) ɸ(f) ɣ(v) ɛ ɔ y ø의 에냥어 반영
     s = s.replace(/[zcfɛɔyø]/g, function (c) { return m0[c]; }).replace(/v/g, "");
-    s = s.replace(/[PTK]/g, function (m) { return { P: "p", T: "t", K: "k" }[m]; });   // E1
-    s = s.replace(/q/g, "k");                                                         // E2
-    s = s.replace(/[xh]/g, "");                                                         // E3
-    s = s.replace(/[mnN](?=\.?[bdg])/g, "");                                          // E4
-    s = s.replace(/[bdg]/g, function (m) { return { b: "p", d: "t", g: "k" }[m]; });  // E5
-    s = s.replace(/^n/, "l");                                                         // E6
-    s = s.replace(/([aeiouəAEIOU])(\.?)n(?=[aeiouəAEIOU])/g, "$1$2r");
+    s = s.replace(/[PTK]/g, function (m) { return { P: "p", T: "t", K: "k" }[m]; });         // E1 방출음이 평음에 합류
+    s = s.replace(/q/g, "k");                                                                 // E2 구개수 폐쇄음은 k
+    s = s.replace(/[xh]/g, "");                                                               // E3 구개수 마찰음과 후음 탈락(모음 연속이 생김)
+    s = s.replace(/I/g, "ai").replace(/U/g, "au").replace(/E/g, "ei").replace(/O/g, "ou");   // E4 장모음 이중모음화(첫 음절 강세), A는 a로 단축
+    s = s.replace(/[mnN](?=\.?[bdg])/g, "");                                                  // E5 유성 폐쇄음 앞 비음 탈락
+    s = s.replace(/[bdg]/g, function (m) { return { b: "p", d: "t", g: "k" }[m]; });         // E6 유성 폐쇄음이 무성음에 합류
+    s = s.replace(/^n/, "l");                                                                 // E7 n: 어두 l, 모음 사이 r, 순음 앞 m, 어말 m
+    s = s.replace(/([aeiouəA])(\.?)n(?=[aeiouəA])/g, "$1$2r");
     s = s.replace(/n(?=\.?[pP])/g, "m").replace(/N/g, "m").replace(/n$/, "m").replace(/n/g, "r");
-    s = s.replace(/j/g, "i").replace(/w/g, "u");                                      // E7
-    s = s.replace(/ə/g, "ɯ");                                                         // E8
-    s = s.replace(/A/g, "a").replace(/E/g, "e").replace(/I/g, "i").replace(/O/g, "o").replace(/U/g, "u");   // E10
-    [["au", "o"], ["eu", "u"], ["ou", "u"], ["iu", "u"], ["oi", "ei"], ["ui", "i"]].forEach(function (p) { s = s.split(p[0]).join(p[1]); });   // E11
+    s = s.replace(/j/g, "i").replace(/w/g, "u");                                              // E8 활음은 모음으로
+    s = s.replace(/ə/g, "ɯ").replace(/A/g, "a");                                              // E9 약모음 ɯ
+    s = s.replace(/k(?=\.?[ptsmrl])/g, "i");                                                  // E10 음절말 k 모음화(ak.ta→aita)
+    s = s.replace(/p(?=\.?[ktsmrl])/g, "u");                                                  // E11 음절말 p 모음화
+    s = s.replace(/(?<![aeiouɯ])[iu](?=(?:\.|[^aeiouɯ.])*a)/g, function (c) { return c === "i" ? "e" : "o"; });   // E12 a-움라우트: 뒤 모음이 a이면 i>e, u>o
+    s = s.replace(/k(?=\.?i)/g, "ʃ");                                                         // E13 k가 i 앞에서 ʃ로
+    var a = sylParts(s), n = a.length, i;
+    for (i = 1; i < n - 1; i++) a[i].nu = a[i].nu.replace(/^[eo]$/, "ɯ");                    // E14 강세 없는 안쪽 음절의 짧은 e o가 ɯ로
+    var out = [];
+    for (i = 0; i < n; i++) {                                                                 // E15 안쪽 ɯ 탈락(합법 자음군이 될 때만)
+      var x = a[i];
+      if (i > 0 && i < n - 1 && x.nu === "ɯ" && x.co === "" && out.length) {
+        var prev = out[out.length - 1], c2 = a[i + 1].on;
+        if (prev.co === "" && x.on.length === 1 && c2.length === 1 && LEGAL_CL(x.on, c2)) { prev.co = x.on; continue; }
+      }
+      out.push(x);
+    }
+    a = out; n = a.length;
+    if (n >= 3) {                                                                             // E16 l r s ʃ 뒤 어말 약모음 탈락
+      var L = a[n - 1], P = a[n - 2];
+      if (/^[ɯeo]$/.test(L.nu) && L.co === "" && P.co === "" && L.on.length === 1 && "lrsʃ".indexOf(L.on) >= 0) { P.co = L.on; a.pop(); }
+    }
+    s = sylStr(a);
+    [["au", "o"], ["eu", "u"], ["ou", "u"], ["iu", "u"], ["oi", "ei"], ["ui", "i"], ["ɯi", "i"], ["ii", "i"]].forEach(function (p) { s = s.split(p[0]).join(p[1]); });   // E17 이중모음은 ai ei만 남김
     s = s.replace(/\./g, "").replace(/S/g, "ʃ");
-    s = s.replace(/(?<=[ptksʃmrl])ɯ/g, "i").replace(/ɯ(?=[ptksʃmrl])/g, "i");              // E10 ɯ가 자음 옆에서 i로
-    return s.replace(/s(?=i)/g, "ʃ").replace(/o(?=l)/g, "a").replace(/(?<=i)s/g, "ʃ");                              // E11 s가 i 앞에서 ʃ로, E12 o가 l 앞에서 a로
+    s = s.replace(/(?<=[tsʃrl])ɯ/g, "i").replace(/ɯ(?=[tsʃrl])/g, "i");                      // E18 ɯ는 설정음 옆에서 i로(순음·연구개음 옆에서는 ɯ로 남음)
+    s = s.replace(/s(?=i)/g, "ʃ").replace(/o(?=l)/g, "a").replace(/(?<=i)s/g, "ʃ");         // E19 s가 i 곁에서 ʃ로, E20 o가 l 앞에서 a로
+    return s.replace(/l([^l]*)l/, "l$1r");                                                    // E21 l…l 이화
   }
 
   /* ---------- 포브르어 (1600년) ---------- */
@@ -93,6 +119,7 @@
       }
     }
     var f = S.map(function (x) { return x.on + x.nu + x.co; }).join("");
+    f = fovNew(f);
     var C = "[ptkbdgnmsxljwhƀđǥ]";
     var re9 = new RegExp("(?<=[aeiouə])(" + C + ")ə(" + C + ")(?=[aeiouə])", "g");
     for (var k = 0; k < 2; k++) f = f.replace(re9, function (m, a, b) { return LEGAL_F.test(a + b) ? a + b : m; });   // F9
@@ -100,6 +127,20 @@
     f = f.replace(/k(?=i)/g, "p").replace(/s$/, "h").replace(/a(?=l)/g, "e");              // F11 i 앞 k→p, F12 어말 s→h, F13 l 앞 a→e
     f = f.replace(/t(?=u)/g, "p").replace(/(?<=[aeiouə])s(?=[aeiouə])/g, "h");           // F14 u 앞 t→p, F15 모음 사이 s→h
     return "%" + f;
+  }
+
+
+  /* ---------- 포브르어 후기 규칙 (F9 이전에 적용, 이어서 안쪽 ə 탈락) ---------- */
+  function fovNew(f) {
+    f = f.replace(/(?<=[aeiouə])([ptk])(?=[aeiouə])/g, function (m, c) { return { p: "b", t: "d", k: "g" }[c]; });   // F16 모음 사이 무성 폐쇄음 유성화
+    f = f.replace(/(?<=[aeiouə][^aeiouə]{0,2})[aeo](?=[^aeiouə]{1,2}[aeiouə])/g, "ə");           // F17 안쪽 음절 a e o가 ə로
+    f = f.replace(/d(?=i)/g, "j").replace(/t(?=i)/g, "s").replace(/g(?=[ie])/g, "j");            // F18 i 앞 구개음화
+    f = f.replace(/(?<=[^aeiouə][aeiou][^aeiouə]*)[aeo]$/, "ə");                                  // F19 어말 a e o가 ə로
+    f = f.replace(/(?<=[aeiouə])x(?=[aeiouə])/g, "h");                                            // F20 모음 사이 x→h
+    f = f.replace(/^([^aeiouə]*)([aeiou])(?=[^aeiouə]?[aeiouə])/, function (m, c, v) { return c + { a: "o", o: "u", u: "i", i: "e", e: "a" }[v]; });   // F21 강세 열린 음절 단모음 순환 이동
+    f = f.replace(/s(?=[ptkmnl])/g, "h");                                                         // F22 음절말 s→h
+    f = f.replace(/(?<=[aeiouə])k(?=[aeiouə])/g, "x").replace(/(?<=[aeiouə])g(?=[aeiouə])/g, "x");   // F23 모음 사이 연구개음 마찰음화
+    return f;
   }
 
   /* ---------- 에클라이아어 차용 (bToA) ---------- */

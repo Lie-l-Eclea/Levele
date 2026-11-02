@@ -132,7 +132,7 @@
 ├── data/
 │   ├── words.json    # 어휘집 사본
 │   └── meanings.tsv  # 뜻 생성용 개념 목록 (분야, 예상 기원, WOLD 차용 지수·품사·연령·단순성)
-├── tools/            # assign_origin.py: 뜻마다 예상 기원 배정, pef3.py: 무작위 조어 어근 생성, pef_check.js: pef.js와 pef3.py 비교
+├── tools/            # assign_origin.py: 뜻마다 예상 기원 배정, pef3.py: 무작위 조어 어근 생성, pef_check.js: pef.js 출력 점검
 └── rules/            # 범주와 음변화 규칙(내부형 r1, 문자형 rf, 기본 표기 r2, 발음 r3)의 사본
 ```
 
