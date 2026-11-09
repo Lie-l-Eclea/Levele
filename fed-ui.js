@@ -106,16 +106,17 @@
       });
       card.appendChild(grid);
       /* 직접 입력 */
-      var row = el("div", "fed-own"), inp = el("input"); inp.type = "text"; inp.placeholder = "조어 직접 입력 (예: ki.l1)"; inp.spellcheck = false;
+      var row = el("div", "fed-own"), inp = el("input"); inp.type = "text"; inp.placeholder = "조어 직접 입력 (예: ki.l1 또는 ki.lɨ)"; inp.spellcheck = false;
       var res = el("span", "fed-meta"), use = el("button", "", "이 형태로"); use.type = "button";
       function upd() {
         var v = inp.value.trim(); if (!v) { res.textContent = ""; return; }
+        var b = F.bad(v); if (b.length) { res.textContent = "쓸 수 없는 기호: " + b.join(" "); return; }
         try { var s = F.derive(v); res.textContent = "→ " + F.show(s) + " (" + F.syllables(s) + "음절)"; } catch (e) { res.textContent = "읽을 수 없음"; }
       }
       inp.addEventListener("input", upd);
       use.addEventListener("click", function () {
-        var v = inp.value.trim(); if (!v) return;
-        var s = F.derive(v); st.picks[line] = { proto: v, std: F.show(s), syl: F.syllables(s), parts: [] };
+        var v = inp.value.trim(); if (!v || F.bad(v).length) return;
+        v = F.norm(v); var s = F.derive(v); st.picks[line] = { proto: v, std: F.show(s), syl: F.syllables(s), parts: [] };
         persist(); render(); renderPicks();
       });
       row.appendChild(inp); row.appendChild(use); row.appendChild(res);
@@ -171,6 +172,7 @@
   $("fedTry").addEventListener("input", function () {
     var v = $("fedTry").value.trim(), o = $("fedTrace"); o.textContent = "";
     if (!v) return;
+    var bd = F.bad(v); if (bd.length) { o.textContent = "쓸 수 없는 기호: " + bd.join(" "); return; }
     try {
       var r = F.derive(v, true);
       o.textContent = F.protoIPA(v.replace(/\./g, "")) + " → " + F.show(r.s) + "\n" + r.steps.map(function (x) { return "  " + x[0] + "  " + x[1]; }).join("\n");

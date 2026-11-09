@@ -85,8 +85,19 @@
     return s;
   }
 
+  /* IPA로 쓴 조어도 받음: tʼ→T, ɓ→B, ʂ→S, ə→@, ɨ→1, ā→A 등. 앞의 *와 공백은 무시 */
+  var FROM_IPA = [["pʼ", "P"], ["tʼ", "T"], ["kʼ", "K"], ["qʼ", "Q"], ["p'", "P"], ["t'", "T"], ["k'", "K"], ["q'", "Q"],
+    ["ɓ", "B"], ["ɗ", "D"], ["ɠ", "G"], ["ʂ", "S"], ["ʐ", "Z"], ["ʈ", "C"], ["ɳ", "N"], ["ɻ", "R"],
+    ["ā", "A"], ["ī", "I"], ["ū", "U"], ["aː", "A"], ["iː", "I"], ["uː", "U"], ["ə", "@"], ["ɨ", "1"]];
+  var OK = "ptkqPTKQBDGsSZCNRhmnljwaiuAIU@1.";
+  function norm(w) {
+    w = String(w).normalize("NFC").replace(/^\s*\*/, "").replace(/\s+/g, "");
+    FROM_IPA.forEach(function (p) { w = w.split(p[0]).join(p[1]); });
+    return w;
+  }
+  function bad(w) { return Array.from(norm(w)).filter(function (c) { return OK.indexOf(c) < 0; }); }
   function derive(word, trace) {
-    var s = Array.from(word.replace(/\./g, "")), steps = [];
+    var s = Array.from(norm(word).replace(/\./g, "")), steps = [];
     function log(n) { if (trace) steps.push([n, s.join("")]); }
     var i, x, out, cm;
     /* 1 h 탈락, i+a 활음화 */
@@ -230,7 +241,7 @@
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
-  function protoIPA(w) { return "*" + Array.from(w).map(function (c) { return IPA[c] || c; }).join(""); }
+  function protoIPA(w) { return "*" + Array.from(norm(w)).map(function (c) { return IPA[c] || c; }).join(""); }
 
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
@@ -260,5 +271,5 @@
     return out.join(".");
   }
 
-  root.FED = { derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
