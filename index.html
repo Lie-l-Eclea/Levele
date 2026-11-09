@@ -223,6 +223,20 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 #viewPef details summary { cursor: pointer; font-weight: 600; }
 #viewPef ol { margin: 6px 0 0; padding-left: 1.3rem; }
 .pef-send { padding: 2px 8px; font-size: .82rem; }
+.fed-card { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.fed-card:last-child { border-bottom: 0; }
+.fed-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fed-chosen { font-family: var(--font-lang); font-size: 1.05rem; color: var(--accent); }
+.fed-chosen.none { color: var(--muted); font-family: var(--font-ui); font-size: .85rem; }
+.fed-grid { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+button.fed-cand { display: grid; gap: 1px; text-align: left; padding: 6px 8px; min-height: 44px; }
+button.fed-cand[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.fed-std { font-family: var(--font-lang); font-size: 1.12rem; color: var(--fg); }
+.fed-meta { font-family: var(--font-code); font-size: .72rem; color: var(--muted); }
+.fed-warn { font-size: .72rem; color: var(--err); }
+.fed-own { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fed-own input, .fed-try { font-family: var(--font-code); font-size: .9rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); padding: 6px 10px; min-width: 0; flex: 1 1 180px; }
+.fed-trace { font-family: var(--font-code); font-size: .82rem; white-space: pre-wrap; margin: 6px 0 0; }
 .views { gap: 0; overflow-x: auto; scrollbar-width: none; }
 .view-tab { white-space: nowrap; flex: 0 0 auto; font-size: 1.05rem; padding: 6px 10px 8px; }
 @media (max-width: 520px) { .view-tab { font-size: 0.92rem; padding: 6px 8px 8px; } }
@@ -425,6 +439,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
     <button class="view-tab" role="tab" type="button" data-view="lex" aria-selected="false">단어장</button>
     <button class="view-tab" role="tab" type="button" data-view="gen" aria-selected="false">단어 생성</button>
     <button class="view-tab" role="tab" type="button" data-view="pef" aria-selected="false">조어 변환기</button>
+    <button class="view-tab" role="tab" type="button" data-view="fed" aria-selected="false">연방어</button>
   </nav>
 
   <section id="viewPef" hidden>
@@ -464,6 +479,40 @@ qeri</textarea>
         <li>모음 연속은 그대로 두고, ə 뒤 모음 연속에서는 ə 탈락, 안쪽 ə는 합법 자음군이 될 때만 탈락, 어말 ə는 l s x n m h 뒤에서 탈락</li>
         <li>i 앞 k는 p로, 어말 s는 h로, l 앞 a는 e로, u 앞 t는 p로, 모음 사이 s는 h로, 자음 앞 s는 h로, 모음 사이 k g는 x로</li>
       </ol>
+    </details>
+  </section>
+  </section>
+
+  <section id="viewFed" hidden>
+  <section class="panel">
+    <label for="fedIn"><b>뜻 목록</b> (한 줄에 하나)</label>
+    <textarea id="fedIn" spellcheck="false" autocomplete="off" rows="6" aria-label="뜻 목록"></textarea>
+    <p class="hint">합성어는 +로 잇고 속격은 '의'로 적습니다(예: 사냥+승리+의+마을). 같은 요소 이름은 "어근 고정"을 누르면 다른 줄에서도 같은 어근을 씁니다. 속격은 권설 조화를 따라 자동으로 붙습니다.</p>
+    <div class="lex-bar">
+      <label>최대 음절 <select id="fedMax"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+      <label>후보 <select id="fedN"><option>12</option><option selected>24</option><option>48</option></select>개</label>
+      <label><input type="checkbox" id="fedSimple" checked> 첫소리 자음군 없이</label>
+      <button type="button" class="primary" id="fedGo">후보 만들기</button>
+    </div>
+    <p class="hint">합성어는 요소 수보다 짧게 만들 수 없으므로, 요소 수가 최대 음절보다 많으면 요소 수까지 허용합니다.</p>
+    <div id="fedFixedWrap" hidden><p class="hint">고정한 어근 (누르면 풀림)</p><div class="chips" id="fedFixed"></div></div>
+  </section>
+  <section class="panel" id="fedCards"></section>
+  <section class="panel">
+    <div class="panel-head"><h2>고른 형태 <span id="fedPickN"></span></h2>
+      <span><button type="button" id="fedCopy">표로 복사</button> <button type="button" id="fedClear">전부 지우기</button> <span class="hint" id="fedCopyMsg"></span></span></div>
+    <div class="scroll"><table>
+      <thead><tr><th>뜻</th><th>표준어</th><th>조어</th><th>음절</th><th></th></tr></thead>
+      <tbody id="fedPicks"></tbody>
+    </table></div>
+    <textarea id="fedOut" rows="4" hidden aria-label="복사할 표"></textarea>
+  </section>
+  <section class="panel">
+    <details>
+      <summary>규칙 확인 (조어 하나를 넣으면 단계별 결과)</summary>
+      <input type="text" id="fedTry" class="fed-try" spellcheck="false" placeholder="예: Za.n@.Ca.ki.l1">
+      <pre id="fedTrace" class="fed-trace"></pre>
+      <p class="hint">기호: 평음 p t k q, 방출음 P T K Q, 내파음 B D G, s, S(ʂ), Z(ʐ), C(ʈ), N(ɳ), R(ɻ), h, m n l j w, 모음 a i u, 장모음 A I U, 약모음 @(ə) 1(ɨ). 규칙과 근거는 docs/fed.md.</p>
     </details>
   </section>
   </section>
@@ -3230,6 +3279,7 @@ function showView(v) {
   $("viewLex").hidden = v !== "lex";
   $("viewGen").hidden = v !== "gen";
   $("viewPef").hidden = v !== "pef";
+  $("viewFed").hidden = v !== "fed";
   Array.prototype.forEach.call(document.querySelectorAll(".view-tab"), function (t) {
     t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false");
   });
@@ -3316,7 +3366,7 @@ input.value = savedInput !== null && savedInput !== "" ? savedInput : SAMPLE;
 })();
 showTab("cats");
 compileAll(); renderErrors(); renderOutput();
-(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" ? v0 : "conv")); })();
+(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : location.hash === "#fed" ? "fed" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" || v0 === "fed" ? v0 : "conv")); })();
 renderLex();
 startLex();
 /* ---- GitHub 동기화 ---- */
@@ -3461,5 +3511,7 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
+<script src="fed.js"></script>
+<script src="fed-ui.js"></script>
 
 </body></html>
