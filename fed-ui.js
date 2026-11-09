@@ -3,13 +3,19 @@
   "use strict";
   var F = window.FED;
   if (!F || !document.getElementById("viewFed")) return;
-  var KEY = "eklea-fed-picker-v2";
+  var KEY = "eklea-fed-picker-v1";
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
   /* 이미 정한 연방어 어휘 (docs/fed.md). 같은 발음 표시에 씀 */
-  /* 정해 둔 연방어 어휘 (규칙 v2로 다시 고르는 중이라 비어 있음). 같은 발음 표시에 씀 */
-  var LEX = {};
+  var LEX = {
+    "아이": "noz", "물고기": "kʲaʃuɚ̯", "집": "silbi", "사람": "kulu", "친구": "tʃaɾa", "선생": "gimal", "의사": "xizeliu", "어제": "nanxuu",
+    "저(지시사)": "nuðo", "먹다": "ʒuts", "가다": "tʃu", "오다": "kets", "1SG": "ʒil", "2SG": "kin", "3SG": "ma", "어머니": "tanuvsu",
+    "아버지": "tanuli", "책": "kuɾuɚ̯", "물": "salexi", "강": "tifʃu", "산": "koɾabo", "오늘": "xiɾiu", "크다": "gʲuʒiwil", "많다": "nuulun",
+    "주다": "tol", "보다": "tubi", "읽다": "hafto", "쓰다": "pinemifu", "마시다": "paswu",
+    "주제 표지": "ɾi/ʒi", "대격": "bu", "속격": "ða/θa/ta", "사격": "n/nu", "복수": "xe", "과거": "zi/si/ʃi", "존대": "ve/fe/pe",
+    "분사": "mi", "부정 조동사": "kima", "의문": "lu"
+  };
   var LEXR = {};
   Object.keys(LEX).forEach(function (k) { LEX[k].split("/").forEach(function (f) { (LEXR[f] = LEXR[f] || []).push(k); }); });
 
@@ -30,14 +36,12 @@
     return hits;
   }
   /* 후보 하나: { proto, std, syl, parts:[{p, proto, std}] } */
-  /* 합성어: 강세는 첫 요소에만 남김(뒤 요소의 ' 제거), 속격은 조어 *-ta (권설 조화) */
   function build(L, partsProto) {
     var proto = "", parts = [];
     L.parts.forEach(function (p, i) {
       var seg = p === "의" ? F.harm(proto, "ta") : partsProto[i];
-      if (proto) seg = seg.replace(/'/g, "");
       proto += (proto ? "." : "") + seg;
-      if (p !== "의") parts.push({ p: p, proto: partsProto[i], std: F.D(partsProto[i]) });
+      if (p !== "의") parts.push({ p: p, proto: seg, std: F.D(seg) });
     });
     var s = F.derive(proto);
     return { proto: proto, std: F.show(s), syl: F.syllables(s), parts: parts };
@@ -51,8 +55,8 @@
       var pp = L.parts.map(function (p) {
         if (p === "의") return null;
         if (st.fixed[p]) return st.fixed[p];
-        if (L.compound) return F.gen(Math.random() < 0.65 ? 1 : 2, Math.random);
-        return F.gen(1 + Math.floor(Math.random() * Math.min(4, lim + 1)), Math.random);
+        if (L.compound) return F.gen(Math.random() < 0.65 ? 1 : 2, Math.random, { simpleOnset: st.simple });
+        return F.gen(1 + Math.floor(Math.random() * Math.min(3, lim + 1)), Math.random, { simpleOnset: st.simple });
       });
       var c = build(L, pp);
       if (c.syl < 1 || c.syl > lim || seen[c.std]) continue;
@@ -102,11 +106,11 @@
       });
       card.appendChild(grid);
       /* 직접 입력 */
-      var row = el("div", "fed-own"), inp = el("input"); inp.type = "text"; inp.placeholder = "조어 직접 입력 (예: kw.'lwA.dw 또는 kʷ.ˈlʷā.dʷ)"; inp.spellcheck = false;
+      var row = el("div", "fed-own"), inp = el("input"); inp.type = "text"; inp.placeholder = "조어 직접 입력 (예: ki.l1 또는 ki.lɨ)"; inp.spellcheck = false;
       var res = el("span", "fed-meta"), use = el("button", "", "이 형태로"); use.type = "button";
       function upd() {
         var v = inp.value.trim(); if (!v) { res.textContent = ""; return; }
-        var b = F.bad(v); if (b.length) { res.textContent = "읽을 수 없는 음절: " + b.join(" "); return; }
+        var b = F.bad(v); if (b.length) { res.textContent = "쓸 수 없는 기호: " + b.join(" "); return; }
         try { var s = F.derive(v); res.textContent = "→ " + F.show(s) + " (" + F.syllables(s) + "음절)"; } catch (e) { res.textContent = "읽을 수 없음"; }
       }
       inp.addEventListener("input", upd);
@@ -148,9 +152,9 @@
 
   /* 조작 */
   $("fedIn").value = st.text;
-  $("fedMax").value = String(st.max); $("fedN").value = String(st.n);
+  $("fedMax").value = String(st.max); $("fedN").value = String(st.n); $("fedSimple").checked = !!st.simple;
   $("fedGo").addEventListener("click", function () {
-    st.text = $("fedIn").value; st.max = +$("fedMax").value; st.n = +$("fedN").value;
+    st.text = $("fedIn").value; st.max = +$("fedMax").value; st.n = +$("fedN").value; st.simple = $("fedSimple").checked;
     st.cards = {}; render(); renderPicks();
   });
   $("fedIn").addEventListener("change", function () {
@@ -168,10 +172,10 @@
   $("fedTry").addEventListener("input", function () {
     var v = $("fedTry").value.trim(), o = $("fedTrace"); o.textContent = "";
     if (!v) return;
-    var bd = F.bad(v); if (bd.length) { o.textContent = "읽을 수 없는 음절: " + bd.join(" "); return; }
+    var bd = F.bad(v); if (bd.length) { o.textContent = "쓸 수 없는 기호: " + bd.join(" "); return; }
     try {
       var r = F.derive(v, true);
-      o.textContent = F.protoIPA(v) + " → " + F.show(r.s) + "\n" + r.steps.map(function (x) { return "  " + x[0] + "  " + x[1]; }).join("\n");
+      o.textContent = F.protoIPA(v.replace(/\./g, "")) + " → " + F.show(r.s) + "\n" + r.steps.map(function (x) { return "  " + x[0] + "  " + x[1]; }).join("\n");
     } catch (e) { o.textContent = "읽을 수 없음"; }
   });
   render(); renderFixed(); renderPicks();
