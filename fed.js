@@ -59,7 +59,7 @@
         if (b0 === "w" || b0 === "j" || b0 === "h") continue;
         if (b0 === "m") { res.push("n"); continue; }
         if (b0 === "ɾ") { res.push("ɚ"); continue; }
-        if (b0 === "t") { res.push("ts"); continue; }
+        if (b0 === "t" && prv !== null && isV(prv)) { res.push("ts"); continue; }
         if (["n", "s", "z", "l", "ts"].indexOf(b0) >= 0) { res.push(b0); continue; }
         res.push(x); res.push(epen(x)); continue;
       }
@@ -219,10 +219,7 @@
         if (i === s.length - 1) {
           var nv = s.filter(isV).length;
           if (i > 0 && !isV(s[i - 1]) && nv > 1 && ["f", "v", "fʲ", "vʲ"].indexOf(s[i - 1]) < 0) {
-            if (i >= 2 && !isV(s[i - 2])) {
-              var a1 = s[i - 2], b1 = s[i - 1];
-              if (!(["n", "l", "m", "R", "ɾ"].indexOf(a1) >= 0 && FINAL2[b1])) continue;
-            }
+            if (i >= 2 && !isV(s[i - 2])) continue;   /* 어말 자음군은 만들지 않음 */
             s = s.slice(0, i); changed = true; break;
           }
           continue;
