@@ -487,11 +487,10 @@ qeri</textarea>
   <section class="panel">
     <label for="fedIn"><b>뜻 목록</b> (한 줄에 하나)</label>
     <textarea id="fedIn" spellcheck="false" autocomplete="off" rows="6" aria-label="뜻 목록"></textarea>
-    <p class="hint">합성어는 +로 잇고 속격은 '의'로 적습니다(예: 사냥+승리+의+마을). 같은 요소 이름은 "어근 고정"을 누르면 다른 줄에서도 같은 어근을 씁니다. 속격은 권설 조화를 따라 자동으로 붙습니다.</p>
+    <p class="hint">합성어는 +로 잇고 속격은 '의'로 적습니다(예: 사냥+승리+의+마을). 같은 요소 이름은 "어근 고정"을 누르면 다른 줄에서도 같은 어근을 씁니다. 속격(조어 *-ta)은 권설 조화를 따라 자동으로 붙고, 합성어의 강세는 첫 요소에 둡니다.</p>
     <div class="lex-bar">
       <label>최대 음절 <select id="fedMax"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
       <label>후보 <select id="fedN"><option>12</option><option selected>24</option><option>48</option></select>개</label>
-      <label><input type="checkbox" id="fedSimple" checked> 첫소리 자음군 없이</label>
       <button type="button" class="primary" id="fedGo">후보 만들기</button>
     </div>
     <p class="hint">합성어는 요소 수보다 짧게 만들 수 없으므로, 요소 수가 최대 음절보다 많으면 요소 수까지 허용합니다.</p>
@@ -510,9 +509,9 @@ qeri</textarea>
   <section class="panel">
     <details>
       <summary>규칙 확인 (조어 하나를 넣으면 단계별 결과)</summary>
-      <input type="text" id="fedTry" class="fed-try" spellcheck="false" placeholder="예: Za.n@.Ca.ki.l1">
+      <input type="text" id="fedTry" class="fed-try" spellcheck="false" placeholder="예: kw.'lwA.dw">
       <pre id="fedTrace" class="fed-trace"></pre>
-      <p class="hint">기호: 평음 p t k q, 방출음 P T K Q, 내파음 B D G, s, S(ʂ), Z(ʐ), C(ʈ), N(ɳ), R(ɻ), h, m n l j w, 모음 a i u, 장모음 A I U, 약모음 @(ə) 1(ɨ). IPA로 써도 됩니다(tʼ ɓ ʂ ʐ ʈ ɳ ɻ ā ə ɨ 등, 앞의 *는 무시). 규칙과 근거는 docs/fed.md.</p>
+      <p class="hint">조어 표기: 음절을 점으로 나누고 강세 음절 앞에 '를 붙입니다. 음절은 첫소리 + 2차 조음(w 원순, j 구개) + 핵(a, A=ā, @=ə, 없음) + 끝소리입니다. 자음은 p t k q, 방출음 P T K, 유성 b d g, s z, S(ʂ) Z(ʐ) C(ʈ) c(θ), x(χ), h, m n l R(ɻ)이고, 끝소리에는 j w도 옵니다. IPA로 써도 됩니다(kʷ.ˈlʷā.dʷ). 규칙과 근거는 docs/fed.md.</p>
     </details>
   </section>
   </section>
