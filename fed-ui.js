@@ -9,11 +9,11 @@
 
   /* 이미 정한 연방어 어휘 (docs/fed.md). 같은 발음 표시에 씀 */
   var LEX = {
-    "아이": "noz", "물고기": "kʲasɾa", "집": "silbi", "사람": "kalu", "친구": "tʃaɾa", "선생": "gimal", "의사": "xizeli", "어제": "nanxa",
-    "저(지시사)": "nu", "먹다": "ʒuts", "가다": "tʃu", "오다": "kets", "1SG": "ʒil", "2SG": "kin", "3SG": "ma", "어머니": "tanavsu",
-    "아버지": "tenli", "책": "kuzɾi", "물": "salexi", "강": "tifʃa", "산": "kɾabo", "오늘": "xiɾi", "크다": "gʲuzwil", "많다": "nuvlun",
-    "주다": "tol", "보다": "tubi", "읽다": "hafta", "쓰다": "pinemi", "마시다": "paswu",
-    "주제 표지": "ɾi/ʒi", "대격": "bu", "속격": "ða/θa/ta", "사격": "n/na", "복수": "xe", "과거": "zi/si/ʃi", "존대": "ve/fe/pe",
+    "아이": "noz", "물고기": "kʲaʃuɚ̯", "집": "silbi", "사람": "kulu", "친구": "tʃaɾa", "선생": "gimal", "의사": "xizeliu", "어제": "nanxuu",
+    "저(지시사)": "nuðo", "먹다": "ʒuts", "가다": "tʃu", "오다": "kets", "1SG": "ʒil", "2SG": "kin", "3SG": "ma", "어머니": "tanuvsu",
+    "아버지": "tanuli", "책": "kuɾuɚ̯", "물": "salexi", "강": "tifʃu", "산": "koɾabo", "오늘": "xiɾiu", "크다": "gʲuʒiwil", "많다": "nuulun",
+    "주다": "tol", "보다": "tubi", "읽다": "hafto", "쓰다": "pinemifu", "마시다": "paswu",
+    "주제 표지": "ɾi/ʒi", "대격": "bu", "속격": "ða/θa/ta", "사격": "n/nu", "복수": "xe", "과거": "zi/si/ʃi", "존대": "ve/fe/pe",
     "분사": "mi", "부정 조동사": "kima", "의문": "lu"
   };
   var LEXR = {};

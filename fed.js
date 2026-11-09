@@ -55,19 +55,25 @@
       if (!isCoda) { res.push(x); continue; }
       var soft = /ʲ$/.test(x);
       if (nxt === null) {
-        var r = soft ? FINMAP.hasOwnProperty(x.slice(0, -1)) ? FINMAP[x.slice(0, -1)] : x.slice(0, -1) : FINMAP.hasOwnProperty(x) ? FINMAP[x] : x;
-        if (r) res.push(r);
-        continue;
+        var b0 = x.replace(/ʲ$/, "");
+        if (b0 === "w" || b0 === "j" || b0 === "h") continue;
+        if (b0 === "m") { res.push("n"); continue; }
+        if (b0 === "ɾ") { res.push("ɚ"); continue; }
+        if (b0 === "t") { res.push("ts"); continue; }
+        if (["n", "s", "z", "l", "ts"].indexOf(b0) >= 0) { res.push(b0); continue; }
+        res.push(x); res.push(epen(x)); continue;
       }
       var base = soft ? x.charAt(0) : x;
       if (nxt === x || (/ʲ$/.test(nxt) && nxt.slice(0, -1) === x)) { res.push(x); continue; }
       var nb = nxt.replace(/ʲ/g, "");
       if (base === "x" && VOICELESS[nb] && nb !== "x") { res.push("f"); continue; }
-      if ("p t k b d g x".split(" ").indexOf(base) >= 0) { res.push(/ʲ$/.test(nxt) ? nxt.charAt(0) : nxt); continue; }
-      if (base === "ð" || base === "w" || base === "j" || base === "h") continue;
-      if ((base === "f" || base === "v") && !VOICELESS[nb]) continue;
-      var mp = { "θ": "s", m: "n", "ʃ": "s", "ʒ": "z", "ɾ": "ɚ", "tʃ": "ts", "dʒ": "z" };
-      res.push(mp.hasOwnProperty(base) ? mp[base] : base);
+      if ("p t k b d g".split(" ").indexOf(base) >= 0 && ["p", "t", "k", "b", "d", "g", "ts", "tʃ", "dʒ"].indexOf(nb) >= 0) { res.push(/ʲ$/.test(nxt) ? nxt.charAt(0) : nxt); continue; }
+      if (base === "w" || base === "j" || base === "h") continue;
+      if (base === "m") { res.push("n"); continue; }
+      if (base === "ɾ") { res.push("ɚ"); continue; }
+      if (["n", "s", "z", "l", "ts"].indexOf(base) >= 0) { res.push(base); continue; }
+      if ((base === "f" || base === "v") && VOICELESS[nb]) { res.push(base); continue; }
+      res.push(x); res.push(epen(x));
     }
     var fin = [];
     res.forEach(function (x) {
@@ -78,6 +84,13 @@
     });
     if (fin.length >= 2 && fin[fin.length - 1] === fin[fin.length - 2] && !isV(fin[fin.length - 1])) fin.pop();
     return fin;
+  }
+  /* 목록 밖 코다 뒤 삽입 모음 */
+  function epen(c) {
+    var b = c.replace(/ʲ$/, "");
+    if (["t", "d", "ɾ", "ð", "θ"].indexOf(b) >= 0) return "o";
+    if (["tʃ", "dʒ", "ʃ", "ʒ"].indexOf(b) >= 0) return "i";
+    return "u";
   }
   function repair(s) {
     var prev = null;
@@ -116,6 +129,15 @@
     cm = codaMask(s, onsetMid);
     var TL = { t: "k", d: "g", "θ": "x", C: "k" };
     s = s.map(function (c, k) { return TL.hasOwnProperty(c) && !cm[k] && k + 1 < s.length && s[k + 1] === "l" ? TL[c] : c; });
+    /* 첫소리 자음군(C+l, C+ɻ) 사이에 모음 삽입: t d θ ð ʈ 뒤 o, 그 밖 u (가타카나식 kl → kul) */
+    out = [];
+    for (i = 0; i < s.length; i++) {
+      x = s[i]; out.push(x);
+      var nx0 = i + 1 < s.length ? s[i + 1] : "", pv0 = i > 0 ? s[i - 1] : "";
+      if (["l", "R", "j", "w", "a", "i", "u", "A", "I", "U", "@", "1"].indexOf(x) < 0 && (nx0 === "l" || nx0 === "R") && (i === 0 || isV(pv0)))
+        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : "u");
+    }
+    s = out;
     log("연쇄");
     /* 3 권설음 */
     cm = codaMask(s, onsetMid); out = [];
@@ -141,7 +163,8 @@
       out.push({ A: "o", I: "i", U: "u" }[x] || x);
     }
     s = out; cm = codaMask(s, onsetMid);
-    s = s.map(function (c, k) { return c === "w" && cm[k] ? "v" : c; });
+    var VL = { p: 1, t: 1, k: 1, f: 1, "θ": 1, x: 1, s: 1, "ʃ": 1, h: 1, C: 1, S: 1 };
+    s = s.map(function (c, k) { return c === "w" && cm[k] ? (k + 1 < s.length && VL[s[k + 1]] ? "v" : "u") : c; });
     log("움라우트·장모음");
     /* 5 탄음화, 6 유성화, θ ð → s z / _i e */
     s = s.map(function (c, k) { return c === "d" && k > 0 && k < s.length - 1 && isV(s[k - 1]) && isV(s[k + 1]) ? "ɾ" : c; });
@@ -220,7 +243,7 @@
     s = out; log("u탈락");
     /* 12 코다 보정, 13 남은 예르 */
     s = repair(s); log("코다보정");
-    s = s.map(function (c) { return c === "@" ? "a" : c === "1" ? "i" : c; });
+    s = s.map(function (c, k) { return c === "@" ? (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0 ? "o" : "u") : c === "1" ? "i" : c; });
     log("남은 예르");
     return trace ? { s: s, steps: steps } : s;
   }
