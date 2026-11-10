@@ -224,10 +224,6 @@
       if (FR[c] && o2.length && /ʲ$/.test(o2[o2.length - 1])) { o2[o2.length - 1] = o2[o2.length - 1].slice(0, -1); o2.push(FR[c]); return; }
       o2.push(c);
     });
-    /* 연음 ʲ 제거: Cʲa → Ce, 그 밖의 Cʲ → C */
-    for (i = 0; i < o2.length; i++) {
-      if (/ʲ$/.test(o2[i])) { o2[i] = o2[i].slice(0, -1); if (o2[i + 1] === "a") o2[i + 1] = "e"; }
-    }
     s = o2; log("구개음화");
     /* 10 예르 탈락 */
     function codaOk(c, n) {
@@ -380,5 +376,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.13", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.14", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
