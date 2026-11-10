@@ -35,6 +35,7 @@
       }
       if (i + 1 < n && isv(seg[i + 1])) {
         var v = seg[i + 1], o = CH[c0] || "ㅇ", palat = pal || c0 === "j";
+        if (c0 === "l" && out.length && out[out.length - 1][2] === "") out[out.length - 1][2] = "ㄹ";  /* l은 ㄹㄹ (울라), ɾ는 ㄹ (우라) */
         if (c0 === "w") { out.push(["ㅇ", "aeiouɯ".indexOf(v.charAt(0)) >= 0 ? WK[v.charAt(0)] : "ㅜ", ""]); i += 2; continue; }
         if (DIPH[v] || v.indexOf("ɚ") >= 0) {
           var a = v.charAt(0);
@@ -59,7 +60,7 @@
     while (out.length < st.n && tries < st.n * 60) {
       tries++;
       var p = F.gen(undefined, Math.random), seg = F.derive(p), s = F.show(seg);
-      if (seen[s]) continue;
+      if (seen[s] || F.syllables(seg) < 2) continue;  /* 단음절은 목록에서 뺌 */
       seen[s] = 1; out.push({ p: p, s: s, h: han(seg), l: null });
     }
     st.cur = out;

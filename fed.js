@@ -355,7 +355,7 @@
   }
   function gen(nSyl, rnd, opt) {
     rnd = rnd || Math.random; opt = opt || {};
-    var n = nSyl || pw([[1, 1.2], [2, 5], [3, 3]], rnd), out = [];
+    var n = nSyl || pw([[1, .1], [2, 5], [3, 3]], rnd), out = [];
     for (var i = 0; i < n; i++) {
       var on = pw(ON, rnd), nu = pw(NU, rnd);
       if (i === 0) while (on === "w" || on === "j") on = pw(ON, rnd);  /* 어두 w·j는 만들지 않음 */
@@ -371,5 +371,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.11", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.12", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
