@@ -186,7 +186,7 @@
     log("움라우트·장모음");
     /* 5 탄음화, 6 유성화, θ ð → s z / _i e */
     s = s.map(function (c, k) { return c === "d" && k > 0 && k < s.length - 1 && isV(s[k - 1]) && isV(s[k + 1]) ? "ɾ" : c; });
-    s = s.map(function (c, k) { var m = { f: "v", s: "z", "θ": "ð" }; return m[c] && k > 0 && k < s.length - 1 && isV(s[k - 1]) && isV(s[k + 1]) ? m[c] : c; });
+    s = s.map(function (c, k) { var m = { f: "v" }; return m[c] && k > 0 && k < s.length - 1 && isV(s[k - 1]) && isV(s[k + 1]) ? m[c] : c; });
     s = s.map(function (c, k) { var m = { "θ": "s", "ð": "z" }; return m[c] && k + 1 < s.length && (s[k + 1] === "i" || s[k + 1] === "e" || s[k + 1] === "I") ? m[c] : c; });
     log("탄음·유성화");
     /* 7 r색 */
@@ -315,6 +315,9 @@
       if (s[k] === "ɯ" && (NOBEFORE[pv.replace(/ʲ$/, "")] === 1 || closedAfter(s, k))) s[k] = "u";
     }
     s = s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯" || s[k + 1] === "ui")); });
+    /* ⑥ 한 단어에 ɯ는 하나만: 둘째부터는 e */
+    var seenW = false;
+    s = s.map(function (c) { if (c !== "ɯ") return c; if (seenW) return "e"; seenW = true; return c; });
     /* ⑤ 같은 모음이 둘 겹치면 장모음으로 두지 않고 이중모음으로 */
     var PAIR = { a: "ai", e: "ei", i: "ai", o: "ou", u: "au", "ɯ": "eu" }, res = [];
     for (k = 0; k < s.length; k++) {
@@ -339,7 +342,7 @@
   }
 
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
-  var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
+  var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .15], ["D", .2], ["G", .12],
     ["s", 1.6], ["S", .6], ["Z", .4], ["C", .5], ["h", .4], ["m", 1.2], ["n", 1.4], ["N", .3], ["l", 1.2], ["R", .6], ["j", .5], ["w", .6]];
   var NU = [["a", 4.2], ["i", .6], ["u", .8], ["@", 3], ["1", 1.8], ["A", .5], ["I", .4], ["U", .4]];
   var CO = [["", .55], ["n", .09], ["m", .03], ["l", .09], ["R", .12], ["s", .03], ["j", .05], ["w", .05], ["C", .004], ["S", .004], ["N", .004],
@@ -355,6 +358,7 @@
     var n = nSyl || pw([[1, 1.2], [2, 5], [3, 3]], rnd), out = [];
     for (var i = 0; i < n; i++) {
       var on = pw(ON, rnd), nu = pw(NU, rnd);
+      if (i === 0) while (on === "w" || on === "j") on = pw(ON, rnd);  /* 어두 w·j는 만들지 않음 */
       if (!opt.simpleOnset) {
         if (rnd() < .08 && "ptkPTKBDG".indexOf(on) >= 0) on += rnd() < .5 ? "l" : "R";
         else if (rnd() < (nu === "a" || nu === "A" ? .11 : .04) && on !== "j" && on !== "w") on += "j";
@@ -367,5 +371,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.9", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.10", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
