@@ -231,6 +231,8 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .fed-grid { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
 button.fed-cand { display: grid; gap: 1px; text-align: left; padding: 6px 8px; min-height: 44px; }
 button.fed-cand[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.fed-jlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; }
+button.fed-j[data-l="ok"] { background: transparent; border-style: dashed; border-color: var(--accent); }
 .fed-std { font-family: var(--font-lang); font-size: 1.12rem; color: var(--fg); }
 .fed-meta { font-family: var(--font-code); font-size: .72rem; color: var(--muted); }
 .fed-warn { font-size: .72rem; color: var(--err); }
@@ -497,6 +499,25 @@ qeri</textarea>
     </div>
     <p class="hint">합성어는 요소 수보다 짧게 만들 수 없으므로, 요소 수가 최대 음절보다 많으면 요소 수까지 허용합니다.</p>
     <div id="fedFixedWrap" hidden><p class="hint">고정한 어근 (누르면 풀림)</p><div class="chips" id="fedFixed"></div></div>
+  </section>
+  <section class="panel" id="fedJudge">
+    <div class="panel-head"><h2>어감 판정</h2></div>
+    <p class="hint">자동으로 만든 단어에서 마음에 드는 것만 탭하세요. 한 번 탭하면 ○ 맞음, 두 번 탭하면 △ 용납, 세 번 탭하면 해제입니다. 고르지 않은 단어는 불가로 기록됩니다. "기록하고 다음 목록"을 누르면 이 목록이 기록되고 새 목록이 나옵니다.</p>
+    <div class="lex-bar">
+      <label>개수 <select id="fedJN"><option>30</option><option>60</option><option>100</option></select></label>
+      <label>음절 <select id="fedJSyl"><option value="1-2">1~2</option><option value="2-3">2~3</option><option value="3-4">3~4</option></select></label>
+      <label><input type="checkbox" id="fedJHan"> 한글 표기 보기(판정용)</label>
+    </div>
+    <div class="chips fed-jlist" id="fedJList"></div>
+    <p class="hint" id="fedJStat"></p>
+    <div class="lex-bar">
+      <button type="button" class="primary" id="fedJNext">기록하고 다음 목록</button>
+      <button type="button" id="fedJRedo">기록 없이 새 목록</button>
+      <button type="button" id="fedJCopy">기록 복사</button>
+      <button type="button" id="fedJClear">기록 지우기</button>
+      <span class="hint" id="fedJMsg"></span>
+    </div>
+    <textarea id="fedJOut" rows="4" hidden aria-label="복사할 기록"></textarea>
   </section>
   <section class="panel" id="fedCards"></section>
   <section class="panel">
@@ -3514,6 +3535,7 @@ if (typeof window !== "undefined") window.__eklea = { convert: convert, compileA
 </script>
 <script src="fed.js?v=1.10"></script>
 <script src="fed-ui.js?v=1.10"></script>
+<script src="fed-judge.js?v=1.10"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
