@@ -61,7 +61,7 @@
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   /* 규칙 하나마다 (규칙을 켠 형태, 같은 조어의 대조 형태) 쌍을 만든다. 규칙이 결과를 바꾸지 않는 조어는 버린다 */
   function make() {
-    var seen = known(), out = [], arms = st.on.filter(function (a) { return F.ARM_OPT[a]; });
+    var seen = known(), seenH = {}, out = [], arms = st.on.filter(function (a) { return F.ARM_OPT[a]; });
     if (!arms.length) arms = ARM_IDS.slice();
     var per = Math.max(1, Math.floor(st.n / (2 * arms.length)));
     arms.forEach(function (a) {
@@ -69,11 +69,12 @@
       while (made < per && tries < per * 400) {
         tries++;
         var p = F.gen(undefined, Math.random), s0 = F.derive(p), s1 = F.derive(p, false, F.ARM_OPT[a]);
-        var t0 = F.show(s0), t1 = F.show(s1);
-        if (t0 === t1 || seen[t0] || seen[t1] || F.syllables(s0) < 2 || F.syllables(s1) < 2) continue;
-        seen[t0] = 1; seen[t1] = 1; made++;
-        out.push({ p: p, s: t1, h: han(s1), l: null, a: a });
-        out.push({ p: p, s: t0, h: han(s0), l: null, a: a + ":c" });
+        var t0 = F.show(s0), t1 = F.show(s1), h0 = han(s0), h1 = han(s1);
+        /* 한글 표기가 같은 쌍(h·x, p·f 등)은 판정할 수 없으므로 버린다. 같은 한글 표기는 한 단어로 센다 */
+        if (h0 === h1 || seen[t0] || seen[t1] || seenH[h0] || seenH[h1] || F.syllables(s0) < 2 || F.syllables(s1) < 2) continue;
+        seen[t0] = 1; seen[t1] = 1; seenH[h0] = 1; seenH[h1] = 1; made++;
+        out.push({ p: p, s: t1, h: h1, l: null, a: a });
+        out.push({ p: p, s: t0, h: h0, l: null, a: a + ":c" });
       }
     });
     st.cur = shuffle(out);
