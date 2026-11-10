@@ -286,7 +286,7 @@
   /* u·ɯ 마무리: ① 첫 음절의 u→o, ɯ→i (uɚ̯→oɚ̯)
      ② 첫 음절이 아니고 앞 자음이 v·m·w가 아닌 u는 ɯ (일본어식 비원순화)
      ③ ɯ는 코다가 뒤따르거나 앞에 m·n·l이 있으면 u
-     ④ wu, wɯ, wuɚ̯ 는 w 탈락 */
+     ④ wu, wɯ, wuɚ̯ 는 w 탈락 ⑤ 같은 모음 둘(aa ee ii oo uu ɯɯ)은 이중모음(ai ei ai ou au eu) */
   var NOBEFORE = { m: 1, n: 1, l: 1 };  /* ɯ 앞에 올 수 없는 자음 */
   var LAB = { v: 1, m: 1, w: 1 };
   function closedAfter(s, k) {
@@ -311,7 +311,13 @@
       if (s[k] === "ɯ" && pv === "w") s[k] = "u";
       if (s[k] === "ɯ" && (NOBEFORE[pv.replace(/ʲ$/, "")] === 1 || closedAfter(s, k))) s[k] = "u";
     }
-    return s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯" || s[k + 1] === "ui")); });
+    s = s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯" || s[k + 1] === "ui")); });
+    /* ⑤ 같은 모음이 둘 겹치면 장모음으로 두지 않고 이중모음으로 */
+    var PAIR = { a: "ai", e: "ei", i: "ai", o: "ou", u: "au", "ɯ": "eu" }, res = [];
+    for (k = 0; k < s.length; k++) {
+      if (PAIR[s[k]] && s[k + 1] === s[k]) { res.push(PAIR[s[k]]); k++; } else res.push(s[k]);
+    }
+    return res;
   }
   /* 남은 예르(ə, ɨ)의 모음 질 (13단계)
      ɨ: 이웃에 구개음(j, ʲ)·i·e가 있으면 i, 앞이 치경·치찰음이면 e, 아니면 ɯ.
@@ -357,5 +363,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.7", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.8", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
