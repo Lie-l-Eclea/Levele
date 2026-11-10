@@ -128,7 +128,7 @@
     s = s.map(function (c, k) { return c === "i" && k + 1 < s.length && (s[k + 1] === "a" || s[k + 1] === "A") && (k === 0 || !isV(s[k - 1])) ? "j" : c; });
     log("h탈락·활음화");
     /* 2 연쇄 이동 */
-    var G = { p: "f", t: "θ", k: "x", q: "x", P: "p", T: "t", K: "k", Q: "k", B: "b", D: "d", G: "g" };
+    var G = { p: "f", t: "θ", k: "x", q: "h", P: "p", T: "t", K: "k", Q: "k", B: "b", D: "d", G: "g" };
     out = [];
     for (i = 0; i < s.length; i++) {
       x = s[i]; var pv = i > 0 ? s[i - 1] : "";
@@ -238,7 +238,7 @@
         if (!isYer(s[i])) continue;
         if (i === s.length - 1) {
           var nv = s.filter(isV).length;
-          if (i > 0 && !isV(s[i - 1]) && nv > 1 && ["f", "v", "fʲ", "vʲ", "l"].indexOf(s[i - 1]) < 0) {
+          if (i > 0 && !isV(s[i - 1]) && nv > 1 && ["f", "v", "fʲ", "vʲ"].indexOf(s[i - 1]) < 0) {
             if (i >= 2 && !isV(s[i - 2])) continue;   /* 어말 자음군은 만들지 않음 */
             s = s.slice(0, i); changed = true; break;
           }
@@ -264,7 +264,6 @@
     log("남은 예르");
     /* 14 첫 음절 모음 제한, ɯ 배분, wu·wɯ → u */
     s = finalV(s);
-    if (s.length > 1 && s[s.length - 1] === "l") s = s.concat(["e"]);  /* 어말 l에는 지지 모음 e */
     log("u·ɯ 정리");
     return trace ? { s: s, steps: steps } : s;
   }
@@ -320,8 +319,6 @@
     /* ⑥ 한 단어에 ɯ는 하나만: 둘째부터는 e */
     var seenW = false;
     s = s.map(function (c) { if (c !== "ɯ") return c; if (seenW) return "e"; seenW = true; return c; });
-    /* ⑦ 단독 u는 o (이중모음 속 u는 유지) */
-    s = s.map(function (c) { return c === "u" ? "o" : c; });
     /* ⑤ 같은 모음이 둘 겹치면 장모음으로 두지 않고 이중모음으로 */
     var PAIR = { a: "ai", e: "ei", i: "ai", o: "ou", u: "au", "ɯ": "eu" }, res = [];
     for (k = 0; k < s.length; k++) {
@@ -339,7 +336,6 @@
     return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : COR[pv] === 1 ? "e" : "ɯ";
   }
   function yerBack(s, k) {
-    if (k === s.length - 1 && s[k - 1] === "l") return "e";  /* 어말 l 뒤 예르는 e (어말 -lu 방지) */
     if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
     var nb = nbrs(s, k);
     if (nb.some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0; })) return "u";
@@ -376,5 +372,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.14", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.15", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
