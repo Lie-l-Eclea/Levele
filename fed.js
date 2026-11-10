@@ -4,7 +4,9 @@
 (function (root) {
   "use strict";
   var V_FULL = "aiuAIU", YER = "@1";
-  var STD_V = { a: 1, e: 1, i: 1, o: 1, u: 1, "ɚ": 1, "aɚ̯": 1, "eɚ̯": 1, "iɚ̯": 1, "oɚ̯": 1, "uɚ̯": 1, "ə": 1, "ɨ": 1, "ɯ": 1 };
+  var STD_V = { a: 1, e: 1, i: 1, o: 1, u: 1, "ɚ": 1, "aɚ̯": 1, "eɚ̯": 1, "iɚ̯": 1, "oɚ̯": 1, "uɚ̯": 1, "ə": 1, "ɨ": 1, "ɯ": 1,
+    ai: 1, au: 1, ei: 1, eu: 1, oi: 1, ou: 1, iu: 1,
+    "aiɚ̯": 1, "auɚ̯": 1, "eiɚ̯": 1, "euɚ̯": 1, "oiɚ̯": 1, "ouɚ̯": 1, "iuɚ̯": 1 };
   function isV(x) { return (x.length === 1 && (V_FULL.indexOf(x) >= 0 || YER.indexOf(x) >= 0)) || STD_V[x] === 1; }
   function isYer(x) { return x === "@" || x === "1"; }
   var VOICELESS = { p: 1, t: 1, k: 1, f: 1, "θ": 1, s: 1, "ʃ": 1, x: 1, ts: 1, "tʃ": 1, "pʲ": 1, "tʲ": 1, "kʲ": 1, "fʲ": 1, "sʲ": 1, "xʲ": 1 };
@@ -46,7 +48,7 @@
     return m;
   }
   /* 첫소리 자음군 사이 삽입 모음: 뒤 모음이 a(A)·i(I)면 그것을 되풀이, 그 밖에는 ɯ */
-  function copyV(v) { return v === "a" || v === "A" ? "a" : v === "i" || v === "I" ? "i" : "ɯ"; }
+  function copyV(v, first) { return v === "a" || v === "A" ? "a" : v === "i" || v === "I" ? "i" : first ? "e" : "ɯ"; }
   function vowelAfter(s, i) { for (var j = i + 1; j < s.length; j++) if (isV(s[j])) return s[j]; return null; }
 
   function repair1(out) {
@@ -142,7 +144,7 @@
       x = s[i]; out.push(x);
       var nx0 = i + 1 < s.length ? s[i + 1] : "", pv0 = i > 0 ? s[i - 1] : "";
       if (["l", "R", "j", "w", "a", "i", "u", "A", "I", "U", "@", "1"].indexOf(x) < 0 && (nx0 === "l" || nx0 === "R") && (i === 0 || isV(pv0)))
-        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : copyV(vowelAfter(s, i + 1)));
+        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : copyV(vowelAfter(s, i + 1), !out.some(isV)));
     }
     s = out;
     log("연쇄");
@@ -166,7 +168,11 @@
     s = out; cm = codaMask(s, onsetMid); out = [];
     for (i = 0; i < s.length; i++) {
       x = s[i]; var n2 = i + 1 < s.length ? s[i + 1] : "";
-      if ((x === "a" || x === "A" || x === "e") && (n2 === "j" || n2 === "w") && cm[i + 1]) { out.push(n2 === "j" || x === "e" ? "e" : "o"); i++; continue; }
+      /* 코다 j·w가 붙은 모음은 이중모음: a·A+j/w → ai au, e → ei eu, o → oi ou, i+w → iu (뒤에 R이 오면 제외) */
+      if ((x === "a" || x === "A" || x === "e" || x === "o" || x === "i") && (n2 === "j" || n2 === "w") && cm[i + 1] && s[i + 2] !== "R" &&
+          !(x === "i" && n2 === "j")) {
+        out.push((x === "A" ? "a" : x) + (n2 === "j" ? "i" : "u")); i++; continue;
+      }
       out.push({ A: "o", I: "i", U: "u" }[x] || x);
     }
     s = out; cm = codaMask(s, onsetMid);
@@ -249,10 +255,9 @@
     s = repair(s); log("코다보정");
     s = s.map(function (c, k) { return c === "@" ? yerBack(s, k) : c === "1" ? yerFront(s, k) : c; });
     log("남은 예르");
-    /* 14 wu, wɯ → u */
-    s = s.map(function (c, k) { return (c === "u" || c === "ɯ") && k > 0 && s[k - 1] === "w" ? "u" : c; })
-         .filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯")); });
-    log("wu·wɯ→u");
+    /* 14 첫 음절 모음 제한, ɯ 배분, wu·wɯ → u */
+    s = finalV(s);
+    log("u·ɯ 정리");
     return trace ? { s: s, steps: steps } : s;
   }
 
@@ -274,27 +279,52 @@
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
   function protoIPA(w) { return "*" + Array.from(norm(w)).map(function (c) { return IPA[c] || c; }).join(""); }
 
+  /* u·ɯ 마무리: ① 첫 음절의 u→o, ɯ→i (uɚ̯→oɚ̯)
+     ② 첫 음절이 아니고 앞 자음이 순음·w가 아닌 u는 ɯ (일본어식 비원순화)
+     ③ ɯ는 코다가 뒤따르거나 앞에 m·n이 있으면 u
+     ④ wu, wɯ, wuɚ̯ 는 w 탈락 */
+  var LAB = { p: 1, b: 1, f: 1, v: 1, m: 1, w: 1 };
+  function closedAfter(s, k) {
+    var c1 = s[k + 1];
+    if (c1 === undefined || isV(c1)) return false;
+    var c2 = s[k + 2];
+    if (c2 === undefined) return true;
+    if (isV(c2)) return false;
+    return !legalOnsetStd([c1, c2]);
+  }
+  function finalV(s) {
+    s = s.slice();
+    var f = -1, k;
+    for (k = 0; k < s.length; k++) if (isV(s[k])) { f = k; break; }
+    if (f >= 0) s[f] = ({ u: "o", "ɯ": "i", "uɚ̯": "oɚ̯" })[s[f]] || s[f];
+    for (k = f + 1; k < s.length; k++) {
+      var pv = k > 0 ? s[k - 1] : "";
+      if (s[k] === "u" && pv && !isV(pv) && !LAB[pv.replace(/ʲ$/, "")] && s[k + 1] !== "u") s[k] = "ɯ";
+      if (s[k] === "ɯ" && (pv.replace(/ʲ$/, "") === "m" || pv.replace(/ʲ$/, "") === "n" || closedAfter(s, k))) s[k] = "u";
+    }
+    return s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯")); });
+  }
   /* 남은 예르(ə, ɨ)의 모음 질 (13단계)
-     ɨ: 이웃에 구개음(j, ʲ)·i·e가 있거나 앞이 치경/치찰음이면 i, 아니면 ɯ.
-     ə: 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 이웃에 연구개·목젖·후음(k g x h q)이 있으면 a, 아니면 e. */
+     ɨ: 이웃에 구개음(j, ʲ)·i·e가 있으면 i, 아니면 ɯ.
+     ə: 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 이웃에 연구개·목젖·후음(k g x h q)이 있으면 a, 아니면 (첫 음절이 아니면 ɯ, 첫 음절이면 e). */
   var COR = { s: 1, z: 1, t: 1, d: 1, n: 1, l: 1, "ð": 1, "θ": 1, "ʃ": 1, "ʒ": 1, ts: 1, "tʃ": 1, "dʒ": 1, "ɾ": 1 };
   function nbrs(s, k) { return [k > 0 ? s[k - 1] : "", k + 1 < s.length ? s[k + 1] : ""]; }
   function yerFront(s, k) {
     var pv = k > 0 ? s[k - 1] : "";
-    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) || COR[pv] === 1 ? "i" : "ɯ";
+    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : "ɯ";
   }
   function yerBack(s, k) {
     if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
     var nb = nbrs(s, k);
     if (nb.some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0; })) return "u";
-    return nb.some(function (x) { return ["k", "g", "x", "h", "q"].indexOf(x) >= 0; }) ? "a" : "e";
+    return nb.some(function (x) { return ["k", "g", "x", "h", "q"].indexOf(x) >= 0; }) ? "a" : s.slice(0, k).some(isV) ? "ɯ" : "e";
   }
 
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
     ["s", 1.6], ["S", .6], ["Z", .4], ["C", .5], ["h", .4], ["m", 1.2], ["n", 1.4], ["N", .3], ["l", 1.2], ["R", .6], ["j", .5], ["w", .6]];
-  var NU = [["a", 3], ["i", 2.5], ["u", 2.3], ["@", 2.2], ["1", 1.2], ["A", .5], ["I", .4], ["U", .4]];
-  var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .025], ["w", .07], ["C", .004], ["S", .004], ["N", .004],
+  var NU = [["a", 3], ["i", 2], ["u", 1.6], ["@", 3], ["1", 1.8], ["A", .5], ["I", .4], ["U", .4]];
+  var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .1], ["w", .12], ["C", .004], ["S", .004], ["N", .004],
     ["Z", .035], ["p", .045], ["t", .008], ["k", .035], ["T", .03], ["P", .012], ["K", .012]];
   function pw(a, rnd) {
     var t = 0; a.forEach(function (p) { t += p[1]; });
