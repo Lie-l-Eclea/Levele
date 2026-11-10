@@ -305,6 +305,7 @@
     for (k = f + 1; k < s.length; k++) {
       var pv = k > 0 ? s[k - 1] : "";
       if (s[k] === "u" && pv && !isV(pv) && !LAB[pv.replace(/ʲ$/, "")] && s[k + 1] !== "u") s[k] = "ɯ";
+      if (s[k] === "ɯ" && pv === "w") s[k] = "u";
       if (s[k] === "ɯ" && (NOBEFORE[pv.replace(/ʲ$/, "")] === 1 || closedAfter(s, k))) s[k] = "u";
     }
     return s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯" || s[k + 1] === "ui")); });
