@@ -174,7 +174,10 @@
         out.push((x === "A" ? "a" : x) + (n2 === "j" ? "i" : "u")); i++; continue;
       }
       if (x === "u" && n2 === "j" && cm[i + 1] && s[i + 2] !== "R" && out.some(isV)) { out.push("ui"); i++; continue; }
-      out.push({ A: "o", I: "i", U: "u" }[x] || x);
+      /* 첫 음절 u + 코다 j·w: u가 o가 되므로 oi·ou */
+      if (x === "u" && (n2 === "j" || n2 === "w") && cm[i + 1] && s[i + 2] !== "R" && !out.some(isV)) { out.push(n2 === "j" ? "oi" : "ou"); i++; continue; }
+      /* 장모음의 이중모음화 (영어 대모음추이식): ā → ei, ī → ai, ū → au */
+      out.push({ A: "ei", I: "ai", U: "au" }[x] || x);
     }
     s = out; cm = codaMask(s, onsetMid);
     var VL = { p: 1, t: 1, k: 1, f: 1, "θ": 1, x: 1, s: 1, "ʃ": 1, h: 1, C: 1, S: 1 };
@@ -329,7 +332,7 @@
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
     ["s", 1.6], ["S", .6], ["Z", .4], ["C", .5], ["h", .4], ["m", 1.2], ["n", 1.4], ["N", .3], ["l", 1.2], ["R", .6], ["j", .5], ["w", .6]];
-  var NU = [["a", 3], ["i", 2], ["u", 1.6], ["@", 3], ["1", 1.8], ["A", .5], ["I", .4], ["U", .4]];
+  var NU = [["a", 3], ["i", 2], ["u", 1.6], ["@", 3], ["1", 1.8], ["A", .9], ["I", .8], ["U", .8]];
   var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .16], ["w", .18], ["C", .004], ["S", .004], ["N", .004],
     ["Z", .035], ["p", .045], ["t", .008], ["k", .035], ["T", .03], ["P", .012], ["K", .012]];
   function pw(a, rnd) {
@@ -354,5 +357,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.6", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.7", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
