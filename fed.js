@@ -90,7 +90,7 @@
     var b = c.replace(/ʲ$/, "");
     if (["t", "d", "ɾ", "ð", "θ"].indexOf(b) >= 0) return "o";
     if (["tʃ", "dʒ", "ʃ", "ʒ"].indexOf(b) >= 0) return "i";
-    return "u";
+    return "ɯ";
   }
   function repair(s) {
     var prev = null;
@@ -129,13 +129,13 @@
     cm = codaMask(s, onsetMid);
     var TL = { t: "k", d: "g", "θ": "x", C: "k" };
     s = s.map(function (c, k) { return TL.hasOwnProperty(c) && !cm[k] && k + 1 < s.length && s[k + 1] === "l" ? TL[c] : c; });
-    /* 첫소리 자음군(C+l, C+ɻ) 사이에 모음 삽입: t d θ ð ʈ 뒤 o, 그 밖 u (가타카나식 kl → kul) */
+    /* 첫소리 자음군(C+l, C+ɻ) 사이에 모음 삽입: t d θ ð ʈ 뒤 o, 그 밖 ɯ */
     out = [];
     for (i = 0; i < s.length; i++) {
       x = s[i]; out.push(x);
       var nx0 = i + 1 < s.length ? s[i + 1] : "", pv0 = i > 0 ? s[i - 1] : "";
       if (["l", "R", "j", "w", "a", "i", "u", "A", "I", "U", "@", "1"].indexOf(x) < 0 && (nx0 === "l" || nx0 === "R") && (i === 0 || isV(pv0)))
-        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : "u");
+        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : "ɯ");
     }
     s = out;
     log("연쇄");
@@ -234,7 +234,7 @@
     out = [];
     for (i = 0; i < s.length; i++) {
       x = s[i]; var pv2 = out.length ? out[out.length - 1] : "", nx2 = i + 1 < s.length ? s[i + 1] : "", pp = out.length > 1 ? out[out.length - 2] : "";
-      if (x === "u" && VOICELESS[pv2] && pp && isV(pp) && (nx2 === "" || VOICELESS[nx2]) && !(nx2 === "" && (pv2 === "f" || pv2 === "fʲ"))) continue;
+      if ((x === "u" || x === "ɯ") && VOICELESS[pv2] && pp && isV(pp) && (nx2 === "" || VOICELESS[nx2]) && !(nx2 === "" && (pv2 === "f" || pv2 === "fʲ"))) continue;
       out.push(x);
     }
     s = out; log("u탈락");
@@ -242,6 +242,10 @@
     s = repair(s); log("코다보정");
     s = s.map(function (c, k) { return c === "@" ? yerBack(s, k) : c === "1" ? yerFront(s, k) : c; });
     log("남은 예르");
+    /* 14 wu, wɯ → u */
+    s = s.map(function (c, k) { return (c === "u" || c === "ɯ") && k > 0 && s[k - 1] === "w" ? "u" : c; })
+         .filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯")); });
+    log("wu·wɯ→u");
     return trace ? { s: s, steps: steps } : s;
   }
 
