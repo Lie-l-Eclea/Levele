@@ -282,9 +282,9 @@
 
   /* u·ɯ 마무리: ① 첫 음절의 u→o, ɯ→i (uɚ̯→oɚ̯)
      ② 첫 음절이 아니고 앞 자음이 v·m·w가 아닌 u는 ɯ (일본어식 비원순화)
-     ③ ɯ는 코다가 뒤따르거나 앞에 m·n·l·ɾ이 있으면 u
+     ③ ɯ는 코다가 뒤따르거나 앞에 m·n·l이 있으면 u
      ④ wu, wɯ, wuɚ̯ 는 w 탈락 */
-  var NOBEFORE = { m: 1, n: 1, l: 1, "ɾ": 1 };  /* ɯ 앞에 올 수 없는 자음 */
+  var NOBEFORE = { m: 1, n: 1, l: 1 };  /* ɯ 앞에 올 수 없는 자음 */
   var LAB = { v: 1, m: 1, w: 1 };
   function closedAfter(s, k) {
     var c1 = s[k + 1];
@@ -354,5 +354,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.5", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.6", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
