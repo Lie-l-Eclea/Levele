@@ -120,7 +120,9 @@
   }
   function bad(w) { return Array.from(norm(w)).filter(function (c) { return OK.indexOf(c) < 0; }); }
   function derive(word, trace, opt) {
-    opt = opt || {};
+    /* v1.17 기본 규칙: 어감 테스트(v1.16)에서 대조보다 우세했던 uo(단독 u→o) fv(어말 u·ɯ→e) gem(쌍자음→단자음)을 켠다 */
+    var o0 = opt || {}; opt = { uo: 1, fv: 1, gem: 1 };
+    Object.keys(o0).forEach(function (k) { opt[k] = o0[k]; });
     var s = Array.from(norm(word).replace(/\./g, "")), steps = [];
     function log(n) { if (trace) steps.push([n, s.join("")]); }
     var i, x, out, cm;
@@ -271,6 +273,7 @@
     s = finalV(s, opt);
     if (opt.fl && s.length > 1 && s[s.length - 1] === "l") s = s.concat(["e"]);  /* 시험 규칙: 어말 l 뒤 e */
     if (opt.fv && s.length > 1 && (s[s.length - 1] === "u" || s[s.length - 1] === "ɯ")) s[s.length - 1] = s[s.length - 2] === "e" ? "i" : "e";  /* 시험 규칙: 어말 u·ɯ → e */
+    if (opt.fo && s.length > 1 && s[s.length - 1] === "o") s[s.length - 1] = s[s.length - 2] === "e" ? "i" : "e";  /* 시험 규칙: 어말 o → e */
     if (opt.gem) s = s.filter(function (c, k) { return !(k > 0 && c === s[k - 1] && !isV(c)); });  /* 시험 규칙: 쌍자음 → 단자음 */
     log("u·ɯ 정리");
     return trace ? { s: s, steps: steps } : s;
@@ -291,15 +294,14 @@
   function D(w) { return show(derive(w)); }
   /* 어감 시험용 후보 규칙. 판정 기록의 특성별 비율에서 뽑았다 (맞음 / 맞음+용납, 단음절 제외 712건) */
   var ARMS = {
-    uo: { name: "단독 u → o", note: "u가 든 단어 맞음 3.5%·용납 포함 12%" },
-    pal: { name: "연음 ʲ 제거", note: "ʲ가 든 단어 5.6% / 5.6%" },
-    qx: { name: "h 대신 x", note: "h가 든 단어 3.6% / 8%" },
-    fl: { name: "어말 l 뒤 e", note: "어말 l 0% / 10.5%" },
-    fv: { name: "어말 u·ɯ → e", note: "어말 u 4.8%, ɯ 7.8% / 어말 e 21%" },
-    gem: { name: "쌍자음 → 단자음", note: "쌍자음 4.8% / 9.5%" },
-    all: { name: "위 6개 모두", note: "기록 안에서 위반 단어 3%, 통과 단어 19%" }
+    pal: { name: "연음 ʲ 제거", note: "1차 시험: 켠 쪽 맞음+용납 24%, 대조 8% (쌍 6:2)" },
+    fl: { name: "어말 l 뒤 e", note: "1차 시험: 켠 쪽 12%, 대조 8% (쌍 3:2)" },
+    fo: { name: "어말 o → e", note: "어말 e가 어말 u·ɯ보다 우세했던 결과의 확장" },
+    all: { name: "위 3개 모두", note: "" }
   };
-  var ARM_OPT = { uo: { uo: 1 }, pal: { pal: 1 }, qx: { qx: 1 }, fl: { fl: 1 }, fv: { fv: 1 }, gem: { gem: 1 }, all: { uo: 1, pal: 1, qx: 1, fl: 1, fv: 1, gem: 1 } };
+  /* 1차 시험(350건, 규칙마다 25쌍): 어말 u·ɯ→e 9:1, 쌍자음 단자음 9:1, 단독 u→o 7:1은 켠 쪽 우세라 기본 규칙으로 승격.
+     h 대신 x는 대조 우세(0:5)라 폐기, 전부 합친 조합은 6:6 */
+  var ARM_OPT = { pal: { pal: 1 }, fl: { fl: 1 }, fo: { fo: 1 }, all: { pal: 1, fl: 1, fo: 1 } };
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
@@ -393,5 +395,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.16", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.17", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
