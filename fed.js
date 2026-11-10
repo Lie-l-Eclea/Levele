@@ -45,6 +45,8 @@
     }
     return m;
   }
+  /* 첫소리 자음군 사이 삽입 모음: 뒤 모음이 a(A)·i(I)면 그것을 되풀이, 그 밖에는 ɯ */
+  function copyV(v) { return v === "a" || v === "A" ? "a" : v === "i" || v === "I" ? "i" : "ɯ"; }
   function vowelAfter(s, i) { for (var j = i + 1; j < s.length; j++) if (isV(s[j])) return s[j]; return null; }
 
   function repair1(out) {
@@ -61,7 +63,7 @@
         if (b0 === "ɾ") { res.push("ɚ"); continue; }
         if (b0 === "t" && prv !== null && isV(prv)) { res.push("ts"); continue; }
         if (["n", "s", "z", "l", "ts"].indexOf(b0) >= 0) { res.push(b0); continue; }
-        res.push(x); res.push(epen(x)); continue;
+        res.push(x); res.push(epen(x, res)); continue;
       }
       var base = soft ? x.charAt(0) : x;
       if (nxt === x || (/ʲ$/.test(nxt) && nxt.slice(0, -1) === x)) { res.push(x); continue; }
@@ -73,7 +75,7 @@
       if (base === "ɾ") { res.push("ɚ"); continue; }
       if (["n", "s", "z", "l", "ts"].indexOf(base) >= 0) { res.push(base); continue; }
       if ((base === "f" || base === "v") && VOICELESS[nb]) { res.push(base); continue; }
-      res.push(x); res.push(epen(x));
+      res.push(x); res.push(epen(x, res));
     }
     var fin = [];
     res.forEach(function (x) {
@@ -86,10 +88,15 @@
     return fin;
   }
   /* 목록 밖 코다 뒤 삽입 모음 */
-  function epen(c) {
+  function epen(c, res) {
     var b = c.replace(/ʲ$/, "");
     if (["t", "d", "ɾ", "ð", "θ"].indexOf(b) >= 0) return "o";
     if (["tʃ", "dʒ", "ʃ", "ʒ"].indexOf(b) >= 0) return "i";
+    /* 그 밖: 앞 모음이 a e i o면 그것을 되풀이(모음 조화식 삽입), 아니면 ɯ */
+    for (var q = res.length - 2; q >= 0; q--) {
+      if (isV(res[q])) return ["a", "e", "i", "o"].indexOf(res[q]) >= 0 ? res[q] : "ɯ";
+      if (res.length - q > 3) break;
+    }
     return "ɯ";
   }
   function repair(s) {
@@ -135,7 +142,7 @@
       x = s[i]; out.push(x);
       var nx0 = i + 1 < s.length ? s[i + 1] : "", pv0 = i > 0 ? s[i - 1] : "";
       if (["l", "R", "j", "w", "a", "i", "u", "A", "I", "U", "@", "1"].indexOf(x) < 0 && (nx0 === "l" || nx0 === "R") && (i === 0 || isV(pv0)))
-        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : "ɯ");
+        out.push(["t", "d", "T", "D", "C", "θ", "ð"].indexOf(x) >= 0 ? "o" : copyV(vowelAfter(s, i + 1)));
     }
     s = out;
     log("연쇄");
@@ -267,15 +274,20 @@
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
   function protoIPA(w) { return "*" + Array.from(norm(w)).map(function (c) { return IPA[c] || c; }).join(""); }
 
-  /* 남은 예르(ə, ɨ)의 모음 질 (13단계): 이웃에 구개음(j, ʲ)이나 i·e가 있으면 i, 아니면 ɯ.
-     ə는 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 아니면 ɯ. */
+  /* 남은 예르(ə, ɨ)의 모음 질 (13단계)
+     ɨ: 이웃에 구개음(j, ʲ)·i·e가 있거나 앞이 치경/치찰음이면 i, 아니면 ɯ.
+     ə: 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 이웃에 연구개·목젖·후음(k g x h q)이 있으면 a, 아니면 e. */
+  var COR = { s: 1, z: 1, t: 1, d: 1, n: 1, l: 1, "ð": 1, "θ": 1, "ʃ": 1, "ʒ": 1, ts: 1, "tʃ": 1, "dʒ": 1, "ɾ": 1 };
   function nbrs(s, k) { return [k > 0 ? s[k - 1] : "", k + 1 < s.length ? s[k + 1] : ""]; }
   function yerFront(s, k) {
-    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : "ɯ";
+    var pv = k > 0 ? s[k - 1] : "";
+    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) || COR[pv] === 1 ? "i" : "ɯ";
   }
   function yerBack(s, k) {
     if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
-    return nbrs(s, k).some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0 || /ʷ$/.test(x); }) ? "u" : "ɯ";
+    var nb = nbrs(s, k);
+    if (nb.some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0; })) return "u";
+    return nb.some(function (x) { return ["k", "g", "x", "h", "q"].indexOf(x) >= 0; }) ? "a" : "e";
   }
 
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
