@@ -442,6 +442,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
     <button class="view-tab" role="tab" type="button" data-view="gen" aria-selected="false">단어 생성</button>
     <button class="view-tab" role="tab" type="button" data-view="pef" aria-selected="false">조어 변환기</button>
     <button class="view-tab" role="tab" type="button" data-view="fed" aria-selected="false">연방어</button>
+    <button class="view-tab" role="tab" type="button" data-view="fedt" aria-selected="false">어감 테스트</button>
   </nav>
 
   <section id="viewPef" hidden>
@@ -500,23 +501,6 @@ qeri</textarea>
     <p class="hint">합성어는 요소 수보다 짧게 만들 수 없으므로, 요소 수가 최대 음절보다 많으면 요소 수까지 허용합니다.</p>
     <div id="fedFixedWrap" hidden><p class="hint">고정한 어근 (누르면 풀림)</p><div class="chips" id="fedFixed"></div></div>
   </section>
-  <section class="panel" id="fedJudge">
-    <div class="panel-head"><h2>어감 판정</h2></div>
-    <p class="hint">자동으로 만든 단어에서 마음에 드는 것만 탭하세요. 한 번 탭하면 ○ 맞음, 두 번 탭하면 △ 용납, 세 번 탭하면 해제입니다. 고르지 않은 단어는 불가로 기록됩니다. "기록하고 다음 목록"을 누르면 이 목록이 기록되고 새 목록이 나옵니다.</p>
-    <div class="lex-bar">
-      <label>개수 <input type="number" id="fedJN" min="1" max="500" step="1" inputmode="numeric" style="width:5.5em"></label>
-    </div>
-    <div class="chips fed-jlist" id="fedJList"></div>
-    <p class="hint" id="fedJStat"></p>
-    <div class="lex-bar">
-      <button type="button" class="primary" id="fedJNext">기록하고 다음 목록</button>
-      <button type="button" id="fedJRedo">기록 없이 새 목록</button>
-      <button type="button" id="fedJCopy">기록 복사</button>
-      <button type="button" id="fedJClear">기록 지우기</button>
-      <span class="hint" id="fedJMsg"></span>
-    </div>
-    <textarea id="fedJOut" rows="4" hidden aria-label="복사할 기록"></textarea>
-  </section>
   <section class="panel" id="fedCards"></section>
   <section class="panel">
     <div class="panel-head"><h2>고른 형태 <span id="fedPickN"></span></h2>
@@ -534,6 +518,29 @@ qeri</textarea>
       <pre id="fedTrace" class="fed-trace"></pre>
       <p class="hint">기호: 평음 p t k q, 방출음 P T K Q, 내파음 B D G, s, S(ʂ), Z(ʐ), C(ʈ), N(ɳ), R(ɻ), h, m n l j w, 모음 a i u, 장모음 A I U, 약모음 @(ə) 1(ɨ). IPA로 써도 됩니다(tʼ ɓ ʂ ʐ ʈ ɳ ɻ ā ə ɨ 등, 앞의 *는 무시). 규칙과 근거는 docs/fed.md.</p>
     </details>
+  </section>
+  </section>
+
+  <section id="viewFedT" hidden>
+  <section class="panel" id="fedJudge">
+    <div class="panel-head"><h2>어감 테스트</h2></div>
+    <p class="hint" style="margin:0 0 6px"><b>연방어 규칙 <span id="fedVerT"></span></b></p>
+    <p class="hint">마음에 드는 단어만 탭하세요. 한 번 탭하면 ○ 맞음, 두 번 탭하면 △ 용납, 세 번 탭하면 해제이고, 고르지 않은 단어는 불가로 기록됩니다. 후보 규칙마다 같은 조어에서 규칙을 켠 단어와 끈 단어(대조)를 섞어 보여 주므로 어느 쪽인지는 표시되지 않습니다. 아래 표는 규칙별로 맞음 비율과 맞음+용납 비율을 대조와 나란히 보여 줍니다.</p>
+    <div class="chips" id="fedJArms"></div>
+    <div class="lex-bar">
+      <label>개수 <input type="number" id="fedJN" min="2" max="500" step="1" inputmode="numeric" style="width:5.5em"></label>
+    </div>
+    <div class="chips fed-jlist" id="fedJList"></div>
+    <p class="hint" id="fedJStat"></p>
+    <div class="lex-bar">
+      <button type="button" class="primary" id="fedJNext">기록하고 다음 목록</button>
+      <button type="button" id="fedJRedo">기록 없이 새 목록</button>
+      <button type="button" id="fedJCopy">기록 복사</button>
+      <button type="button" id="fedJClear">기록 지우기</button>
+      <span class="hint" id="fedJMsg"></span>
+    </div>
+    <div style="overflow-x:auto"><table id="fedJTab" style="border-collapse:collapse;font-size:.85em;margin-top:.5em"></table></div>
+    <textarea id="fedJOut" rows="4" hidden aria-label="복사할 기록"></textarea>
   </section>
   </section>
 
@@ -3300,6 +3307,7 @@ function showView(v) {
   $("viewGen").hidden = v !== "gen";
   $("viewPef").hidden = v !== "pef";
   $("viewFed").hidden = v !== "fed";
+  $("viewFedT").hidden = v !== "fedt";
   Array.prototype.forEach.call(document.querySelectorAll(".view-tab"), function (t) {
     t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false");
   });
@@ -3386,7 +3394,7 @@ input.value = savedInput !== null && savedInput !== "" ? savedInput : SAMPLE;
 })();
 showTab("cats");
 compileAll(); renderErrors(); renderOutput();
-(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : location.hash === "#fed" ? "fed" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" || v0 === "fed" ? v0 : "conv")); })();
+(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : location.hash === "#fed" ? "fed" : location.hash === "#fedt" ? "fedt" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" || v0 === "fed" || v0 === "fedt" ? v0 : "conv")); })();
 renderLex();
 startLex();
 /* ---- GitHub 동기화 ---- */
@@ -3531,9 +3539,9 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.15"></script>
-<script src="fed-ui.js?v=1.15"></script>
-<script src="fed-judge.js?v=1.15"></script>
-<script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
+<script src="fed.js?v=1.16"></script>
+<script src="fed-ui.js?v=1.16"></script>
+<script src="fed-judge.js?v=1.16"></script>
+<script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>

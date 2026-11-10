@@ -119,7 +119,8 @@
     return w;
   }
   function bad(w) { return Array.from(norm(w)).filter(function (c) { return OK.indexOf(c) < 0; }); }
-  function derive(word, trace) {
+  function derive(word, trace, opt) {
+    opt = opt || {};
     var s = Array.from(norm(word).replace(/\./g, "")), steps = [];
     function log(n) { if (trace) steps.push([n, s.join("")]); }
     var i, x, out, cm;
@@ -129,6 +130,7 @@
     log("h탈락·활음화");
     /* 2 연쇄 이동 */
     var G = { p: "f", t: "θ", k: "x", q: "h", P: "p", T: "t", K: "k", Q: "k", B: "b", D: "d", G: "g" };
+    if (opt.qx) G.q = "x";
     out = [];
     for (i = 0; i < s.length; i++) {
       x = s[i]; var pv = i > 0 ? s[i - 1] : "";
@@ -224,6 +226,9 @@
       if (FR[c] && o2.length && /ʲ$/.test(o2[o2.length - 1])) { o2[o2.length - 1] = o2[o2.length - 1].slice(0, -1); o2.push(FR[c]); return; }
       o2.push(c);
     });
+    if (opt.pal) for (i = 0; i < o2.length; i++) {   /* 시험 규칙: 연음 ʲ 제거 (Cʲa → Ce, Cʲ → C) */
+      if (/ʲ$/.test(o2[i])) { o2[i] = o2[i].slice(0, -1); if (o2[i + 1] === "a") o2[i + 1] = "e"; }
+    }
     s = o2; log("구개음화");
     /* 10 예르 탈락 */
     function codaOk(c, n) {
@@ -238,7 +243,7 @@
         if (!isYer(s[i])) continue;
         if (i === s.length - 1) {
           var nv = s.filter(isV).length;
-          if (i > 0 && !isV(s[i - 1]) && nv > 1 && ["f", "v", "fʲ", "vʲ"].indexOf(s[i - 1]) < 0) {
+          if (i > 0 && !isV(s[i - 1]) && nv > 1 && ["f", "v", "fʲ", "vʲ"].concat(opt.fl ? ["l"] : []).indexOf(s[i - 1]) < 0) {
             if (i >= 2 && !isV(s[i - 2])) continue;   /* 어말 자음군은 만들지 않음 */
             s = s.slice(0, i); changed = true; break;
           }
@@ -260,10 +265,13 @@
     s = out; log("u탈락");
     /* 12 코다 보정, 13 남은 예르 */
     s = repair(s); log("코다보정");
-    s = s.map(function (c, k) { return c === "@" ? yerBack(s, k) : c === "1" ? yerFront(s, k) : c; });
+    s = s.map(function (c, k) { return c === "@" ? yerBack(s, k, opt) : c === "1" ? yerFront(s, k) : c; });
     log("남은 예르");
     /* 14 첫 음절 모음 제한, ɯ 배분, wu·wɯ → u */
-    s = finalV(s);
+    s = finalV(s, opt);
+    if (opt.fl && s.length > 1 && s[s.length - 1] === "l") s = s.concat(["e"]);  /* 시험 규칙: 어말 l 뒤 e */
+    if (opt.fv && s.length > 1 && (s[s.length - 1] === "u" || s[s.length - 1] === "ɯ")) s[s.length - 1] = s[s.length - 2] === "e" ? "i" : "e";  /* 시험 규칙: 어말 u·ɯ → e */
+    if (opt.gem) s = s.filter(function (c, k) { return !(k > 0 && c === s[k - 1] && !isV(c)); });  /* 시험 규칙: 쌍자음 → 단자음 */
     log("u·ɯ 정리");
     return trace ? { s: s, steps: steps } : s;
   }
@@ -281,6 +289,17 @@
   }
   function syllables(s) { return s.filter(isV).length; }
   function D(w) { return show(derive(w)); }
+  /* 어감 시험용 후보 규칙. 판정 기록의 특성별 비율에서 뽑았다 (맞음 / 맞음+용납, 단음절 제외 712건) */
+  var ARMS = {
+    uo: { name: "단독 u → o", note: "u가 든 단어 맞음 3.5%·용납 포함 12%" },
+    pal: { name: "연음 ʲ 제거", note: "ʲ가 든 단어 5.6% / 5.6%" },
+    qx: { name: "h 대신 x", note: "h가 든 단어 3.6% / 8%" },
+    fl: { name: "어말 l 뒤 e", note: "어말 l 0% / 10.5%" },
+    fv: { name: "어말 u·ɯ → e", note: "어말 u 4.8%, ɯ 7.8% / 어말 e 21%" },
+    gem: { name: "쌍자음 → 단자음", note: "쌍자음 4.8% / 9.5%" },
+    all: { name: "위 6개 모두", note: "기록 안에서 위반 단어 3%, 통과 단어 19%" }
+  };
+  var ARM_OPT = { uo: { uo: 1 }, pal: { pal: 1 }, qx: { qx: 1 }, fl: { fl: 1 }, fv: { fv: 1 }, gem: { gem: 1 }, all: { uo: 1, pal: 1, qx: 1, fl: 1, fv: 1, gem: 1 } };
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
@@ -300,7 +319,7 @@
     if (isV(c2)) return false;
     return !legalOnsetStd([c1, c2]);
   }
-  function finalV(s) {
+  function finalV(s, opt) {
     s = s.slice();
     var f = -1, k;
     /* 구개 자음(ʃ ʒ tʃ dʒ, ʲ 붙은 자음) 앞의 a는 e */
@@ -319,6 +338,7 @@
     /* ⑥ 한 단어에 ɯ는 하나만: 둘째부터는 e */
     var seenW = false;
     s = s.map(function (c) { if (c !== "ɯ") return c; if (seenW) return "e"; seenW = true; return c; });
+    if (opt && opt.uo) s = s.map(function (c) { return c === "u" ? "o" : c; });  /* 시험 규칙: 단독 u → o */
     /* ⑤ 같은 모음이 둘 겹치면 장모음으로 두지 않고 이중모음으로 */
     var PAIR = { a: "ai", e: "ei", i: "ai", o: "ou", u: "au", "ɯ": "eu" }, res = [];
     for (k = 0; k < s.length; k++) {
@@ -335,7 +355,8 @@
     var pv = k > 0 ? s[k - 1] : "";
     return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : COR[pv] === 1 ? "e" : "ɯ";
   }
-  function yerBack(s, k) {
+  function yerBack(s, k, opt) {
+    if (opt && opt.fl && k === s.length - 1 && s[k - 1] === "l") return "e";
     if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
     var nb = nbrs(s, k);
     if (nb.some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0; })) return "u";
@@ -372,5 +393,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.15", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.16", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
