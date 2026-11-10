@@ -485,6 +485,7 @@ qeri</textarea>
 
   <section id="viewFed" hidden>
   <section class="panel">
+    <p class="hint" style="margin:0 0 6px"><b>연방어 규칙 <span id="fedVer"></span></b></p>
     <label for="fedIn"><b>뜻 목록</b> (한 줄에 하나)</label>
     <textarea id="fedIn" spellcheck="false" autocomplete="off" rows="6" aria-label="뜻 목록"></textarea>
     <p class="hint">합성어는 +로 잇고 속격은 '의'로 적습니다(예: 사냥+승리+의+마을). 같은 요소 이름은 "어근 고정"을 누르면 다른 줄에서도 같은 어근을 씁니다. 속격은 권설 조화를 따라 자동으로 붙습니다.</p>
@@ -3513,5 +3514,6 @@ if (typeof window !== "undefined") window.__eklea = { convert: convert, compileA
 </script>
 <script src="fed.js"></script>
 <script src="fed-ui.js"></script>
+<script>(function(){var e=document.getElementById("fedVer");if(e&&window.FED)e.textContent=FED.VERSION;})();</script>
 
 </body></html>

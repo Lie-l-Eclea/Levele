@@ -5,7 +5,7 @@
   "use strict";
   var V_FULL = "aiuAIU", YER = "@1";
   var STD_V = { a: 1, e: 1, i: 1, o: 1, u: 1, "ɚ": 1, "aɚ̯": 1, "eɚ̯": 1, "iɚ̯": 1, "oɚ̯": 1, "uɚ̯": 1, "ə": 1, "ɨ": 1, "ɯ": 1,
-    ai: 1, au: 1, ei: 1, eu: 1, oi: 1, ou: 1, iu: 1,
+    ai: 1, au: 1, ei: 1, eu: 1, oi: 1, ou: 1, iu: 1, ui: 1, "uiɚ̯": 1,
     "aiɚ̯": 1, "auɚ̯": 1, "eiɚ̯": 1, "euɚ̯": 1, "oiɚ̯": 1, "ouɚ̯": 1, "iuɚ̯": 1 };
   function isV(x) { return (x.length === 1 && (V_FULL.indexOf(x) >= 0 || YER.indexOf(x) >= 0)) || STD_V[x] === 1; }
   function isYer(x) { return x === "@" || x === "1"; }
@@ -173,6 +173,7 @@
           !(x === "i" && n2 === "j")) {
         out.push((x === "A" ? "a" : x) + (n2 === "j" ? "i" : "u")); i++; continue;
       }
+      if (x === "u" && n2 === "j" && cm[i + 1] && s[i + 2] !== "R" && out.some(isV)) { out.push("ui"); i++; continue; }
       out.push({ A: "o", I: "i", U: "u" }[x] || x);
     }
     s = out; cm = codaMask(s, onsetMid);
@@ -280,10 +281,10 @@
   function protoIPA(w) { return "*" + Array.from(norm(w)).map(function (c) { return IPA[c] || c; }).join(""); }
 
   /* u·ɯ 마무리: ① 첫 음절의 u→o, ɯ→i (uɚ̯→oɚ̯)
-     ② 첫 음절이 아니고 앞 자음이 순음·w가 아닌 u는 ɯ (일본어식 비원순화)
+     ② 첫 음절이 아니고 앞 자음이 v·m·w가 아닌 u는 ɯ (일본어식 비원순화)
      ③ ɯ는 코다가 뒤따르거나 앞에 m·n이 있으면 u
      ④ wu, wɯ, wuɚ̯ 는 w 탈락 */
-  var LAB = { p: 1, b: 1, f: 1, v: 1, m: 1, w: 1 };
+  var LAB = { v: 1, m: 1, w: 1 };
   function closedAfter(s, k) {
     var c1 = s[k + 1];
     if (c1 === undefined || isV(c1)) return false;
@@ -295,6 +296,9 @@
   function finalV(s) {
     s = s.slice();
     var f = -1, k;
+    /* 구개 자음(ʃ ʒ tʃ dʒ, ʲ 붙은 자음) 앞의 a는 e */
+    var PALC = { "ʃ": 1, "ʒ": 1, "tʃ": 1, "dʒ": 1 };
+    s = s.map(function (c, q) { var n = s[q + 1]; return c === "a" && n && (PALC[n] === 1 || /ʲ$/.test(n)) ? "e" : c; });
     for (k = 0; k < s.length; k++) if (isV(s[k])) { f = k; break; }
     if (f >= 0) s[f] = ({ u: "o", "ɯ": "i", "uɚ̯": "oɚ̯" })[s[f]] || s[f];
     for (k = f + 1; k < s.length; k++) {
@@ -302,16 +306,16 @@
       if (s[k] === "u" && pv && !isV(pv) && !LAB[pv.replace(/ʲ$/, "")] && s[k + 1] !== "u") s[k] = "ɯ";
       if (s[k] === "ɯ" && (pv.replace(/ʲ$/, "") === "m" || pv.replace(/ʲ$/, "") === "n" || closedAfter(s, k))) s[k] = "u";
     }
-    return s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯")); });
+    return s.filter(function (c, k) { return !(c === "w" && k + 1 < s.length && (s[k + 1] === "u" || s[k + 1] === "ɯ" || s[k + 1] === "uɚ̯" || s[k + 1] === "ui")); });
   }
   /* 남은 예르(ə, ɨ)의 모음 질 (13단계)
-     ɨ: 이웃에 구개음(j, ʲ)·i·e가 있으면 i, 아니면 ɯ.
+     ɨ: 이웃에 구개음(j, ʲ)·i·e가 있으면 i, 앞이 치경·치찰음이면 e, 아니면 ɯ.
      ə: 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 이웃에 연구개·목젖·후음(k g x h q)이 있으면 a, 아니면 (첫 음절이 아니면 ɯ, 첫 음절이면 e). */
   var COR = { s: 1, z: 1, t: 1, d: 1, n: 1, l: 1, "ð": 1, "θ": 1, "ʃ": 1, "ʒ": 1, ts: 1, "tʃ": 1, "dʒ": 1, "ɾ": 1 };
   function nbrs(s, k) { return [k > 0 ? s[k - 1] : "", k + 1 < s.length ? s[k + 1] : ""]; }
   function yerFront(s, k) {
     var pv = k > 0 ? s[k - 1] : "";
-    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : "ɯ";
+    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : COR[pv] === 1 ? "e" : "ɯ";
   }
   function yerBack(s, k) {
     if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
@@ -324,7 +328,7 @@
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
     ["s", 1.6], ["S", .6], ["Z", .4], ["C", .5], ["h", .4], ["m", 1.2], ["n", 1.4], ["N", .3], ["l", 1.2], ["R", .6], ["j", .5], ["w", .6]];
   var NU = [["a", 3], ["i", 2], ["u", 1.6], ["@", 3], ["1", 1.8], ["A", .5], ["I", .4], ["U", .4]];
-  var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .1], ["w", .12], ["C", .004], ["S", .004], ["N", .004],
+  var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .16], ["w", .18], ["C", .004], ["S", .004], ["N", .004],
     ["Z", .035], ["p", .045], ["t", .008], ["k", .035], ["T", .03], ["P", .012], ["K", .012]];
   function pw(a, rnd) {
     var t = 0; a.forEach(function (p) { t += p[1]; });
@@ -348,5 +352,5 @@
     return out.join(".");
   }
 
-  root.FED = { norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.4", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
