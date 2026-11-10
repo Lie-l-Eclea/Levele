@@ -4,7 +4,7 @@
 (function (root) {
   "use strict";
   var V_FULL = "aiuAIU", YER = "@1";
-  var STD_V = { a: 1, e: 1, i: 1, o: 1, u: 1, "ɚ": 1, "aɚ̯": 1, "eɚ̯": 1, "iɚ̯": 1, "oɚ̯": 1, "uɚ̯": 1, "ə": 1, "ɨ": 1 };
+  var STD_V = { a: 1, e: 1, i: 1, o: 1, u: 1, "ɚ": 1, "aɚ̯": 1, "eɚ̯": 1, "iɚ̯": 1, "oɚ̯": 1, "uɚ̯": 1, "ə": 1, "ɨ": 1, "ɯ": 1 };
   function isV(x) { return (x.length === 1 && (V_FULL.indexOf(x) >= 0 || YER.indexOf(x) >= 0)) || STD_V[x] === 1; }
   function isYer(x) { return x === "@" || x === "1"; }
   var VOICELESS = { p: 1, t: 1, k: 1, f: 1, "θ": 1, s: 1, "ʃ": 1, x: 1, ts: 1, "tʃ": 1, "pʲ": 1, "tʲ": 1, "kʲ": 1, "fʲ": 1, "sʲ": 1, "xʲ": 1 };
@@ -240,7 +240,7 @@
     s = out; log("u탈락");
     /* 12 코다 보정, 13 남은 예르 */
     s = repair(s); log("코다보정");
-    s = s.map(function (c, k) { return c === "@" ? (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0 ? "o" : "u") : c === "1" ? "i" : c; });
+    s = s.map(function (c, k) { return c === "@" ? yerBack(s, k) : c === "1" ? yerFront(s, k) : c; });
     log("남은 예르");
     return trace ? { s: s, steps: steps } : s;
   }
@@ -262,6 +262,17 @@
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
   function protoIPA(w) { return "*" + Array.from(norm(w)).map(function (c) { return IPA[c] || c; }).join(""); }
+
+  /* 남은 예르(ə, ɨ)의 모음 질 (13단계): 이웃에 구개음(j, ʲ)이나 i·e가 있으면 i, 아니면 ɯ.
+     ə는 치음 뒤면 o, 이웃에 원순 요소(순음, w, u, o)가 있으면 u, 아니면 ɯ. */
+  function nbrs(s, k) { return [k > 0 ? s[k - 1] : "", k + 1 < s.length ? s[k + 1] : ""]; }
+  function yerFront(s, k) {
+    return nbrs(s, k).some(function (x) { return x === "j" || x === "i" || x === "I" || x === "e" || /ʲ$/.test(x); }) ? "i" : "ɯ";
+  }
+  function yerBack(s, k) {
+    if (k > 0 && ["t", "d", "ɾ", "ð", "θ"].indexOf(s[k - 1]) >= 0) return "o";
+    return nbrs(s, k).some(function (x) { return ["p", "b", "f", "v", "m", "w", "u", "o", "U"].indexOf(x) >= 0 || /ʷ$/.test(x); }) ? "u" : "ɯ";
+  }
 
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
