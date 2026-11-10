@@ -21,6 +21,8 @@
 
   var st = { text: "", max: 2, n: 24, simple: true, cards: {}, picks: {}, fixed: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
+  /* 저장된 후보는 이전 규칙으로 만든 것일 수 있으므로 버리고 다시 생성 (고른 형태는 유지) */
+  st.cards = {};
   if (!st.text) st.text = "친구+의+마을\n사냥+승리+의+마을\n야생장미+들판\n외국+의\n집터\n호밀+밭+사람\n잔나무\n갈대";
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
