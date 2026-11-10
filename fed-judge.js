@@ -37,7 +37,7 @@
         i++; continue;
       }
       if (i + 1 < n && isv(seg[i + 1])) {
-        var v = seg[i + 1], o = CH[c0] || "ㅇ", palat = pal || c0 === "j";
+        var v = seg[i + 1], o = CH[c0] || "ㅇ", palat = pal || c0 === "j" || c0 === "ʃ";  /* ʃ는 ㅅ에 y 모음: 샤 셰 쇼 슈 시 */
         if (c0 === "l" && out.length && out[out.length - 1][2] === "") out[out.length - 1][2] = "ㄹ";  /* l은 ㄹㄹ (울라), ɾ는 ㄹ (우라) */
         if (c0 === "w") { out.push(["ㅇ", "aeiouɯ".indexOf(v.charAt(0)) >= 0 ? WK[v.charAt(0)] : "ㅜ", ""]); i += 2; continue; }
         if (DIPH[v] || v.indexOf("ɚ") >= 0) {
@@ -46,7 +46,7 @@
           if (DIPH[v]) out.push(["ㅇ", BASE[v.charAt(1)], ""]); else if (v !== "ɚ") out.push(["ㅇ", "ㅓ", ""]);
           i += 2; continue;
         }
-        out.push([o, v === "ɚ" ? "ㅓ" : (palat && PAL[v] ? PAL[v] : BASE[v]), ""]); i += 2; continue;
+        out.push([o, v === "ɚ" ? (palat ? "ㅕ" : "ㅓ") : (palat && PAL[v] ? PAL[v] : BASE[v]), ""]); i += 2; continue;
       }
       if ("nlɾm".indexOf(c0) >= 0 && c0.length === 1 && out.length && out[out.length - 1][2] === "") {
         out[out.length - 1][2] = { n: "ㄴ", l: "ㄹ", "ɾ": "ㄹ", m: "ㅁ" }[c0]; i++; continue;

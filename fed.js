@@ -412,5 +412,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.19", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.20", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
