@@ -504,9 +504,7 @@ qeri</textarea>
     <div class="panel-head"><h2>어감 판정</h2></div>
     <p class="hint">자동으로 만든 단어에서 마음에 드는 것만 탭하세요. 한 번 탭하면 ○ 맞음, 두 번 탭하면 △ 용납, 세 번 탭하면 해제입니다. 고르지 않은 단어는 불가로 기록됩니다. "기록하고 다음 목록"을 누르면 이 목록이 기록되고 새 목록이 나옵니다.</p>
     <div class="lex-bar">
-      <label>개수 <select id="fedJN"><option>30</option><option>60</option><option>100</option></select></label>
-      <label>음절 <select id="fedJSyl"><option value="1-2">1~2</option><option value="2-3">2~3</option><option value="3-4">3~4</option></select></label>
-      <label><input type="checkbox" id="fedJHan"> 한글 표기 보기(판정용)</label>
+      <label>개수 <input type="number" id="fedJN" min="1" max="500" step="1" inputmode="numeric" style="width:5.5em"></label>
     </div>
     <div class="chips fed-jlist" id="fedJList"></div>
     <p class="hint" id="fedJStat"></p>

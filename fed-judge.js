@@ -8,7 +8,7 @@
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  var st = { recs: [], cur: [], n: 60, syl: "2-3", han: false };
+  var st = { recs: [], cur: [], n: 60 };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
@@ -53,13 +53,12 @@
   }
 
   var LAB = [null, "good", "ok"], MARK = { good: "○", ok: "△" }, NAME = { good: "맞음", ok: "용납", bad: "불가" };
-  function sylRange() { return { "1-2": [1, 2], "2-3": [2, 3], "3-4": [3, 4] }[st.syl] || [2, 3]; }
   function known() { var m = {}; st.recs.forEach(function (r) { m[r.s] = 1; }); st.cur.forEach(function (r) { m[r.s] = 1; }); return m; }
   function make() {
-    var r = sylRange(), seen = known(), out = [], tries = 0;
+    var seen = known(), out = [], tries = 0;
     while (out.length < st.n && tries < st.n * 60) {
       tries++;
-      var p = F.gen(r[0] + Math.floor(Math.random() * (r[1] - r[0] + 1)), Math.random), seg = F.derive(p), s = F.show(seg);
+      var p = F.gen(undefined, Math.random), seg = F.derive(p), s = F.show(seg);
       if (seen[s]) continue;
       seen[s] = 1; out.push({ p: p, s: s, h: han(seg), l: null });
     }
@@ -73,7 +72,7 @@
       var b = el("button", "fed-cand fed-j"); b.type = "button";
       b.setAttribute("data-l", w.l || "none"); b.setAttribute("aria-pressed", w.l ? "true" : "false");
       b.appendChild(el("span", "fed-std", (w.l ? MARK[w.l] + " " : "") + w.s));
-      if (st.han) b.appendChild(el("span", "fed-meta", w.h));
+      b.appendChild(el("span", "fed-meta", w.h));
       b.addEventListener("click", function () { w.l = LAB[(LAB.indexOf(w.l || null) + 1) % 3]; persist(); render(); });
       box.appendChild(b);
     });
@@ -83,12 +82,11 @@
   function commit() {
     st.cur.forEach(function (w) { st.recs.push({ p: w.p, s: w.s, l: w.l || "bad", v: F.VERSION }); });
   }
-  $("fedJNext").addEventListener("click", function () { commit(); make(); persist(); render(); window.scrollTo(0, root.offsetTop); });
-  $("fedJRedo").addEventListener("click", function () { make(); persist(); render(); });
-  $("fedJN").value = String(st.n); $("fedJSyl").value = st.syl; $("fedJHan").checked = !!st.han;
-  $("fedJN").addEventListener("change", function () { st.n = +$("fedJN").value; persist(); });
-  $("fedJSyl").addEventListener("change", function () { st.syl = $("fedJSyl").value; persist(); });
-  $("fedJHan").addEventListener("change", function () { st.han = $("fedJHan").checked; persist(); render(); });
+  $("fedJNext").addEventListener("click", function () { readN(); commit(); make(); persist(); render(); window.scrollTo(0, root.offsetTop); });
+  $("fedJRedo").addEventListener("click", function () { readN(); make(); persist(); render(); });
+  function readN() { var v = Math.floor(+$("fedJN").value); if (!(v >= 1)) v = st.n || 60; v = Math.min(v, 500); $("fedJN").value = String(v); st.n = v; persist(); }
+  $("fedJN").value = String(st.n);
+  $("fedJN").addEventListener("change", readN);
   $("fedJCopy").addEventListener("click", function () {
     var rows = st.recs.slice(); st.cur.forEach(function (w) { if (w.l) rows.push({ p: w.p, s: w.s, l: w.l, v: F.VERSION }); });
     var t = rows.map(function (r) { return [NAME[r.l], r.s, r.p, r.v].join("\t"); }).join("\n");
