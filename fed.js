@@ -31,6 +31,7 @@
       var a = cs[0], b = cs[1];
       if ("p t k b d g f v x θ ð".split(" ").indexOf(a) >= 0 && b === "ɾ") return true;
       if ("p k b g f v x".split(" ").indexOf(a) >= 0 && b === "l") return true;
+      if (["s", "θ", "ʃ"].indexOf(a) >= 0 && ["p", "t", "k"].indexOf(b) >= 0) return true;
     }
     return false;
   }
@@ -194,6 +195,7 @@
       x = s[i];
       if (x === "R" && cm[i] && out.length && isV(out[out.length - 1])) {
         var v = out.pop();
+        if (v === "a" || v === "e") { out.push(v, "ɾ", "ɯ"); continue; }  /* a e 뒤 코다 r는 ɾɯ (르) */
         out.push(isYer(v) ? "ɚ" : ({ a: "aɚ̯", e: "eɚ̯", i: "iɚ̯", o: "oɚ̯", u: "uɚ̯" }[v] || v + "ɚ̯"));
         continue;
       }
@@ -307,6 +309,7 @@
     if (f >= 0) s[f] = ({ u: "o", "ɯ": "i", "uɚ̯": "oɚ̯" })[s[f]] || s[f];
     for (k = f + 1; k < s.length; k++) {
       var pv = k > 0 ? s[k - 1] : "";
+      if (s[k] === "i" && closedAfter(s, k) && !/ʲ$|^(ʃ|ʒ|tʃ|dʒ)$/.test(s[k + 1])) s[k] = "e";
       if (s[k] === "u" && pv && !isV(pv) && !LAB[pv.replace(/ʲ$/, "")] && s[k + 1] !== "u") s[k] = "ɯ";
       if (s[k] === "ɯ" && pv === "w") s[k] = "u";
       if (s[k] === "ɯ" && (NOBEFORE[pv.replace(/ʲ$/, "")] === 1 || closedAfter(s, k))) s[k] = "u";
@@ -338,9 +341,9 @@
   /* 무작위 어근 생성 (fed_gen.py와 같은 가중치) */
   var ON = [["p", 1.2], ["t", 1.6], ["k", 1.4], ["q", .6], ["P", .7], ["T", 1], ["K", .8], ["Q", .4], ["B", .6], ["D", .7], ["G", .5],
     ["s", 1.6], ["S", .6], ["Z", .4], ["C", .5], ["h", .4], ["m", 1.2], ["n", 1.4], ["N", .3], ["l", 1.2], ["R", .6], ["j", .5], ["w", .6]];
-  var NU = [["a", 3], ["i", 2], ["u", 1.6], ["@", 3], ["1", 1.8], ["A", .9], ["I", .8], ["U", .8]];
-  var CO = [["", .55], ["n", .01], ["m", .006], ["l", .022], ["R", .006], ["s", .012], ["j", .16], ["w", .18], ["C", .004], ["S", .004], ["N", .004],
-    ["Z", .035], ["p", .045], ["t", .008], ["k", .035], ["T", .03], ["P", .012], ["K", .012]];
+  var NU = [["a", 4.2], ["i", .6], ["u", .8], ["@", 3], ["1", 1.8], ["A", .5], ["I", .4], ["U", .4]];
+  var CO = [["", .55], ["n", .09], ["m", .03], ["l", .09], ["R", .12], ["s", .03], ["j", .05], ["w", .05], ["C", .004], ["S", .004], ["N", .004],
+    ["Z", .02], ["p", .02], ["t", .008], ["k", .02], ["T", .015], ["P", .01], ["K", .01]];
   function pw(a, rnd) {
     var t = 0; a.forEach(function (p) { t += p[1]; });
     var r = rnd() * t;
@@ -357,11 +360,12 @@
         else if (rnd() < (nu === "a" || nu === "A" ? .11 : .04) && on !== "j" && on !== "w") on += "j";
       }
       if (i > 0 && "AIU".indexOf(nu) >= 0) nu = nu.toLowerCase();
+      if (i === 0 && (nu === "u" || nu === "U")) nu = "a";  /* 첫 음절에는 u가 올 수 없으므로 생성하지 않음 */
       if (i === n - 1 && rnd() < .35) nu = rnd() < .5 ? "@" : "1";
       out.push(on + nu + pw(CO, rnd));
     }
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.8", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.9", norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
