@@ -11,9 +11,10 @@
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  var st = { recs: [], cur: [], n: 300, on: null, mode: "pair", np: 100, pairs: [], precs: [] };
+  var st = { recs: [], cur: [], n: 300, on: null, mode: "one", np: 100, pairs: [], precs: [], gen: 0 };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
   var ARM_IDS = Object.keys(F.ARMS || {});
+  if (st.gen < 23) { st.gen = 23; st.mode = "one"; st.cur = []; }  /* v1.23: 기본을 목표 모델 검증으로 */
   if (!st.on) st.on = ARM_IDS.slice();
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
@@ -86,11 +87,16 @@
       st.pairs = shuffle(makePairs(st.np, seen, seenH)).map(function (q) { q.left = Math.random() < .5 ? "on" : "off"; q.pref = null; return q; });
       return;
     }
-    var out = [], arms = armsOn(), per = Math.max(1, Math.floor(st.n / (2 * arms.length)));
-    makePairs(per * arms.length, seen, seenH).forEach(function (q) {
-      out.push({ p: q.p, s: q.on.s, h: q.on.h, l: null, a: q.a });
-      out.push({ p: q.p, s: q.off.s, h: q.off.h, l: null, a: q.a + ":c" });
-    });
+    var out = [], tries = 0, half = Math.ceil(st.n / 2), made = { m: 0, r: 0 };
+    /* 절반은 목표 모델 상위 단어(m), 절반은 무작위 단어(r). 어느 쪽인지는 표시하지 않는다 */
+    while ((made.m < half || made.r < st.n - half) && tries < st.n * 80) {
+      tries++;
+      var src = made.m < half && (made.r >= st.n - half || Math.random() < .5) ? "m" : "r";
+      var p = src === "m" && F.genGood ? F.genGood(Math.random) : F.gen(undefined, Math.random), seg = F.derive(p), t = F.show(seg), h = han(seg);
+      if (seen[t] || seenH[h] || F.syllables(seg) < 2) continue;
+      seen[t] = 1; seenH[h] = 1; made[src]++;
+      out.push({ p: p, s: t, h: h, l: null, a: src });
+    }
     st.cur = shuffle(out);
   }
 
@@ -161,12 +167,11 @@
         row([F.ARMS[a].name, r.length, on, off, r.length - on - off, signP(on, off)]);
       });
     } else {
-      row(["규칙", "켠 쪽 n", "맞음", "맞음+용납", "대조 n", "맞음", "맞음+용납"], true);
-      ARM_IDS.forEach(function (a) {
-        var c = { n: 0, g: 0, o: 0 }, d = { n: 0, g: 0, o: 0 };
-        st.recs.forEach(function (r) { var x = r.a === a ? c : r.a === a + ":c" ? d : null; if (!x) return; x.n++; if (r.l === "good") x.g++; else if (r.l === "ok") x.o++; });
-        if (c.n + d.n === 0) return; any = true;
-        row([F.ARMS[a].name, c.n, pct(c.g, c.n), pct(c.g + c.o, c.n), d.n, pct(d.g, d.n), pct(d.g + d.o, d.n)]);
+      row(["출처", "n", "맞음", "맞음+용납"], true);
+      [["m", "목표 모델 상위"], ["r", "무작위"]].forEach(function (q) {
+        var c = { n: 0, g: 0, o: 0 };
+        st.recs.forEach(function (r) { if (r.a !== q[0]) return; c.n++; if (r.l === "good") c.g++; else if (r.l === "ok") c.o++; });
+        if (!c.n) return; any = true; row([q[1], c.n, pct(c.g, c.n), pct(c.g + c.o, c.n)]);
       });
     }
     if (!any) row(["기록이 쌓이면 여기에 표시됩니다"]);
