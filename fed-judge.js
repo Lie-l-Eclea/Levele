@@ -18,46 +18,7 @@
   if (!st.on) st.on = ARM_IDS.slice();
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
-  /* 판정용 한글 표기 */
-  var CH = { p: "ㅍ", b: "ㅂ", t: "ㅌ", d: "ㄷ", k: "ㅋ", g: "ㄱ", f: "ㅍ", v: "ㅂ", s: "ㅅ", z: "ㅈ", "θ": "ㅅ", "ð": "ㄷ", x: "ㅎ", h: "ㅎ", "ʃ": "ㅅ", "ʒ": "ㅈ", "tʃ": "ㅊ", "dʒ": "ㅈ", ts: "ㅊ", m: "ㅁ", n: "ㄴ", l: "ㄹ", "ɾ": "ㄹ", j: "ㅇ", w: "ㅇ" };
-  var ONS = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ".split(""), NUC = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ".split("");
-  var COD = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
-  var BASE = { a: "ㅏ", e: "ㅔ", i: "ㅣ", o: "ㅗ", u: "ㅜ", "ɯ": "ㅡ" }, PAL = { a: "ㅑ", e: "ㅖ", o: "ㅛ", u: "ㅠ", i: "ㅣ", "ɯ": "ㅡ" };
-  var DIPH = { ai: "ai", au: "au", ei: "ei", eu: "eu", oi: "oi", ou: "ou", iu: "iu", ui: "ui" };
-  var WK = { a: "ㅘ", e: "ㅞ", i: "ㅟ", o: "ㅗ", u: "ㅜ", "ɯ": "ㅡ" };
-  function isv(x) { return "aeiouɯɚ".indexOf(x.charAt(0)) >= 0; }
-  function han(seg) {
-    var out = [], i = 0, n = seg.length;
-    while (i < n) {
-      var x = seg[i], pal = /ʲ$/.test(x), c0 = x.replace(/ʲ$/, "");
-      if (isv(x)) {
-        if (x === "ɚ") out.push(["ㅇ", "ㅓ", ""]);
-        else if (DIPH[x]) { out.push(["ㅇ", BASE[x.charAt(0)], ""]); out.push(["ㅇ", BASE[x.charAt(1)], ""]); }
-        else if (x.indexOf("ɚ") >= 0) {
-          var b = x.replace("ɚ̯", "");
-          out.push(["ㅇ", BASE[b.charAt(0)], ""]); if (!DIPH[b]) out.push(["ㅇ", "ㅓ", ""]);
-        } else out.push(["ㅇ", BASE[x], ""]);
-        i++; continue;
-      }
-      if (i + 1 < n && isv(seg[i + 1])) {
-        var v = seg[i + 1], o = CH[c0] || "ㅇ", palat = pal || c0 === "j" || c0 === "ʃ";  /* ʃ는 ㅅ에 y 모음: 샤 셰 쇼 슈 시 */
-        if (c0 === "l" && out.length && out[out.length - 1][2] === "") out[out.length - 1][2] = "ㄹ";  /* l은 ㄹㄹ (울라), ɾ는 ㄹ (우라) */
-        if (c0 === "w") { out.push(["ㅇ", "aeiouɯ".indexOf(v.charAt(0)) >= 0 ? WK[v.charAt(0)] : "ㅜ", ""]); i += 2; continue; }
-        if (DIPH[v] || v.indexOf("ɚ") >= 0) {
-          var a = v.charAt(0);
-          out.push([o, palat && PAL[a] ? PAL[a] : (BASE[a] || "ㅓ"), ""]);
-          if (DIPH[v]) out.push(["ㅇ", BASE[v.charAt(1)], ""]); else if (v !== "ɚ") out.push(["ㅇ", "ㅓ", ""]);
-          i += 2; continue;
-        }
-        out.push([o, v === "ɚ" ? (palat ? "ㅕ" : "ㅓ") : (palat && PAL[v] ? PAL[v] : BASE[v]), ""]); i += 2; continue;
-      }
-      if ("nlɾm".indexOf(c0) >= 0 && c0.length === 1 && out.length && out[out.length - 1][2] === "") {
-        out[out.length - 1][2] = { n: "ㄴ", l: "ㄹ", "ɾ": "ㄹ", m: "ㅁ" }[c0]; i++; continue;
-      }
-      out.push([CH[c0] || "ㅇ", ["ʃ", "ʒ", "tʃ", "dʒ"].indexOf(c0) >= 0 ? "ㅣ" : "ㅡ", ""]); i++;
-    }
-    return out.map(function (s) { return String.fromCharCode(0xAC00 + (ONS.indexOf(s[0]) * 21 + NUC.indexOf(s[1])) * 28 + COD.indexOf(s[2])); }).join("");
-  }
+  var han = F.hanSeg;  /* 한글 표기는 fed-model.js에 있음 */
 
   var LAB = [null, "good", "ok"], MARK = { good: "○", ok: "△" }, NAME = { good: "맞음", ok: "용납", bad: "불가" };
   function known() { var m = {}; st.recs.forEach(function (r) { m[r.s] = 1; }); st.cur.forEach(function (r) { m[r.s] = 1; }); return m; }
