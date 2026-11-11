@@ -1,6 +1,6 @@
 /* 목표 모델: 어감 판정 1454건(단음절 제외)에서 학습한 로지스틱 회귀 점수(맞음, 맞음+용납 두 모델의 계수 합).
    특성은 표시 형태(std)에서 뽑은 음절형, 모음 배열, 한글 표기가 같은 자음을 합친 자음쌍, 첫·끝 음절 등이며 5겹 교차검증에서
-   상위 20퍼센트가 맞음+용납 49퍼센트(전체 23.5퍼센트)였다. 한글 표기 음절 특성을 더한 m2. FED.score(std)는 점수, FED.genGood(rnd)는 상위 약 20퍼센트 단어의 조어를 뽑는다. */
+   상위 20퍼센트가 맞음+용납 49퍼센트(전체 23.5퍼센트)였다. 한글 표기 음절 특성을 더한 m2. FED.score(std)는 점수, FED.genGood(음절수, rnd, 옵션)은 상위 약 20퍼센트 단어의 조어를 뽑는다. */
 (function (root) {
   "use strict";
   var F = root.FED; if (!F) return;
@@ -103,9 +103,11 @@
     sc.sort(function (x, y) { return x - y; }); thr = sc[Math.floor(sc.length * 0.8)];
     return thr;
   }
-  function genGood(rnd) {
+  function genGood(nSyl, rnd, opt) {
+    if (typeof nSyl === "function") { rnd = nSyl; nSyl = undefined; }
     var t = thresholdTop(), p, seg, n;
-    for (n = 0; n < 400; n++) { p = F.gen(undefined, rnd); seg = F.derive(p); if (F.syllables(seg) >= 2 && score(F.show(seg)) >= t) return p; }
+    if (nSyl === 1) return F.gen(1, rnd, opt);
+    for (n = 0; n < 400; n++) { p = F.gen(nSyl, rnd, opt); seg = F.derive(p); if (F.syllables(seg) >= 2 && score(F.show(seg)) >= t) return p; }
     return p;
   }
   F.score = score; F.genGood = genGood; F.MODEL = "m2";

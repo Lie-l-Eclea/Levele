@@ -19,7 +19,7 @@
   var LEXR = {};
   Object.keys(LEX).forEach(function (k) { LEX[k].split("/").forEach(function (f) { (LEXR[f] = LEXR[f] || []).push(k); }); });
 
-  var st = { text: "", max: 2, n: 24, simple: true, cards: {}, picks: {}, fixed: {} };
+  var st = { text: "", max: 2, n: 24, simple: true, model: true, cards: {}, picks: {}, fixed: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
   /* 저장된 후보는 이전 규칙으로 만든 것일 수 있으므로 버리고 다시 생성 (고른 형태는 유지) */
   st.cards = {};
@@ -54,11 +54,12 @@
     Object.keys(st.picks).forEach(function (m) { seen[st.picks[m].std] = 1; });
     while (out.length < count && tries < count * 400) {
       tries++;
+      var G = st.model && F.genGood ? F.genGood : F.gen;
       var pp = L.parts.map(function (p) {
         if (p === "의") return null;
         if (st.fixed[p]) return st.fixed[p];
-        if (L.compound) return F.gen(Math.random() < 0.65 ? 1 : 2, Math.random, { simpleOnset: st.simple });
-        return F.gen(1 + Math.floor(Math.random() * Math.min(3, lim + 1)), Math.random, { simpleOnset: st.simple });
+        if (L.compound) return G(Math.random() < 0.65 ? 1 : 2, Math.random, { simpleOnset: st.simple });
+        return G(1 + Math.floor(Math.random() * Math.min(3, lim + 1)), Math.random, { simpleOnset: st.simple });
       });
       var c = build(L, pp);
       if (c.syl < 1 || c.syl > lim || seen[c.std]) continue;
@@ -154,9 +155,9 @@
 
   /* 조작 */
   $("fedIn").value = st.text;
-  $("fedMax").value = String(st.max); $("fedN").value = String(st.n); $("fedSimple").checked = !!st.simple;
+  $("fedMax").value = String(st.max); $("fedN").value = String(st.n); $("fedSimple").checked = !!st.simple; $("fedModel").checked = !!st.model;
   $("fedGo").addEventListener("click", function () {
-    st.text = $("fedIn").value; st.max = +$("fedMax").value; st.n = +$("fedN").value; st.simple = $("fedSimple").checked;
+    st.text = $("fedIn").value; st.max = +$("fedMax").value; st.n = +$("fedN").value; st.simple = $("fedSimple").checked; st.model = $("fedModel").checked;
     st.cards = {}; render(); renderPicks();
   });
   $("fedIn").addEventListener("change", function () {
