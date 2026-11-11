@@ -67,7 +67,7 @@
   }
   function isv(x) { return V.indexOf(x[0]) >= 0 || x[0] === "ɚ"; }
   function vhead(x) { return x.length > 1 && DIPH[x.substr(0, 2)] ? x.substr(0, 2) : x[0]; }
-  function score(std) {
+  function score(std, wantF) {
     var t0 = tok(std), t = t0.map(function (x) { return CL[x] || x; }), f = {}, vs = [], i, k, sc = 0;
     t.forEach(function (x) { if (isv(x)) vs.push(x); });
     var fin = t[t.length - 1];
@@ -91,9 +91,11 @@
       o = hg.charCodeAt(i) - 0xAC00;
       if (o >= 0 && o < 11172) { f["J초:" + Math.floor(o / 588)] = 1; f["J중:" + Math.floor((o % 588) / 28)] = 1; if (o % 28) f["J종:" + (o % 28)] = 1; }
     }
+    if (wantF) return f;
     for (k in f) if (W.hasOwnProperty(k)) sc += W[k];
     return sc;
   }
+  function feats(std) { return score(std, true); }
   var thr = null;
   function thresholdTop() {
     if (thr !== null) return thr;
@@ -110,5 +112,5 @@
     for (n = 0; n < 400; n++) { p = F.gen(nSyl, rnd, opt); seg = F.derive(p); if (F.syllables(seg) >= 2 && score(F.show(seg)) >= t) return p; }
     return p;
   }
-  F.score = score; F.genGood = genGood; F.MODEL = "m2";
+  F.score = score; F.feats = feats; F.W = W; F.genGood = genGood; F.MODEL = "m2";
 })(typeof window !== "undefined" ? window : globalThis);

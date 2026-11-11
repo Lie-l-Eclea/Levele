@@ -275,6 +275,13 @@
     if (opt.fv && s.length > 1 && (s[s.length - 1] === "u" || s[s.length - 1] === "ɯ")) s[s.length - 1] = s[s.length - 2] === "e" ? "i" : "e";  /* 시험 규칙: 어말 u·ɯ → e */
     if (opt.fd && s.length > 1 && DPH1[s[s.length - 1]]) s[s.length - 1] = DPH1[s[s.length - 1]];  /* 시험 규칙: 어말 이중모음 → 단모음 */
     if (opt.fo && s.length > 1 && s[s.length - 1] === "o") s[s.length - 1] = s[s.length - 2] === "e" ? "i" : "e";  /* 시험 규칙: 어말 o → e */
+    if (opt.fn && s.length > 1 && s[s.length - 1] === "n") s = s.concat(["e"]);  /* 시험 규칙(모델 역추론): 어말 n 뒤 e */
+    if (opt.ni && s[0] === "n") s[0] = "ɾ";  /* 시험 규칙(모델 역추론): 어두 n → ɾ */
+    if (opt.od) {  /* 시험 규칙(모델 역추론): 이웃 음절의 o…o에서 뒤 o → e */
+      var vi = [];
+      s.forEach(function (c, k) { if (isV(c)) vi.push(k); });
+      for (var q = 0; q + 1 < vi.length; q++) if (s[vi[q]] === "o" && s[vi[q + 1]] === "o") { s[vi[q + 1]] = "e"; break; }
+    }
     if (opt.mk) s = s.map(function (c, k) { return k > 0 && (c === "h" || c === "x") ? "k" : c; });  /* 시험 규칙: 어중 h·x → k (어두는 유지) */
     if (opt.mh) {  /* 시험 규칙: 어중 h·x 삭제 (어두는 유지), 모음이 맞닿으면 이중모음으로 */
       s = s.filter(function (c, k) { return !((c === "h" || c === "x") && k > 0); });
@@ -312,11 +319,14 @@
     fo: { name: "어말 o → e", note: "2차 시험 쌍 8:4 (맞음+용납 46% 대 32%)" },
     fr: { name: "어말 ɚ → eɾɯ", note: "2차 시험 쌍 8:4 (39% 대 29%)" },
     mh: { name: "어중 h·x 삭제", note: "한글 ㅎ(h·x)이 어중에 있으면 맞음+용납 11%, 어두는 23%" },
-    mk: { name: "어중 h·x → k", note: "같은 근거. 어중 k는 +0.42" }
+    mk: { name: "어중 h·x → k", note: "같은 근거. 어중 k는 +0.42" },
+    fn: { name: "어말 n 뒤 e", note: "모델 역추론: 끝자음 n 계수 -1.67, 끝음절 an -5.59. 변한 단어 모델 점수 +0.5 sd" },
+    ni: { name: "어두 n → ɾ", note: "모델 역추론: 어두 n -3.17, 어두 ɾ·l 가장 높음. 변한 단어 +1.0 sd" },
+    od: { name: "o…o의 뒤 o → e", note: "모델 역추론: 모음 이웃 oo -3.4 (같은 모음 반복 37퍼센트). 변한 단어 +1.0 sd" }
   };
   /* 기본 규칙(v1.18): uo 단독 u→o, fv 어말 u·ɯ→e, gem 쌍자음 단자음화, pal 연음 ʲ 제거.
      1차 시험(350건, 규칙마다 25쌍): fv 9:1, gem 9:1, uo 7:1, pal 6:2. h 대신 x는 0:5로 폐기 */
-  var ARM_OPT = { fl: { fl: 1 }, fo: { fo: 1 }, fr: { fr: 1 }, mh: { mh: 1 }, mk: { mk: 1 } };
+  var ARM_OPT = { fl: { fl: 1 }, fo: { fo: 1 }, fr: { fr: 1 }, mh: { mh: 1 }, mk: { mk: 1 }, fn: { fn: 1 }, ni: { ni: 1 }, od: { od: 1 } };
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
@@ -410,5 +420,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.25", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.26", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
