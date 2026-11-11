@@ -121,7 +121,7 @@
   function bad(w) { return Array.from(norm(w)).filter(function (c) { return OK.indexOf(c) < 0; }); }
   function derive(word, trace, opt) {
     /* v1.17 기본 규칙: 어감 테스트(v1.16)에서 대조보다 우세했던 uo(단독 u→o) fv(어말 u·ɯ→e) gem(쌍자음→단자음)을 켠다 */
-    var o0 = opt || {}; opt = { uo: 1, fv: 1, gem: 1, pal: 1 };
+    var o0 = opt || {}; opt = { uo: 1, fv: 1, gem: 1, pal: 1, fl: 1, fo: 1, fr: 1, mh: 1, fn: 1, ni: 1, od: 1 };
     Object.keys(o0).forEach(function (k) { opt[k] = o0[k]; });
     var s = Array.from(norm(word).replace(/\./g, "")), steps = [];
     function log(n) { if (trace) steps.push([n, s.join("")]); }
@@ -314,19 +314,10 @@
   var DPH1 = { ai: "e", au: "a", ei: "e", eu: "e", oi: "o", ou: "o", iu: "i", ui: "i" };
   function D(w) { return show(derive(w)); }
   /* 어감 시험용 후보 규칙. 판정 기록의 특성별 비율에서 뽑았다 (맞음 / 맞음+용납, 단음절 제외 712건) */
-  var ARMS = {
-    fl: { name: "어말 l 뒤 e", note: "누적 쌍 9:4. 전체 회귀에서 어말 l은 맞음 계수 -1.04" },
-    fo: { name: "어말 o → e", note: "2차 시험 쌍 8:4 (맞음+용납 46% 대 32%)" },
-    fr: { name: "어말 ɚ → eɾɯ", note: "2차 시험 쌍 8:4 (39% 대 29%)" },
-    mh: { name: "어중 h·x 삭제", note: "한글 ㅎ(h·x)이 어중에 있으면 맞음+용납 11%, 어두는 23%" },
-    mk: { name: "어중 h·x → k", note: "같은 근거. 어중 k는 +0.42" },
-    fn: { name: "어말 n 뒤 e", note: "모델 역추론: 끝자음 n 계수 -1.67, 끝음절 an -5.59. 변한 단어 모델 점수 +0.5 sd" },
-    ni: { name: "어두 n → ɾ", note: "모델 역추론: 어두 n -3.17, 어두 ɾ·l 가장 높음. 변한 단어 +1.0 sd" },
-    od: { name: "o…o의 뒤 o → e", note: "모델 역추론: 모음 이웃 oo -3.4 (같은 모음 반복 37퍼센트). 변한 단어 +1.0 sd" }
-  };
+  var ARMS = {};  /* 시험 중인 후보 규칙. 현재 없음: fl fo fr mh fn ni od는 v1.27에서 모델 판단으로 기본 승격 */
   /* 기본 규칙(v1.18): uo 단독 u→o, fv 어말 u·ɯ→e, gem 쌍자음 단자음화, pal 연음 ʲ 제거.
      1차 시험(350건, 규칙마다 25쌍): fv 9:1, gem 9:1, uo 7:1, pal 6:2. h 대신 x는 0:5로 폐기 */
-  var ARM_OPT = { fl: { fl: 1 }, fo: { fo: 1 }, fr: { fr: 1 }, mh: { mh: 1 }, mk: { mk: 1 }, fn: { fn: 1 }, ni: { ni: 1 }, od: { od: 1 } };
+  var ARM_OPT = {};
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
@@ -420,5 +411,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.26", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.27", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);

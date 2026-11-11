@@ -14,6 +14,7 @@
   var st = { recs: [], cur: [], n: 300, on: null, mode: "one", np: 100, pairs: [], precs: [], gen: 0 };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
   var ARM_IDS = Object.keys(F.ARMS || {});
+  if (!ARM_IDS.length) { st.mode = "one"; st.pairs = []; }  /* v1.27: 시험 중인 후보 규칙이 없으면 쌍 비교 불가 */
   if (st.gen < 23) { st.gen = 23; st.mode = "one"; st.cur = []; }  /* v1.23: 기본을 목표 모델 검증으로 */
   if (!st.on) st.on = ARM_IDS.slice();
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
