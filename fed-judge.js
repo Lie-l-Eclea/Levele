@@ -9,7 +9,7 @@
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  var st = { recs: [], cur: [], n: 200, on: null };
+  var st = { recs: [], cur: [], n: 300, on: null };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) st = Object.assign(st, sv); } catch (e) {}
   var ARM_IDS = Object.keys(F.ARMS || {});
   if (!st.on) st.on = ARM_IDS.slice();

@@ -308,17 +308,15 @@
   function D(w) { return show(derive(w)); }
   /* 어감 시험용 후보 규칙. 판정 기록의 특성별 비율에서 뽑았다 (맞음 / 맞음+용납, 단음절 제외 712건) */
   var ARMS = {
-    fl: { name: "어말 l 뒤 e", note: "1차 시험 쌍 3:2. 전체 회귀에서 어말 l은 맞음 계수 -1.04" },
-    fo: { name: "어말 o → e", note: "어말 e가 어말 u·ɯ보다 우세했던 결과의 확장" },
-    fd: { name: "어말 이중모음 → 단모음", note: "어말 이중모음 55개: 맞음+용납 계수 -0.76" },
-    fr: { name: "어말 ɚ → eɾɯ", note: "ɚ가 든 단어 101개: 맞음+용납 계수 -0.92" },
+    fl: { name: "어말 l 뒤 e", note: "누적 쌍 9:4. 전체 회귀에서 어말 l은 맞음 계수 -1.04" },
+    fo: { name: "어말 o → e", note: "2차 시험 쌍 8:4 (맞음+용납 46% 대 32%)" },
+    fr: { name: "어말 ɚ → eɾɯ", note: "2차 시험 쌍 8:4 (39% 대 29%)" },
     mh: { name: "어중 h·x 삭제", note: "한글 ㅎ(h·x)이 어중에 있으면 맞음+용납 11%, 어두는 23%" },
-    mk: { name: "어중 h·x → k", note: "같은 근거. 어중 k는 +0.42" },
-    c1: { name: "코다 한 단어에 하나", note: "코다 2개 이상 127개: 맞음+용납 계수 -0.76" }
+    mk: { name: "어중 h·x → k", note: "같은 근거. 어중 k는 +0.42" }
   };
   /* 기본 규칙(v1.18): uo 단독 u→o, fv 어말 u·ɯ→e, gem 쌍자음 단자음화, pal 연음 ʲ 제거.
      1차 시험(350건, 규칙마다 25쌍): fv 9:1, gem 9:1, uo 7:1, pal 6:2. h 대신 x는 0:5로 폐기 */
-  var ARM_OPT = { fl: { fl: 1 }, fo: { fo: 1 }, fd: { fd: 1 }, fr: { fr: 1 }, mh: { mh: 1 }, mk: { mk: 1 }, c1: { c1: 1 } };
+  var ARM_OPT = { fl: { fl: 1 }, fo: { fo: 1 }, fr: { fr: 1 }, mh: { mh: 1 }, mk: { mk: 1 } };
 
   /* 조어 기호 → IPA */
   var IPA = { P: "pʼ", T: "tʼ", K: "kʼ", Q: "qʼ", B: "ɓ", D: "ɗ", G: "ɠ", S: "ʂ", Z: "ʐ", C: "ʈ", N: "ɳ", R: "ɻ", A: "ā", I: "ī", U: "ū", "@": "ə", "1": "ɨ" };
@@ -412,5 +410,5 @@
     return out.join(".");
   }
 
-  root.FED = { VERSION: "v1.20", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
+  root.FED = { VERSION: "v1.21", ARMS: ARMS, ARM_OPT: ARM_OPT, norm: norm, bad: bad, derive: derive, show: show, D: D, harm: harm, syllables: syllables, isV: isV, protoIPA: protoIPA, gen: gen };
 })(typeof window !== "undefined" ? window : globalThis);
