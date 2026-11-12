@@ -212,6 +212,15 @@ h2 { color: var(--accent); letter-spacing: 0.12em; }
 .view-tab { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; padding: 6px 14px 8px; }
 .view-tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 #viewPef { display: grid; gap: 16px; }
+#viewFedL[hidden] { display: none; }
+#viewFedL table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+#viewFedL th, #viewFedL td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+#viewFedL th { color: var(--muted); font-weight: 600; font-size: .8rem; }
+#viewFedL td input { width: 100%; box-sizing: border-box; }
+#viewFedL input.m, #viewFedL td.m { font-family: var(--font-code); }
+#viewFedL .scroll { overflow-x: auto; }
+#viewFedL .row { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+#viewFedL .row input { flex: 1 1 120px; min-width: 0; }
 #viewPef[hidden] { display: none; }
 #viewPef textarea { font-family: var(--font-code); font-size: 1.05rem; min-height: 110px; }
 #viewPef table { width: 100%; border-collapse: collapse; font-size: .95rem; }
@@ -442,6 +451,7 @@ button.menu-btn { min-width: 36px; padding: 0; font-size: 1.05rem; line-height: 
     <button class="view-tab" role="tab" type="button" data-view="gen" aria-selected="false">단어 생성</button>
     <button class="view-tab" role="tab" type="button" data-view="pef" aria-selected="false">조어 변환기</button>
     <button class="view-tab" role="tab" type="button" data-view="fed" aria-selected="false">연방어</button>
+    <button class="view-tab" role="tab" type="button" data-view="fedl" aria-selected="false">연방어 단어장</button>
     <button class="view-tab" role="tab" type="button" data-view="fedt" aria-selected="false">어감 테스트</button>
   </nav>
 
@@ -505,7 +515,7 @@ qeri</textarea>
   <section class="panel" id="fedCards"></section>
   <section class="panel">
     <div class="panel-head"><h2>고른 형태 <span id="fedPickN"></span></h2>
-      <span><button type="button" id="fedCopy">표로 복사</button> <button type="button" id="fedClear">전부 지우기</button> <span class="hint" id="fedCopyMsg"></span></span></div>
+      <span><button type="button" id="fedToBook" class="primary">단어장에 확정</button> <button type="button" id="fedCopy">표로 복사</button> <button type="button" id="fedClear">전부 지우기</button> <span class="hint" id="fedCopyMsg"></span></span></div>
     <div class="scroll"><table>
       <thead><tr><th>뜻</th><th>표준어</th><th>조어</th><th>음절</th><th></th></tr></thead>
       <tbody id="fedPicks"></tbody>
@@ -522,6 +532,20 @@ qeri</textarea>
   </section>
   </section>
 
+  <section id="viewFedL" hidden>
+  <section class="panel">
+    <div class="panel-head"><h2>연방어 단어장 <span id="fedLexN"></span></h2>
+      <span><button type="button" id="fedLexCopy">표로 복사</button> <button type="button" id="fedLexJson">백업(JSON)</button> <button type="button" id="fedLexImp">가져오기</button> <span class="hint" id="fedLexMsg"></span></span></div>
+    <p class="hint">에클레아어 단어장과 별개입니다. 연방어 탭에서 고른 형태는 "단어장에 확정"으로 옮기고, 뜻·형태·태그·메모는 칸을 눌러 바로 고칠 수 있습니다. 형태가 같은 항목은 표시됩니다.</p>
+    <div class="row"><input id="fedLexQ" type="search" placeholder="뜻, 형태, 태그, 메모로 찾기" aria-label="연방어 단어 찾기"></div>
+    <div class="row"><input id="fedLexK" type="text" placeholder="뜻" aria-label="추가할 뜻"> <input id="fedLexS" type="text" class="m" placeholder="형태" aria-label="추가할 형태"> <input id="fedLexT" type="text" placeholder="태그(기본 어휘)" aria-label="태그"> <button type="button" class="primary" id="fedLexAdd">추가</button></div>
+    <div class="scroll"><table>
+      <thead><tr><th>뜻</th><th>형태</th><th>조어</th><th>태그</th><th>메모</th><th></th></tr></thead>
+      <tbody id="fedLexRows"></tbody>
+    </table></div>
+    <textarea id="fedLexOut" rows="4" hidden aria-label="복사 또는 가져올 내용"></textarea>
+  </section>
+  </section>
   <section id="viewFedT" hidden>
   <section class="panel" id="fedJudge">
     <div class="panel-head"><h2>어감 테스트</h2></div>
@@ -3310,6 +3334,7 @@ function showView(v) {
   $("viewGen").hidden = v !== "gen";
   $("viewPef").hidden = v !== "pef";
   $("viewFed").hidden = v !== "fed";
+  $("viewFedL").hidden = v !== "fedl";
   $("viewFedT").hidden = v !== "fedt";
   Array.prototype.forEach.call(document.querySelectorAll(".view-tab"), function (t) {
     t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false");
@@ -3397,7 +3422,7 @@ input.value = savedInput !== null && savedInput !== "" ? savedInput : SAMPLE;
 })();
 showTab("cats");
 compileAll(); renderErrors(); renderOutput();
-(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : location.hash === "#fed" ? "fed" : location.hash === "#fedt" ? "fedt" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" || v0 === "fed" || v0 === "fedt" ? v0 : "conv")); })();
+(function () { var v0 = load(STORE_VIEW); showView(location.hash === "#pef" ? "pef" : location.hash === "#fed" ? "fed" : location.hash === "#fedt" ? "fedt" : location.hash === "#fedl" ? "fedl" : /^#in=/.test(location.hash) ? "conv" : (v0 === "lex" || v0 === "gen" || v0 === "pef" || v0 === "fed" || v0 === "fedt" || v0 === "fedl" ? v0 : "conv")); })();
 renderLex();
 startLex();
 /* ---- GitHub 동기화 ---- */
@@ -3542,10 +3567,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.27"></script>
-<script src="fed-model.js?v=1.27"></script>
-<script src="fed-ui.js?v=1.27"></script>
-<script src="fed-judge.js?v=1.27"></script>
+<script src="fed.js?v=1.28"></script>
+<script src="fed-model.js?v=1.28"></script>
+<script src="fed-ui.js?v=1.28"></script>
+<script src="fed-lex.js?v=1.28"></script>
+<script src="fed-judge.js?v=1.28"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>

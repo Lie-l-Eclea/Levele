@@ -16,6 +16,7 @@
     "주제 표지": "ɾi/ʒi", "대격": "bu", "속격": "ða/θa/ta", "사격": "n/nu", "복수": "xe", "과거": "zi/si/ʃi", "존대": "ve/fe/pe",
     "분사": "mi", "부정 조동사": "kima", "의문": "lu"
   };
+  F.LEX = LEX;
   var LEXR = {};
   Object.keys(LEX).forEach(function (k) { LEX[k].split("/").forEach(function (f) { (LEXR[f] = LEXR[f] || []).push(k); }); });
 
@@ -169,6 +170,14 @@
     var t = Object.keys(st.picks).map(function (k) { var p = st.picks[k]; return [k, p.std, F.protoIPA(p.proto), p.proto, p.syl].join("\t"); }).join("\n");
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { $("fedCopyMsg").textContent = "복사했습니다"; },
       function () { $("fedOut").hidden = false; $("fedOut").value = t; $("fedCopyMsg").textContent = "아래 칸에서 복사하세요"; });
+  });
+  $("fedToBook").addEventListener("click", function () {
+    var keys = Object.keys(st.picks);
+    if (!keys.length) { $("fedCopyMsg").textContent = "고른 형태가 없습니다"; return; }
+    if (!F.LEXBOOK) { $("fedCopyMsg").textContent = "단어장을 불러오지 못했습니다"; return; }
+    var n = F.LEXBOOK.addPicks(st.picks);
+    st.picks = {}; persist(); render(); renderPicks();
+    $("fedCopyMsg").textContent = n + "개를 연방어 단어장으로 옮겼습니다";
   });
   $("fedClear").addEventListener("click", function () { if (confirm("고른 형태를 모두 지울까요?")) { st.picks = {}; persist(); render(); renderPicks(); } });
   /* 규칙 확인용 변환 */
