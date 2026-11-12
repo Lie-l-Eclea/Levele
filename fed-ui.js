@@ -25,7 +25,7 @@
   /* 저장된 후보는 이전 규칙으로 만든 것일 수 있으므로 버리고 다시 생성 (고른 형태는 유지) */
   st.cards = {};
   if (!st.text) st.text = "친구+의+마을\n사냥+승리+의+마을\n야생장미+들판\n외국+의\n집터\n호밀+밭+사람\n잔나무\n갈대";
-  function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function persist() { try { var o = Object.assign({}, st); delete o.cards; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }  /* 후보 카드는 불러올 때 버리므로 저장하지 않음 */
 
   function parseLine(line) {
     var parts = line.split("+").map(function (p) { return p.trim(); }).filter(Boolean);
@@ -51,8 +51,13 @@
   }
   function makeCands(L, count) {
     var content = L.parts.filter(function (p) { return p !== "의"; }).length;
-    var lim = Math.max(st.max, L.compound ? content : 1), out = [], seen = {}, tries = 0;
+    var lim = Math.max(st.max, L.compound ? content : 1), out = [], seen = {}, tries = 0, miss = 0;
     Object.keys(st.picks).forEach(function (m) { seen[st.picks[m].std] = 1; });
+    /* 모든 요소가 고정 어근이면 결과가 하나뿐이므로 한 번만 만든다(반복하면 같은 형태만 count*400번 나옴) */
+    if (!L.parts.some(function (p) { return p !== "의" && !st.fixed[p]; })) {
+      var c0 = build(L, L.parts.map(function (p) { return p === "의" ? null : st.fixed[p]; }));
+      return c0.syl >= 1 && c0.syl <= lim ? [c0] : [];
+    }
     while (out.length < count && tries < count * 400) {
       tries++;
       var G = st.model && F.genGood ? F.genGood : F.gen;
@@ -63,8 +68,8 @@
         return G(1 + Math.floor(Math.random() * Math.min(3, lim + 1)), Math.random, { simpleOnset: st.simple });
       });
       var c = build(L, pp);
-      if (c.syl < 1 || c.syl > lim || seen[c.std]) continue;
-      seen[c.std] = 1; out.push(c);
+      if (c.syl < 1 || c.syl > lim || seen[c.std]) { if (++miss > 200) break; continue; }  /* 새 후보가 200번 연속 안 나오면 가능한 조합이 바닥난 것 */
+      miss = 0; seen[c.std] = 1; out.push(c);
     }
     return out;
   }
