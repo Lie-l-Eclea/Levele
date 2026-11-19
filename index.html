@@ -1038,6 +1038,7 @@ r1: [
 "[mnŋ]ʲ/ɲ/_/&…_",
 "[zʒ]//_ɲ",
 "Nɲ/Oɲ/_",
+"; ɲ 앞에 장애음이 오면 사이에 ə를 넣음 (프랑스어에는 장애음+ɲ 연쇄가 없음: vattei → vandegni). 문자형에는 반영하지 않음",
 "/ə/[ptkbdgfvsʃc]_ɲ",
 "ʲ/j/_",
 "c/s/_",
@@ -1053,6 +1054,8 @@ r1: [
 "ll/d/N_",
 "l/d/N_",
 "ʃ/s/_C",
+"; 어두 장자음은 단자음으로",
+"C²/C/#_",
 "ʒ/z/_C",
 "; 10. v 탈락과 후기 변화",
 "v//R_/&…_",
@@ -1072,7 +1075,9 @@ r1: [
 "[oóuú]l/ú/_A/&…_",
 "w/v/#_",
 "w/v/V_",
-"ə//[ptkbdgfvszʃʒcmnŋɲlʁ]_ʁV",
+"; 활음(j·w·ɥ) 뒤에서는 ʁ 앞 ə를 지우지 않음 (프랑스어에 어두 [jʁ] 연쇄가 없음: iuru → yere)",
+"; 자음 두 개 뒤의 ə는 지우지 않음 (프랑스어 규범: premier, appartement)",
+"ə//[ptkbdgfvszʃʒcmnŋɲlʁ]_ʁV/CC_",
 "s/z/V_V",
 "ʃ/ʒ/V_V",
 "; 치찰음 연속은 뒤의 ʃ·ʒ로 합침 (모음 사이 유성음화 뒤라서 무성음 유지)",
@@ -1092,6 +1097,19 @@ r1: [
 "/b/N(ˆ)_l#",
 "/b/N(ˆ)_lA",
 "/b/N(ˆ)_lj",
+"; 어말 ə 탈락으로 불가한 자음군이 생기는 경우를 r1에서 고침 (기본 표기와 발음이 함께 바뀜, 문자형은 그대로)",
+"ʃ/s/V_ʁə(S)#",
+"ʃ/s/[tk]_ə(S)#",
+"l²/l/_ʁə(S)#",
+"/d/V[ln]_ʁə(S)#",
+"/b/Vm_ʁə(S)#",
+"/t/Vs_ʁə(S)#",
+"/k/Vs_lə(S)#",
+"; sv·sd·zv: s·z 탈락과 보상 장음 (프랑스어 isle > île, 곡절 부호)",
+"[aeoiuyœə]s/[áéóíúýǿé]/_[vd]ə(S)#",
+"z/ˆ/N_[vd]ə(S)#",
+"; 그 밖의 불가군은 ə를 e로 경화해 살림",
+"ə/e/V…CC_(S)#/VC²_/V[pbkgfv]l_/V[tdpbkgfv]ʁ_/Vʁ[pbtdkgfvszʃʒmln]_/Vl[pbtdkgfvszʃʒm]_/Vs[ptk]_/V[ptk]s_/Vstʁ_/Vldʁ_/Vmbʁ_/Vskl_/Vʁdʁ_/Vʁbʁ_/Vʁtʁ_/Vʁkl_/j_",
 "&//_",
 "; 11. 내부형 표시",
 "[ẽ õ ã ỹ]/[ɛ̃ ɔ̃ ɑ̃ œ̃]/_",
@@ -1100,7 +1118,7 @@ r1: [
 "; 비모음 + 공명음으로 끝나면 ə를 덧붙임",
 "/ə/T(C)J_#/Tn_#",
 "/ə/ɲ_#",
-"ʃ/ch/_"
+"ʃ/ch/_",
 ].join("\n"),
 
 rf: [
@@ -3601,11 +3619,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.32.6"></script>
-<script src="fed-model.js?v=1.32.6"></script>
-<script src="fed-ui.js?v=1.32.6"></script>
-<script src="fed-lex.js?v=1.32.6"></script>
-<script src="fed-judge.js?v=1.32.6"></script>
+<script src="fed.js?v=1.32.7"></script>
+<script src="fed-model.js?v=1.32.7"></script>
+<script src="fed-ui.js?v=1.32.7"></script>
+<script src="fed-lex.js?v=1.32.7"></script>
+<script src="fed-judge.js?v=1.32.7"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
