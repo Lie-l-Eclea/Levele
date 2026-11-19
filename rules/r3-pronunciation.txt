@@ -29,12 +29,5 @@ j//V(T)ʁ[pbtdkgfvszʃʒmln]_#
 j//V(T)l[pbtdkgfvszʃʒm]_#
 j//V(T)s[ptk]_#
 j//V(T)[ptk]s_#
-j//V(T)ss_#
-j//V(T)ll_#
-j//V(T)ʁʁ_#
-j//V(T)pp_#
-j//V(T)tt_#
-j//V(T)kk_#
-j//V(T)ff_#
-j//V(T)vv_#
+j//V(T)C²_#
 j/i/C_#

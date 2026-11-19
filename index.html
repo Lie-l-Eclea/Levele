@@ -815,7 +815,7 @@ qeri</textarea>
             <p>한 줄에 규칙 하나: <code>대상/결과/환경</code> 또는 <code>대상/결과/환경/예외</code>.</p>
             <p><code>_</code> 대상 자리, <code>#</code> 단어 경계, <code>…</code> 임의의 글자열(단어 안), <code>( )</code> 있어도 없어도 됨.</p>
             <p>범주는 대문자 한 글자(<code>V=aeiou</code>) 또는 중괄호 이름(<code>{무성}=ptkfsʃ</code>)으로 정의합니다. ɛ̃처럼 여러 글자인 구성원은 띄어 씁니다(<code>{비모음}=ɛ̃ ɑ̃ ɔ̃ œ̃</code>). 대상과 결과에 범주를 쓰면 같은 순번 글자끼리 바뀝니다.</p>
-            <p><code>[ptk]</code>는 이름 없는 범주입니다(<code>[ptk]ʲ/ʃ</code>, <code>[ao][iy]/[ao][ïü]</code>). <code>²</code>는 바로 앞 요소와 같은 글자의 반복입니다(<code>J²/J</code> = 같은 공명음 장자음을 단자음으로).</p>
+            <p><code>[ptk]</code>는 이름 없는 범주입니다(<code>[ptk]ʲ/ʃ</code>, <code>[ao][iy]/[ao][ïü]</code>). <code>²</code>는 바로 앞 요소와 같은 글자의 반복입니다(<code>J²/J</code> = 같은 공명음 장자음을 단자음으로). 환경에서도 쓸 수 있습니다(<code>j//V(T)C²_#</code> = 모음 뒤 장자음 다음의 j를 지움).</p>
             <p>예외는 여러 개 둘 수 있습니다(<code>대상/결과/환경/예외1/예외2</code>). 줄 끝에 <code> ↻</code>를 붙이면 더 바뀌지 않을 때까지 그 규칙을 되풀이합니다.</p>
             <p>대상을 비우면 삽입, 결과를 비우면 삭제입니다. <code>;</code>로 시작하는 줄은 주석입니다.</p>
             <p>규칙은 단어마다 따로, 위에서 아래로 적용되며, 한 규칙은 단어 안의 모든 자리에 한꺼번에 적용됩니다.</p>
@@ -1260,14 +1260,7 @@ r3: [
 "j//V(T)l[pbtdkgfvszʃʒm]_#",
 "j//V(T)s[ptk]_#",
 "j//V(T)[ptk]s_#",
-"j//V(T)ss_#",
-"j//V(T)ll_#",
-"j//V(T)ʁʁ_#",
-"j//V(T)pp_#",
-"j//V(T)tt_#",
-"j//V(T)kk_#",
-"j//V(T)ff_#",
-"j//V(T)vv_#",
+"j//V(T)C²_#",
 "j/i/C_#"
 ].join("\n")
 };
@@ -1358,17 +1351,33 @@ function tokenize(str, cats) {
   return out;
 }
 
-function compilePart(str, cats, side) {
-  var out = "";
-  tokenize(str, cats).forEach(function (e) {
-    if (e.dup) throw new Error("환경에는 ² 를 쓸 수 없습니다");
-    if (e.cat) { out += altOf(e.cat); return; }
-    var ch = e.lit;
-    if (ch === "(") out += "(?:";
-    else if (ch === ")") out += ")?";
-    else if (ch === "…") out += ".*";
-    else if (ch === "#") out += side === "pre" ? "^" : "$";
-    else out += esc(ch);
+function compilePart(str, cats, side, ctr) {
+  var out = "", els = tokenize(str, cats), prev = null;
+  els.forEach(function (e, i) {
+    var nextDup = i + 1 < els.length && els[i + 1].dup;
+    if (e.dup) {
+      /* ²: 바로 앞 요소와 같은 글자의 반복. 앞 요소를 이름 붙은 묶음으로 잡고 되돌려 씀.
+         환경 앞쪽(lookbehind)은 오른쪽부터 맞추므로 묶음과 되돌림의 자리를 맞바꿈 */
+      if (!prev || prev.name === undefined) throw new Error("² 앞에는 글자나 범주 하나만 올 수 있습니다");
+      out += side === "pre" ? "(?<" + prev.name + ">" + prev.src + ")" : "\\k<" + prev.name + ">";
+      prev = null; return;
+    }
+    var src;
+    if (e.cat) src = altOf(e.cat);
+    else {
+      var ch = e.lit;
+      if (ch === "(") src = "(?:";
+      else if (ch === ")") src = ")?";
+      else if (ch === "…") src = ".*";
+      else if (ch === "#") src = side === "pre" ? "^" : "$";
+      else src = esc(ch);
+    }
+    if (nextDup) {
+      if (!e.cat && /[()…#]/.test(e.lit)) throw new Error("² 앞에는 글자나 범주 하나만 올 수 있습니다");
+      var name = "d" + (ctr.n++);
+      prev = { name: name, src: src };
+      out += side === "pre" ? "\\k<" + name + ">" : "(?<" + name + ">" + src + ")";
+    } else { out += src; prev = null; }
   });
   return out;
 }
@@ -1384,22 +1393,24 @@ function compileRule(src, cats) {
   if (/[()…#_]/.test(tgt)) throw new Error("대상에는 ( ) … # _ 를 쓸 수 없습니다");
   var tgtEls = tokenize(tgt, cats), repEls = tokenize(rep, cats);
   if (repEls.some(function (e) { return e.dup; })) throw new Error("결과에는 ² 를 쓸 수 없습니다");
-  var tgtSrc = tgtEls.map(function (e, i) {
-    if (e.dup) return "(\\" + i + ")";
-    return "(" + (e.cat ? altOf(e.cat) : esc(e.lit)) + ")";
-  }).join("");
   function build(envStr) {
     var idx = envStr.indexOf("_");
     if (idx < 0 || envStr.indexOf("_", idx + 1) >= 0) throw new Error("환경에는 _ 가 정확히 하나 있어야 합니다");
-    var pre = compilePart(envStr.slice(0, idx), cats, "pre");
-    var post = compilePart(envStr.slice(idx + 1), cats, "post");
-    return new RegExp((pre ? "(?<=" + pre + ")" : "") + (tgtSrc ? tgtSrc : "") + (post ? "(?=" + post + ")" : ""), "gu");
+    var ctr = { n: 0 };
+    var pre = compilePart(envStr.slice(0, idx), cats, "pre", ctr), preG = ctr.n;
+    var post = compilePart(envStr.slice(idx + 1), cats, "post", ctr), postG = ctr.n - preG;
+    /* 환경의 ² 묶음이 대상 묶음보다 앞에 있으면 번호가 밀리므로 preG만큼 더함 */
+    var tgtSrc = tgtEls.map(function (e, i) {
+      if (e.dup) return "(\\" + (preG + i) + ")";
+      return "(" + (e.cat ? altOf(e.cat) : esc(e.lit)) + ")";
+    }).join("");
+    return { re: new RegExp((pre ? "(?<=" + pre + ")" : "") + tgtSrc + (post ? "(?=" + post + ")" : ""), "gu"), preG: preG, postG: postG };
   }
-  var re = build(env);
-  var excRes = excs.map(build);
+  var main = build(env), re = main.re;
+  var excRes = excs.map(function (x) { return build(x).re; });
   var catPos = [];
   tgtEls.forEach(function (e, i) { if (e.cat) catPos.push(i); });
-  return { src: src.trim(), repeat: repeat, re: re, excRes: excRes, tgtEls: tgtEls, repEls: repEls, catPos: catPos, n: tgtEls.length };
+  return { src: src.trim(), repeat: repeat, re: re, preG: main.preG, postG: main.postG, excRes: excRes, tgtEls: tgtEls, repEls: repEls, catPos: catPos, n: tgtEls.length };
 }
 
 function applyRule(r, word) {
@@ -1411,8 +1422,8 @@ function applyRule(r, word) {
   r.re.lastIndex = 0;
   return word.replace(r.re, function () {
     var args = arguments, match = args[0], groups = [];
-    for (var g = 1; g <= r.n; g++) groups.push(args[g]);
-    var offset = args[r.n + 1];
+    for (var g = 1; g <= r.n; g++) groups.push(args[r.preG + g]);
+    var offset = args[r.preG + r.n + r.postG + 1];
     if (skip && skip[offset]) return match;
     var out = "", k = 0;
     r.repEls.forEach(function (e) {
@@ -3590,11 +3601,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.32.5"></script>
-<script src="fed-model.js?v=1.32.5"></script>
-<script src="fed-ui.js?v=1.32.5"></script>
-<script src="fed-lex.js?v=1.32.5"></script>
-<script src="fed-judge.js?v=1.32.5"></script>
+<script src="fed.js?v=1.32.6"></script>
+<script src="fed-model.js?v=1.32.6"></script>
+<script src="fed-ui.js?v=1.32.6"></script>
+<script src="fed-lex.js?v=1.32.6"></script>
+<script src="fed-judge.js?v=1.32.6"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
