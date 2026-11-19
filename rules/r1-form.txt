@@ -231,7 +231,7 @@ l²/l/_ʁə(S)#
 [aeoiuyœə]s/[áéóíúýǿé]/_[vd]ə(S)#
 z/ˆ/N_[vd]ə(S)#
 ; 그 밖의 불가군은 ə를 e로 경화해 살림
-ə/e/V…CC_(S)#/VC²_/V[pbkgfv]l_/V[tdpbkgfv]ʁ_/Vʁ[pbtdkgfvszʃʒmln]_/Vl[pbtdkgfvszʃʒm]_/Vs[ptk]_/V[ptk]s_/Vstʁ_/Vldʁ_/Vmbʁ_/Vskl_/Vʁdʁ_/Vʁbʁ_/Vʁtʁ_/Vʁkl_/j_
+ə/e/V…CC_(S)#/VC²_/V[pbkgfv]l_/V[tdpbkgfv]ʁ_/Vʁ[pbtdkgfvszʃʒmln]_/Vl[pbtdkgfvszʃʒm]_/Vs[ptk]_/V[ptk]s_/Vstʁ_/Vʁdʁ_/Vʁbʁ_/Vʁtʁ_/Vʁkl_/j_
 &//_
 ; 11. 내부형 표시
 [ẽ õ ã ỹ]/[ɛ̃ ɔ̃ ɑ̃ œ̃]/_
