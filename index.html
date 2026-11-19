@@ -1110,6 +1110,38 @@ r1: [
 "z/ˆ/N_[vd]ə(S)#",
 "; 그 밖의 불가군은 ə를 e로 경화해 살림",
 "ə/e/V…CC_(S)#/VC²_/V[pbkgfv]l_/V[tdpbkgfv]ʁ_/Vʁ[pbtdkgfvszʃʒmln]_/Vl[pbtdkgfvszʃʒm]_/Vs[ptk]_/V[ptk]s_/Vstʁ_/Vʁdʁ_/Vʁbʁ_/Vʁtʁ_/Vʁkl_/j_",
+"; 모음 탈락으로 생긴 어중 자음군을 프랑스어사의 수리 방식으로 고침 (프랑스어에 없는 군: 유성 마찰음·f 뒤 파열음, 유무성이 다른 장애음, 치음이 앞서는 파열음)",
+"; 1. 마찰음 뒤 장애음: s·z·ʒ·v·f 탈락과 보상 장음 (isle > île, mesme > même)",
+"[aeoiuyœə]s/[áéóíúýǿé]/_(!)[bdgvzʒ](!)V",
+"s/ˆ/N_(!)[bdgvzʒ](!)V",
+"[aeoiuyœə]z/[áéóíúýǿé]/_(!)[ptkbdgfvsʃʒ](!)V",
+"z/ˆ/N_(!)[ptkbdgfvsʃʒ](!)V",
+"[aeoiuyœə]ʒ/[áéóíúýǿé]/_(!)[ptkbdgfvszʃ](!)V",
+"ʒ/ˆ/N_(!)[ptkbdgfvszʃ](!)V",
+"[aeoiuyœə]v/[áéóíúýǿé]/_(!)[ptkbdfszʃʒ](!)V",
+"v/ˆ/N_(!)[ptkbdfszʃʒ](!)V",
+"[aeoiuyœə]f/[áéóíúýǿé]/_(!)[ptkbdgvszʃʒ](!)V",
+"f/ˆ/N_(!)[ptkbdgvszʃʒ](!)V",
+"; 보상 장음이 이미 있는 모음 뒤에서는 자음만 지움",
+"s//[áéóíúýǿ]_(!)[bdgvzʒ](!)V",
+"z//[áéóíúýǿ]_(!)[ptkbdgfvsʃʒ](!)V",
+"ʒ//[áéóíúýǿ]_(!)[ptkbdgfvszʃ](!)V",
+"v//[áéóíúýǿ]_(!)[ptkbdfszʃʒ](!)V",
+"f//[áéóíúýǿ]_(!)[ptkbdgvszʃʒ](!)V",
+"; 2. 파열음의 유무성을 뒤 장애음에 맞춤 (라틴어 scribo > scriptum)",
+"[ptk]/[bdg]/V_(!)[bdgvzʒ](!)V",
+"[bdg]/[ptk]/V_(!)[ptkfsʃ](!)V",
+"; 3. 치음 파열음이 순음·연구개음 앞에서 동화 (dette), g+d는 dd",
+"t/p/V_(!)p(!)V",
+"d/b/V_(!)b(!)V",
+"t/k/V_(!)k(!)V",
+"d/g/V_(!)g(!)V",
+"g/d/V_(!)d(!)V",
+"; 4. 그래도 남는 파열음+마찰음은 ə를 남김 (모음 탈락을 하지 않은 것과 같음)",
+"/ə/V[ptk]_(!)fV",
+"/ə/V[pk]_(!)ʃV",
+"/ə/Vg_(!)vV",
+"/ə/Vt_(!)sV",
 "&//_",
 "; 11. 내부형 표시",
 "[ẽ õ ã ỹ]/[ɛ̃ ɔ̃ ɑ̃ œ̃]/_",
@@ -1273,9 +1305,30 @@ r3: [
 "J²/J/V(T)_əC(ˈ)V/ə_",
 "{무성}²/{무성}/V(T)_ə{무성}(ˈ)V/ə_",
 "{유성}²/{유성}/V(T)_ə{유성}(ˈ)V/ə_",
-"ə//V(T)J_C(ˈ)V/ə(T)C_/ɲ_",
-"ə//V(T){무성}_{무성}(ˈ)V/ə(T)C_",
-"ə//V(T){유성}_{유성}(ˈ)V/ə(T)C_",
+"ə//V(T)[lʁ]_C(ˈ)V/ə(T)C_/ɲ_/ʁ_z/l_ʃ",
+"ə//V(T)m_[lnʁ](ˈ)V/ə(T)C_",
+"ə//V(T)n_[mtkʁ](ˈ)V/ə(T)C_",
+"ə//V(T)[pk]_[ts](ˈ)V/ə(T)C_",
+"ə//V(T)s_[ptkf](ˈ)V/ə(T)C_",
+"ə//V(T)ʃ_t(ˈ)V/ə(T)C_",
+"ə//V(T)[bd]_[zʒv](ˈ)V/ə(T)C_",
+"ə//V(T)g_[zʒb](ˈ)V/ə(T)C_",
+"ə//V(T)b_d(ˈ)V/ə(T)C_",
+"; 같은 자음 사이(장자음)는 탈락",
+"ə//V(T)p_p(ˈ)V/ə(T)C_",
+"ə//V(T)t_t(ˈ)V/ə(T)C_",
+"ə//V(T)k_k(ˈ)V/ə(T)C_",
+"ə//V(T)f_f(ˈ)V/ə(T)C_",
+"ə//V(T)s_s(ˈ)V/ə(T)C_",
+"ə//V(T)ʃ_ʃ(ˈ)V/ə(T)C_",
+"ə//V(T)b_b(ˈ)V/ə(T)C_",
+"ə//V(T)d_d(ˈ)V/ə(T)C_",
+"ə//V(T)g_g(ˈ)V/ə(T)C_",
+"ə//V(T)v_v(ˈ)V/ə(T)C_",
+"ə//V(T)z_z(ˈ)V/ə(T)C_",
+"ə//V(T)ʒ_ʒ(ˈ)V/ə(T)C_",
+"ə//V(T)m_m(ˈ)V/ə(T)C_",
+"ə//V(T)n_n(ˈ)V/ə(T)C_",
 "; 어말 ə가 탈락한 뒤 자음 다음에 남은 어말 j (프랑스어에는 자음+j 어말이 없음). j를 지워도 합법적인 어말(단자음, 합법 어말 자음군, 장자음)이 되면 지우고, 불가한 자음군(sl·sv·sʁ 등)이 생기면 i로 경화(-ie는 [i]: patrie)",
 "j//V(T)C_#",
 "j//V(T)[pbkgfv]l_#",
@@ -1285,7 +1338,7 @@ r3: [
 "j//V(T)s[ptk]_#",
 "j//V(T)[ptk]s_#",
 "j//V(T)C²_#",
-"j/i/C_#"
+"j/i/C_#",
 ].join("\n")
 };
 
@@ -3625,11 +3678,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.32.10"></script>
-<script src="fed-model.js?v=1.32.10"></script>
-<script src="fed-ui.js?v=1.32.10"></script>
-<script src="fed-lex.js?v=1.32.10"></script>
-<script src="fed-judge.js?v=1.32.10"></script>
+<script src="fed.js?v=1.32.11"></script>
+<script src="fed-model.js?v=1.32.11"></script>
+<script src="fed-ui.js?v=1.32.11"></script>
+<script src="fed-lex.js?v=1.32.11"></script>
+<script src="fed-judge.js?v=1.32.11"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
