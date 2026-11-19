@@ -21,5 +21,20 @@ J²/J/V(T)_əC(ˈ)V/ə_
 ə//V(T)J_C(ˈ)V/ə(T)C_/ɲ_
 ə//V(T){무성}_{무성}(ˈ)V/ə(T)C_
 ə//V(T){유성}_{유성}(ˈ)V/ə(T)C_
-; 어말 ə가 탈락한 뒤 자음 다음에 남은 어말 j는 i로 경화 (프랑스어에는 자음+j 어말이 없고 -ie는 [i]: patrie. j를 지우면 어말 sʁ·sl·sv 같은 불가한 자음군이 생김)
+; 어말 ə가 탈락한 뒤 자음 다음에 남은 어말 j (프랑스어에는 자음+j 어말이 없음). j를 지워도 합법적인 어말(단자음, 합법 어말 자음군, 장자음)이 되면 지우고, 불가한 자음군(sl·sv·sʁ 등)이 생기면 i로 경화(-ie는 [i]: patrie)
+j//V(T)C_#
+j//V(T)[pbkgfv]l_#
+j//V(T)[tdpbkgfv]ʁ_#
+j//V(T)ʁ[pbtdkgfvszʃʒmln]_#
+j//V(T)l[pbtdkgfvszʃʒm]_#
+j//V(T)s[ptk]_#
+j//V(T)[ptk]s_#
+j//V(T)ss_#
+j//V(T)ll_#
+j//V(T)ʁʁ_#
+j//V(T)pp_#
+j//V(T)tt_#
+j//V(T)kk_#
+j//V(T)ff_#
+j//V(T)vv_#
 j/i/C_#
