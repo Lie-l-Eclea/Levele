@@ -1101,7 +1101,8 @@ r1: [
 "ʃ/s/V_ʁə(S)#",
 "ʃ/s/[tk]_ə(S)#",
 "l²/l/_ʁə(S)#",
-"/d/V[ln]_ʁə(S)#",
+"/t/Vl_ʁə(S)#",
+"/d/Vn_ʁə(S)#",
 "/b/Vm_ʁə(S)#",
 "/t/Vs_ʁə(S)#",
 "/k/Vs_lə(S)#",
@@ -1110,6 +1111,12 @@ r1: [
 "z/ˆ/N_[vd]ə(S)#",
 "; 그 밖의 불가군은 ə를 e로 경화해 살림",
 "ə/e/V…CC_(S)#/VC²_/V[pbkgfv]l_/V[tdpbkgfv]ʁ_/Vʁ[pbtdkgfvszʃʒmln]_/Vl[pbtdkgfvszʃʒm]_/Vs[ptk]_/V[ptk]s_/Vstʁ_/Vʁdʁ_/Vʁbʁ_/Vʁtʁ_/Vʁkl_/j_",
+"; 구강 모음 + m·n + 장애음은 비모음 + 장애음 (프랑스어 tendre, chambre). 위의 d·b 삽입 뒤에 놓아 ndʁ·mbʁ도 포함",
+"O/N/_[mn](!)[ptkbdgfvszʃʒ]",
+"[mn]//N_(!)[ptkbdgfvszʃʒ]",
+"ĩ/ẽ/_",
+"ũ/õ/_",
+"ɚ/ỹ/_",
 "; 모음 탈락으로 생긴 어중 자음군을 프랑스어사의 수리 방식으로 고침 (프랑스어에 없는 군: 유성 마찰음·f 뒤 파열음, 유무성이 다른 장애음, 치음이 앞서는 파열음)",
 "; 1. 마찰음 뒤 장애음: s·z·ʒ·v·f 탈락과 보상 장음 (isle > île, mesme > même)",
 "[aeoiuyœə]s/[áéóíúýǿé]/_(!)[bdgvzʒ](!)V",
@@ -1150,7 +1157,7 @@ r1: [
 "; 비모음 + 공명음으로 끝나면 ə를 덧붙임",
 "/ə/T(C)J_#/Tn_#",
 "/ə/ɲ_#",
-"ʃ/ch/_",
+"ʃ/ch/_"
 ].join("\n"),
 
 rf: [
@@ -3678,11 +3685,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.32.12"></script>
-<script src="fed-model.js?v=1.32.12"></script>
-<script src="fed-ui.js?v=1.32.12"></script>
-<script src="fed-lex.js?v=1.32.12"></script>
-<script src="fed-judge.js?v=1.32.12"></script>
+<script src="fed.js?v=1.32.13"></script>
+<script src="fed-model.js?v=1.32.13"></script>
+<script src="fed-ui.js?v=1.32.13"></script>
+<script src="fed-lex.js?v=1.32.13"></script>
+<script src="fed-judge.js?v=1.32.13"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
