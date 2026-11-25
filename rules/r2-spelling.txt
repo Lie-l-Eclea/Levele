@@ -61,7 +61,8 @@ k/c/_
 g/gu/_F
 ʒ/g/_F
 ʒ/j/_
-s/ss/Z_Z
+; 모음 사이 단자음 [s]는 임시 기호 Ç로 두었다가 끝에서 c·ç로 적음 (ss는 장자음 [ss]만)
+s/Ç/Z_Z
 z/s/Z_Z
 ʃ/ch/_
 ɲ/gn/_
@@ -71,3 +72,6 @@ z/s/Z_Z
 [əɘ]/e/_
 ʉ/ouh/_[ou oi eu an am in im on om un um]
 ʉ/ouh/_
+; 단자음 [s]: a·o·u 앞은 ç, 그 밖은 c
+Ç/ç/_[aouɑɔâôûùàá]
+Ç/c/_
