@@ -994,6 +994,8 @@ r1: [
 "oy/ǿ/_",
 "ei/é/_",
 "ou/ó/_",
+"; 약화 비음 ɯ(ɚ)는 융합 전에 ỹ로 (õ+ɚ가 융합표를 빠져나가 비모음이 연달아 남던 문제)",
+"ɚ/ỹ/_",
 "[aeoiuyœĩũ]²/[áéóíúýœĩũ]/_",
 "ãĩ/ẽ/_",
 "[ãẽ]ẽ/ẽ/_",
@@ -1009,7 +1011,6 @@ r1: [
 "ãã/ã/_",
 "ĩ/ẽ/_",
 "ũ/õ/_",
-"ɚ/ỹ/_",
 "; 모음 융합 뒤에도 m·n 앞 비모음은 탈비음화",
 "N/O/_[mn](!)V",
 "; 9. 구개음화와 자음 (학술어는 구개음화 없음)",
@@ -3656,11 +3657,11 @@ if (ghToken() && ghBase()) ghSync(true, true); else if (!ghToken()) ghPublicPull
 if (typeof window !== "undefined") window.__eklea = { convert: convert, compileAll: compileAll, state: state };
 })();
 </script>
-<script src="fed.js?v=1.33.1"></script>
-<script src="fed-model.js?v=1.33.1"></script>
-<script src="fed-ui.js?v=1.33.1"></script>
-<script src="fed-lex.js?v=1.33.1"></script>
-<script src="fed-judge.js?v=1.33.1"></script>
+<script src="fed.js?v=1.33.2"></script>
+<script src="fed-model.js?v=1.33.2"></script>
+<script src="fed-ui.js?v=1.33.2"></script>
+<script src="fed-lex.js?v=1.33.2"></script>
+<script src="fed-judge.js?v=1.33.2"></script>
 <script>(function(){var t=window.FED&&FED.VERSION?FED.VERSION:null;Array.prototype.forEach.call(document.querySelectorAll(".fedVerTxt"),function(n){n.textContent=t||"?";});var e2=document.getElementById("fedVerT");if(e2)e2.textContent=t||"?";var e=document.getElementById("fedVer");if(e)e.textContent=window.FED?(FED.VERSION||"(fed.js 구버전: 강력 새로고침 필요)"):"(fed.js 로드 실패)";})();</script>
 
 </body></html>
